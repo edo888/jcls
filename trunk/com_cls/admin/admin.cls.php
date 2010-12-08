@@ -230,6 +230,8 @@ class CLSController extends JController {
 
         echo file_get_contents($tmp_file);
         unlink($tmp_file);
+
+        clsLog('Report downloaded', 'User have downloaded a report for the ' . $period . ' period');
         exit;
     }
 
@@ -449,6 +451,7 @@ class CLSController extends JController {
                 $query = "delete from #__complaints where id = $cid[$i]";
                 $db->setQuery($query);
                 $db->query();
+                clsLog('Complaint removed', 'The complaint with ID=' . $cid[$i] . ' has been removed');
             }
 
             $this->setRedirect('index.php?option=com_cls', JText::_('Complaint(s) successfully deleted'));
@@ -468,6 +471,7 @@ class CLSController extends JController {
         if($user->getParam('role', 'Viewer') != 'Viewer') {
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, '$user->username', '$complaint->phone', 'Thank you, your complaint #{$complaint->message_id} was processed, we will contact you soon.', now(), 'Processed')");
             $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
+            clsLog('Processed notification SMSed', 'Complaint #' . $complaint->message_id . ' SMS notification has been queued to be sent to ' . $complaint->phone . ' number');
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('SMS notification will be sent shortly'));
         } else {
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('You don\'t have permission to send notifications'));
@@ -492,6 +496,8 @@ class CLSController extends JController {
             $mail->AddAddress($complaint->email);
             $mail->Send() or JError::raiseWarning(0, 'Unable to send Email notification');
 
+            clsLog('Processed notification emailed', 'Complaint #' . $complaint->message_id . ' email notification has been sent to ' . $complaint->email . ' address');
+
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('Email notification successfully sent'));
         } else {
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('You don\'t have permission to send notifications'));
@@ -509,6 +515,9 @@ class CLSController extends JController {
         if($user->getParam('role', 'Viewer') != 'Viewer') {
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, '$user->username', '$complaint->phone', 'Thank you, your complaint #{$complaint->message_id} was resolved. Feel free to send further complaints if any.', now(), 'Resolved')");
             $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
+
+            clsLog('Resolved notification SMSed', 'Complaint #' . $complaint->message_id . ' SMS notification has been queued to be sent to ' . $complaint->phone . ' number');
+
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('SMS notification will be sent shortly'));
         } else {
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('You don\'t have permission to send notifications'));
@@ -532,6 +541,8 @@ class CLSController extends JController {
             $mail->MsgHTML('<p>Thank you, your complaint was resolved. Feel free to send further complaints if any.</p>');
             $mail->AddAddress($complaint->email);
             $mail->Send() or JError::raiseWarning(0, 'Unable to send Email notification');
+
+            clsLog('Resolved notification emailed', 'Complaint #' . $complaint->message_id . ' email notification has been sent to ' . $complaint->email . ' address');
 
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('Email notification successfully sent'));
         } else {
