@@ -35,9 +35,12 @@ CREATE TABLE IF NOT EXISTS `#__complaint_notifications` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL default 0,
   `action` varchar(20) NOT NULL default '',
+  `date` datetime NOT NULL default '0000-00-00 00:00:00',
   `description` text,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+INSERT INTO `#__complaint_notifications` VALUES (null, 0, 'CLS installed', now(), 'System installed or upgraded');
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_queue` (
   `id` int(11) NOT NULL auto_increment,

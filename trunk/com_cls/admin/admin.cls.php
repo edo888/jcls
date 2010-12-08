@@ -119,7 +119,80 @@ class CLSController extends JController {
     }
 
     function showNotifications() {
-        CLSView::showNotifications();
+        global $mainframe, $option;
+
+        $db     =& JFactory::getDBO();
+        $config =& JComponentHelper::getParams('com_cls');
+
+        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
+        $filter_user_id   = $mainframe->getUserStateFromRequest("$option.filter_user_id",'filter_user_id','');
+        $filter_action    = $mainframe->getUserStateFromRequest("$option.filter_action",'filter_action','');
+        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $search           = $db->getEscaped(trim(JString::strtolower($search)));
+
+        $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+
+        $where = array();
+
+        if($filter_user_id)
+            $where[] = 'm.user_id = "'.$filter_user_id.'"';
+
+        if($filter_action)
+            $where[] = 'm.action = "'.$filter_action.'"';
+
+        if($search)
+            $where[] = 'm.description LIKE "%'.$search.'%"';
+
+        $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+        $orderby = ' ORDER BY '. $filter_order .' '. $filter_order_Dir;
+
+        $query = 'SELECT COUNT(m.id) FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) ' . $where;
+        $db->setQuery($query);
+        $total = $db->loadResult();
+
+        jimport('joomla.html.pagination');
+        $pageNav = new JPagination($total,$limitstart,$limit);
+
+        $query = 'SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) ' . $where . ' ' . $orderby;
+        $db->setQuery($query, $pageNav->limitstart, $pageNav->limit);
+        $rows = $db->loadObjectList();
+        //echo $query;
+
+        if($db->getErrorNum()) {
+            echo $db->stderr();
+            return false;
+        }
+
+        // user_id filter
+        $query = 'select distinct n.user_id, u.name from #__complaint_notifications as n left join #__users as u on (n.user_id = u.id)';
+        $db->setQuery($query);
+        $users = $db->loadObjectList();
+        $users[] = array('key' => '', 'value' => '- Select User -');
+        foreach($users as $u) {
+            $u->name = $u->user_id == 0 ? 'System' : $u->name;
+            $users[] = array('key' => $u->user_id, 'value' => $u->name);
+        }
+        $lists['user_id'] = JHTML::_('select.genericlist', $users, 'filter_user_id', 'onchange=submitform();', 'key', 'value', $filter_user_id);
+
+        // action filter
+        $query = 'select distinct action from #__complaint_notifications';
+        $db->setQuery($query);
+        $actions = $db->loadObjectList();
+        $actions[] = array('key' => '', 'value' => '- Select Action -');
+        foreach($actions as $a)
+            $actions[] = array('key' => $a->action, 'value' => $a->action);
+        $lists['action'] = JHTML::_('select.genericlist', $actions, 'filter_user_id', 'onchange=submitform();', 'key', 'value', $filter_action);
+
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order']     = $filter_order;
+
+        // search filter
+        $lists['search'] = $search;
+
+        CLSView::showNotifications($rows, $pageNav, $option, $lists);
     }
 
     function downloadReport() {
@@ -764,15 +837,100 @@ class CLSView {
         # -- End Complaints Map --
     }
 
-    function showNotifications() {
+    function showNotifications($rows, $pageNav, $options, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
         JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications', true);
 
-        $db =& JFactory::getDBO();
-        $config =& JComponentHelper::getParams('com_cls');
+        JHTML::_('behavior.tooltip');
 
-        echo 'Notificationts';
+        jimport('joomla.filter.output');
+        ?>
+        <form action="index.php?option=com_cls" method="post" name="adminForm">
+
+        <table>
+            <tr>
+                <td align="left" width="100%">
+                    <?php echo JText::_('Filter'); ?>:
+                    <input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+                    <button onclick="this.form.submit();"><?php echo JText::_('Go'); ?></button>
+                    <button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_('Reset'); ?></button>
+                </td>
+                <td nowrap="nowrap">
+                    <?php echo $lists['user_id']; ?>
+                    <?php echo $lists['action']; ?>
+                </td>
+            </tr>
+        </table>
+
+        <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JHTML::_('grid.sort', 'User', 'u.name', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JHTML::_('grid.sort', 'Action', 'm.action', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JHTML::_('grid.sort', 'Date', 'm.date', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="68%" align="left">Description</th>
+                    <th width="1%" nowrap="nowrap">
+                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($rows); $i < $n; $i++) {
+                $row = &$rows[$i];
+                JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $pageNav->getRowOffset( $i ); ?>
+                    </td>
+                    <td align="center">
+                        <?php if($row->user_id == 0) echo 'System'; else echo $row->name; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->action; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo date('Y-m-d', strtotime($row->date)); ?>
+                    </td>
+                    <td align="left">
+                        <?php echo $row->description; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->id; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
+            <tfoot>
+                <td colspan="13">
+                    <?php echo $pageNav->getListFooter(); ?>
+                </td>
+            </tfoot>
+            </table>
+        </div>
+
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="c" value="notifications" />
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="" />
+        <?php echo JHTML::_( 'form.token' ); ?>
+        </form>
+        <?php
     }
 
     /**
