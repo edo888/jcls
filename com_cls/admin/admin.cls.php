@@ -324,6 +324,9 @@ class CLSController extends JController {
             $complaint->set('message_source', JRequest::getVar('message_source'));
             $complaint->store();
 
+            // adding notification
+            clsLog('New back-end complaint', 'New back-end complaint created');
+
             $this->setRedirect('index.php?option=com_cls', JText::_('Complaint successfully created'));
         } else { // going to update complaint
 
@@ -379,11 +382,13 @@ class CLSController extends JController {
                 if($complaint->date_processed == '' and $complaint->processed_message != '') {
                     $complaint->set('date_processed', date('Y-m-d H:i:s'));
 
+                    clsLog('Complaint processed', 'The user processed the complaint');
+
                     // Send processed complaint to members
                     $config =& JComponentHelper::getParams('com_cls');
                     $processed_message_send_count = (int) $config->get('processed_message_send_count', 3);
 
-                    $db->setQuery("select email, rand() as r from #__users where params like '%receive_processed_messages=1%' order by r limit $processed_message_send_count");
+                    $db->setQuery("select email, name, rand() as r from #__users where params like '%receive_processed_messages=1%' order by r limit $processed_message_send_count");
                     $res = $db->query();
 
                     jimport('joomla.mail.mail');
@@ -394,8 +399,10 @@ class CLSController extends JController {
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
                     $mail->msgHTML('<p>A complaint was processed. Login to http://www.lrip.am/administrator/index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
                     $mail->AddReplyTo('no_reply@lrip.am');
-                    while($row = mysql_fetch_array($res, MYSQL_NUM))
+                    while($row = mysql_fetch_array($res, MYSQL_NUM)) {
                         $mail->AddAddress($row[0]);
+                        clsLog('Processed notification send', 'Processed notification send to ' . $row[1]);
+                    }
                     $mail->Send();
                 }
             }
@@ -406,16 +413,21 @@ class CLSController extends JController {
                 $complaint->set('resolution', JRequest::getVar('resolution'));
                 if($complaint->date_resolved == '' and $complaint->resolution != '')
                     $complaint->set('date_resolved', date('Y-m-d H:i:s'));
+
+                clsLog('Complaint resolved', 'The user resolved the complaint');
             }
 
             if($user_type != 'Viewer') {
-                if(JRequest::getVar('comments', '') != '') // append comment
+                if(JRequest::getVar('comments', '') != '') { // append comment
                     $complaint->set('comments', $complaint->comments . 'On ' . date('Y-m-d H:i:s') . ' ' . $user->name . " wrote:\n" . JRequest::getVar('comments') . "\n\n");
+                    clsLog('Complaint comment added', 'The user added a follow up comment on the complaint');
+                }
 
                 // storing updated data
                 //echo '<pre>', print_r($complaint, true), '</pre>';
                 //exit;
                 $complaint->store();
+                clsLog('Complaint updated', 'The user updated complaint data');
             }
 
             if($this->_task == 'save')
@@ -1475,6 +1487,14 @@ class CLSView {
         </script>
         <?php
     }
+}
+
+function clsLog($action, $description) {
+    $db   =& JFactory::getDBO();
+    $user =& JFactory::getUser();
+    $description = mysql_real_escape_string($description);
+    $db->setQuery("insert into #__complaint_notifications values(null, {$user->id}, '$action', now(), '$description')");
+    $db->query();
 }
 
 
