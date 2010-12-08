@@ -325,7 +325,7 @@ class CLSController extends JController {
             $complaint->store();
 
             // adding notification
-            clsLog('New back-end complaint', 'New back-end complaint created');
+            clsLog('New back-end complaint', 'New back-end complaint created #' . $message_id);
 
             $this->setRedirect('index.php?option=com_cls', JText::_('Complaint successfully created'));
         } else { // going to update complaint
@@ -382,7 +382,7 @@ class CLSController extends JController {
                 if($complaint->date_processed == '' and $complaint->processed_message != '') {
                     $complaint->set('date_processed', date('Y-m-d H:i:s'));
 
-                    clsLog('Complaint processed', 'The user processed the complaint');
+                    clsLog('Complaint processed', 'The user processed the complaint #' . $complaint->message_id);
 
                     // Send processed complaint to members
                     $config =& JComponentHelper::getParams('com_cls');
@@ -401,7 +401,7 @@ class CLSController extends JController {
                     $mail->AddReplyTo('no_reply@lrip.am');
                     while($row = mysql_fetch_array($res, MYSQL_NUM)) {
                         $mail->AddAddress($row[0]);
-                        clsLog('Processed notification send', 'Processed notification send to ' . $row[1]);
+                        clsLog('Processed notification send', 'Complaint #' . $complaint->message_id . ' processed notification send to ' . $row[1]);
                     }
                     $mail->Send();
                 }
@@ -411,23 +411,23 @@ class CLSController extends JController {
                 if($user_type == 'Resolver')
                     $complaint->set('resolver_id', $user->id);
                 $complaint->set('resolution', JRequest::getVar('resolution'));
-                if($complaint->date_resolved == '' and $complaint->resolution != '')
+                if($complaint->date_resolved == '' and $complaint->resolution != '') {
                     $complaint->set('date_resolved', date('Y-m-d H:i:s'));
-
-                clsLog('Complaint resolved', 'The user resolved the complaint');
+                    clsLog('Complaint resolved', 'The user resolved the complaint #' . $complaint->message_id);
+                }
             }
 
             if($user_type != 'Viewer') {
                 if(JRequest::getVar('comments', '') != '') { // append comment
                     $complaint->set('comments', $complaint->comments . 'On ' . date('Y-m-d H:i:s') . ' ' . $user->name . " wrote:\n" . JRequest::getVar('comments') . "\n\n");
-                    clsLog('Complaint comment added', 'The user added a follow up comment on the complaint');
+                    clsLog('Complaint comment added', 'The user added a follow up comment on the complaint #' . $complaint->message_id);
                 }
 
                 // storing updated data
                 //echo '<pre>', print_r($complaint, true), '</pre>';
                 //exit;
                 $complaint->store();
-                clsLog('Complaint updated', 'The user updated complaint data');
+                clsLog('Complaint updated', 'The user updated complaint #' . $complaint->message_id . ' data');
             }
 
             if($this->_task == 'save')
@@ -908,7 +908,7 @@ class CLSView {
                         <?php echo $pageNav->getRowOffset( $i ); ?>
                     </td>
                     <td align="center">
-                        <?php if($row->user_id == 0) echo 'System'; else echo $row->name; ?>
+                        <?php if($row->user_id == 0) echo 'System'; else echo $row->user; ?>
                     </td>
                     <td align="center">
                         <?php echo $row->action; ?>
