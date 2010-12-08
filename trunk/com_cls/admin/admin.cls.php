@@ -925,7 +925,7 @@ class CLSView {
                         <?php echo $row->action; ?>
                     </td>
                     <td align="center">
-                        <?php echo date('Y-m-d', strtotime($row->date)); ?>
+                        <?php echo $row->date; ?>
                     </td>
                     <td align="left">
                         <?php echo $row->description; ?>
