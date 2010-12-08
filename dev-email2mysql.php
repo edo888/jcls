@@ -84,8 +84,12 @@ if($argv[1] == 'install') {
             $query = "insert into jos_complaints (message_id, name, email, raw_message, message_source, date_received) value('$message_id', '$from_name', '$from', '$msg', 'Email', now())";
             mysql_query($query);
 
+            // log
+            $query = "insert into jos_complaint_notifications values(null, 0, 'New email complaint', now(), 'New email complaint #{$message_id} arrived')";
+            mysql_query($query);
+
             // TODO: send complaint to members
-            $res = mysql_query("select email, rand() as r from jos_users where params like '%receive_raw_messages=1%' order by r limit 3");
+            $res = mysql_query("select email, name, rand() as r from jos_users where params like '%receive_raw_messages=1%' order by r limit 3");
             //$res = mysql_query("select email, rand() as r from jos_users where params like '%receive_raw_messages=1%' and id = 63 order by r limit 3");
             $mail = new PHPMailer();
             $mail->IsSMTP();
@@ -100,15 +104,20 @@ if($argv[1] == 'install') {
             $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
             $mail->msgHTML('<p>New complaint received from ' . htmlspecialchars($header->fromaddress) . '. Login to http://www.test.com/administrator/index.php?option=com_cls to process it.</p>' . $body);
             $mail->AddReplyTo(NO_REPLY);
-            while($row = mysql_fetch_array($res, MYSQL_NUM))
+            while($row = mysql_fetch_array($res, MYSQL_NUM)) {
                 $mail->AddAddress($row[0]);
+
+                // log
+                $query = "insert into jos_complaint_notifications values(null, 0, 'New email complaint notification', now(), 'New complaint #{$message_id} notification has been sent to $row[1]')";
+                mysql_query($query);
+            }
             $mail->Send();
 
             imap_delete($mbox, $i);
         }
 
         // check sms queue
-        $res = mysql_query("select * from jos_complaint_message_queue where status = 'Pending'");
+        $res = mysql_query("select q.*, c.message_id from jos_complaint_message_queue as q left join jos_complaints as c on (q.complaint_id = c.id) where q.status = 'Pending'");
         while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
             $sms_body = "From: $row[msg_from]\n";
             $sms_body .= "To: $row[msg_to]\n";
@@ -117,6 +126,10 @@ if($argv[1] == 'install') {
             $sms_body .= $row['msg'];
             file_put_contents(OUTGOING_PATH.'\out_'.$row['id'].'.txt', $sms_body);
             mysql_query("update jos_complaint_message_queue set status = 'Outgoing' where id = " . $row['id']);
+
+            // log
+            $query = "insert into jos_complaint_notifications values(null, 0, 'SMS notification status changed', now(), 'Complaint #{$row[message_id]} SMS notification status changed to Outgoing')";
+            mysql_query($query);
         }
 
         if($num == 0) {
