@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS `#__complaints`;
+DROP TABLE IF EXISTS `#__complaint_message_ids`;
+DROP TABLE IF EXISTS `#__complaint_message_queue`
+DROP TABLE IF EXISTS `#__complaint_areas`;

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install SYSTEM "http://dev.joomla.org/xml/1.5/component-install.dtd">
+<install type="component" version="1.5.0" method="upgrade">
+    <name>CLS</name>
+    <author>Edvard Ananyan</author>
+    <creationDate>March 2010</creationDate>
+    <copyright>Copyright (c) 2010 Edvard Ananyan. All rights reserved.</copyright>
+    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <authorEmail>edo888@gmail.com</authorEmail>
+    <authorUrl>http://edo.webmaster.am/</authorUrl>
+    <version>0.9.2</version>
+    <description>Complaint Logging System</description>
+
+    <files>
+        <filename>cls.php</filename>
+        <filename>lsans.ttf</filename>
+        <filename>captcha.gif</filename>
+        <filename>index.html</filename>
+    </files>
+
+    <installfile></installfile>
+    <uninstallfile></uninstallfile>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">install.cls.sql</file>
+        </sql>
+    </install>
+
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">uninstall.cls.sql</file>
+        </sql>
+    </uninstall>
+
+    <languages folder="language">
+        <language tag="en-GB">en-GB.com_cls.ini</language>
+        <language tag="hy-AM">hy-AM.com_cls.ini</language>
+    </languages>
+
+    <administration>
+        <menu>Complaints</menu>
+        <submenu>
+            <menu link="option=com_cls">Home</menu>
+            <menu link="option=com_cls&amp;c=reports">Reports</menu>
+            <menu link="option=com_cls&amp;c=notifications">Notifications</menu>
+        </submenu>
+
+        <files folder="admin">
+            <filename>admin.cls.php</filename>
+            <filename>toolbar.cls.html.php</filename>
+            <filename>toolbar.cls.php</filename>
+            <filename>install.cls.sql</filename>
+            <filename>uninstall.cls.sql</filename>
+            <filename>index.html</filename>
+        </files>
+    </administration>
+</install>
