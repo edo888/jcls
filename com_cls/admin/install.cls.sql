@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
 CREATE TABLE IF NOT EXISTS `#__complaint_notifications` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL default 0,
-  `action` varchar(20) NOT NULL default '',
+  `action` varchar(100) NOT NULL default '',
   `date` datetime NOT NULL default '0000-00-00 00:00:00',
   `description` text,
   PRIMARY KEY (`id`)
