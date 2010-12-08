@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <params>
+        <param name="admin_language" type="languages" client="administrator" default="" label="Back-end Language" description="paramAdminLanguage" />
+        <param name="language" type="languages" client="site" default="" label="Front-end Language" description="paramLanguage" />
+        <param name="editor" type="editors" default="" label="User Editor" description="WYSIWYG Editor for this User" />
+        <param name="helpsite" type="helpsites" default="" label="Help Site" description="Help Site for this User" />
+        <param name="timezone" type="timezones" default="" label="Time Zone" description="Time Zone for this User" />
+        <param type="spacer" default="&lt;b&gt;GAC parameters&lt;b&gt;" />
+        <param name="organization" type="text" default="" label="Organization" description="" size="40" />
+        <param name="area" type="text" default="" label="Area" description="The area of specialty" size="40" />
+        <param name="role" type="list" default="Viewer" label="Role" description="">
+            <option value="Viewer">Viewer - Can view messages and stats</option>
+            <option value="Super User">Super User - Full access and control including deleting records</option>
+            <option value="Administrator">Administrator - Full access and control to all functionality but cannot delete</option>
+            <option value="Auditor">Auditor - Can enter data related to specific complaints</option>
+            <option value="Resolver">Resolver - People who are to follow up on messages received</option>
+        </param>
+        <param name="receive_raw_messages" type="radio" default="0" label="Receive Raw Messages" description="">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </param>
+        <param name="receive_processed_messages" type="radio" default="0" label="Receive Processed Messages" description="">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </param>
+    </params>
+</form>
