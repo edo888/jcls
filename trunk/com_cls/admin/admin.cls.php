@@ -169,21 +169,21 @@ class CLSController extends JController {
         $query = 'select distinct n.user_id, u.name from #__complaint_notifications as n left join #__users as u on (n.user_id = u.id)';
         $db->setQuery($query);
         $users = $db->loadObjectList();
-        $users[] = array('key' => '', 'value' => '- Select User -');
+        $user[] = array('key' => '', 'value' => '- Select User -');
         foreach($users as $u) {
             $u->name = $u->user_id == 0 ? 'System' : $u->name;
-            $users[] = array('key' => $u->user_id, 'value' => $u->name);
+            $user[] = array('key' => $u->user_id, 'value' => $u->name);
         }
-        $lists['user_id'] = JHTML::_('select.genericlist', $users, 'filter_user_id', 'onchange=submitform();', 'key', 'value', $filter_user_id);
+        $lists['user_id'] = JHTML::_('select.genericlist', $user, 'filter_user_id', 'onchange=submitform();', 'key', 'value', $filter_user_id);
 
         // action filter
         $query = 'select distinct action from #__complaint_notifications';
         $db->setQuery($query);
         $actions = $db->loadObjectList();
-        $actions[] = array('key' => '', 'value' => '- Select Action -');
+        $action[] = array('key' => '', 'value' => '- Select Action -');
         foreach($actions as $a)
-            $actions[] = array('key' => $a->action, 'value' => $a->action);
-        $lists['action'] = JHTML::_('select.genericlist', $actions, 'filter_user_id', 'onchange=submitform();', 'key', 'value', $filter_action);
+            $action[] = array('key' => $a->action, 'value' => $a->action);
+        $lists['action'] = JHTML::_('select.genericlist', $action, 'filter_user_id', 'onchange=submitform();', 'key', 'value', $filter_action);
 
         // table ordering
         $lists['order_Dir'] = $filter_order_Dir;
