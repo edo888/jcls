@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# This script logs all events into an SQL database
+
+# MySQL config
+SQL_HOST=127.0.0.1
+SQL_USER=user
+SQL_PASSWORD="pass"
+SQL_DATABASE=database
+
+# E-mail config - configure your settings in /etc/ssmtp/ssmtp.conf
+EMAIL=complaints@test.com
+EMAIL_PASS="*****"
+DOMAIN=www.test.com
+
+
+DATE=`date +"%Y-%m-%d %H:%M:%S"`
+
+# Extract data from the SMS file
+
+FROM=`formail -zx From: < $2 | sed 's/"//g' | tr -d '\n'`
+TO=`formail -zx To: < $2`
+SUBJECT=`formail -zx Subject: < $2`
+SENT=`formail -zx Sent: < $2`
+TEXT=`sed -e '1,/^$/d' < $2`
+
+# Set some SQL parameters
+if [ "$SQL_PASSWORD" != "" ]; then
+  SQL_ARGS="-p$SQL_PASSWORD";
+else
+  SQL_ARGS="";
+fi
+SQL_ARGS="-h $SQL_HOST -u $SQL_USER $SQL_ARGS -D $SQL_DATABASE -s -e"
+
+# Insert a new entry into the SQL table
+
+if [ "$1" = "FAILED" ]; then
+   MSG_ID=`formail -zx MsgID: < $2`
+   mysql $SQL_ARGS "update jos_complaint_message_queue set status = 'Failed' where id = $MSG_ID;";
+elif [ "$1" = "SENT" ]; then
+   MSG_ID=`formail -zx MsgID: < $2`
+   mysql $SQL_ARGS "update jos_complaint_message_queue set status = 'Sent' where id = $MSG_ID;";
+elif [ "$1" = "RECEIVED" ]; then
+
+   DATE=`date +"%Y-%m-%d"`
+   COUNT=`mysql $SQL_ARGS "select count(*) from jos_complaints where date_received >= '$DATE 00:00:00' and date_received <= '$DATE 23:59:59';" | sed 's/[^0-9]//g'`
+   if [ $COUNT = 0 ]; then
+      mysql $SQL_ARGS "delete from jos_complaint_message_ids;alter table jos_complaint_message_ids auto_increment = 0;"
+   fi
+   ID=`mysql $SQL_ARGS "insert into jos_complaint_message_ids value(null);select LAST_INSERT_ID();" | sed 's/[^0-9]//g'`
+   MESSAGE_ID="$DATE-`printf %04d $ID`"
+   #echo $MESSAGE_ID
+
+   mysql $SQL_ARGS "insert into jos_complaints (message_id, phone, raw_message, message_source, date_received) value('$MESSAGE_ID', '$FROM', '$TEXT', 'SMS', now());"
+
+   # TODO: send complaint to members
+   MEMBERS=`mysql $SQL_ARGS "select email, rand() as r from jos_users where params like '%receive_raw_messages=1%' order by r limit 3;" | awk '{print $1}' | tr '\n' ','`
+   echo "To: $MEMBERS" > msg.txt
+   echo "From: Complaint Logging System <$EMAIL>" >> msg.txt
+   echo "Subject: New SMS Complaint: #$MESSAGE_ID" >> msg.txt
+   echo "Content-Type: text/html; charset=utf-8" >> msg.txt
+   echo "<p>New complaint received from $FROM. Login to http://$DOMAIN/administrator/index.php?option=com_cls to process it.</p> $TEXT" >> msg.txt
+
+   /usr/sbin/ssmtp -au$EMAIL -ap$EMAIL_PASS -t < msg.txt
+
+elif [ "$1" = "REPORT" ]; then
+   # Extract more data from the status report file
+   #REPORT=`sed -e '1,/STATUS REPORT/d' $2`
+   #DISCHARGE=`echo "$REPORT" | formail -zx Discharge_timestamp:`
+   #MSGID=`echo "$REPORT" | formail -zx Message_id:`
+   #STATUS=`echo "$REPORT" | formail -zx Status: | cut -f1 -d,`
+   #ID=`mysql $SQL_ARGS "select id from $SQL_TABLE where receiver like \"$FROM%\" and type=\"SENT\" and msgid=\"$MSGID\" order by id desc limit 1;"`
+   #mysql $SQL_ARGS "update $SQL_TABLE set received=\"$DISCHARGE\",status=\"$STATUS\" where id=\"$ID\";"
+
+   sleep 0
+fi
