@@ -31,6 +31,14 @@ CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `#__complaint_notifications` (
+  `id` int(11) NOT NULL auto_increment,
+  `user_id` int(11) NOT NULL default 0,
+  `action` varchar(20) NOT NULL default '',
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `#__complaint_message_queue` (
   `id` int(11) NOT NULL auto_increment,
   `complaint_id` int(11) NOT NULL default 0,

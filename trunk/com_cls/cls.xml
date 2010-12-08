@@ -13,6 +13,7 @@
 
     <files>
         <filename>cls.php</filename>
+        <filename>base64.php</filename>
         <filename>lsans.ttf</filename>
         <filename>captcha.gif</filename>
         <filename>index.html</filename>
@@ -21,17 +22,9 @@
     <installfile></installfile>
     <uninstallfile></uninstallfile>
 
-    <install>
-        <sql>
-            <file driver="mysql" charset="utf8">install.cls.sql</file>
-        </sql>
-    </install>
+    <install><sql><file driver="mysql" charset="utf8">install.cls.sql</file></sql></install>
 
-    <uninstall>
-        <sql>
-            <file driver="mysql" charset="utf8">uninstall.cls.sql</file>
-        </sql>
-    </uninstall>
+    <uninstall><sql><file driver="mysql" charset="utf8">uninstall.cls.sql</file></sql></uninstall>
 
     <languages folder="language">
         <language tag="en-GB">en-GB.com_cls.ini</language>
@@ -52,6 +45,7 @@
             <filename>toolbar.cls.php</filename>
             <filename>install.cls.sql</filename>
             <filename>uninstall.cls.sql</filename>
+            <filename>config.xml</filename>
             <filename>index.html</filename>
         </files>
     </administration>
