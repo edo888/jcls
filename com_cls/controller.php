@@ -11,15 +11,58 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
+// TODO: authorize
+
 class CLSController extends JController {
     function __construct($default = array()) {
         parent::__construct($default);
+        $this->registerTask('download_report', 'downloadReport');
         $this->registerTask('submit', 'submitComplaint');
     }
 
     function display() {
         $view = JRequest::getVar('view');
         parent::display(true);
+    }
+
+    function downloadReport() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $doc  =& JFactory::getDocument();
+
+        $period = JRequest::getVar('period', 'all');
+
+        $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id)';
+
+        switch($period) {
+            case 'month': $query .= ' where date_received >= DATE_ADD(now(), interval -1 month)'; break;
+            case 'current_month': $query .= " where date_received >= '" . date("Y-m-01") . "'"; break;
+            case 'prev_month': $query .= " where date_received < '" . date("Y-m-01") . "' and date_received >= DATE_ADD('".date("Y-m-01")."', interval -1 month)"; break;
+            default: break;
+        }
+
+        $db->setQuery($query);
+        $complaints = $db->loadObjectList();
+
+        $tmp_file = tempnam(JPATH_ROOT.'/dmdocuments', 'cls');
+        $fh = fopen($tmp_file, 'w') or die('cannot open file for writing');
+        fputcsv($fh, array('MessageID', 'Name', 'Email', 'Tel', 'Address', 'Sender IP', 'Message Source', 'Message Priority', 'Complaint Area', 'Editor', 'Resolver', 'Resolution', 'Resolved and Closed', 'Raw Message', 'Processed Message', 'Comments')) or die('cannot write');
+        foreach($complaints as $complaint)
+            fputcsv($fh, array($complaint->message_id, $complaint->name, $complaint->email, $complaint->phone, $complaint->address, $complaint->ip_address, $complaint->message_source, $complaint->message_priority, $complaint->complaint_area, $complaint->editor, $complaint->resolver, $complaint->resolution, $complaint->confirmed_closed, $complaint->raw_message, $complaint->processed_message, $complaint->comments));
+        fclose($fh);
+
+        header("Cache-Control: public, must-revalidate");
+        header("Pragma: hack");
+        header("Content-Type: application/octet-stream");
+        header("Content-Length: " . filesize($tmp_file));
+        header('Content-Disposition: attachment; filename="'.basename($tmp_file).'.csv"');
+        header("Content-Transfer-Encoding: binary\n");
+
+        echo file_get_contents($tmp_file);
+        unlink($tmp_file);
+
+        clsLog('Report downloaded', 'User have downloaded a report for the ' . $period . ' period');
+        exit;
     }
 
     function submitComplaint() {
@@ -87,4 +130,12 @@ class CLSController extends JController {
 
         $this->setRedirect(JRoute::_('index.php?option=com_cls&Itemid='.JRequest::getInt('Itemid')), JText::_('COMPLAINT_FORM_SUBMIT'));
     }
+}
+
+function clsLog($action, $description) {
+    $db   =& JFactory::getDBO();
+    $user =& JFactory::getUser();
+    $description = mysql_real_escape_string($description);
+    $db->setQuery("insert into #__complaint_notifications values(null, {$user->id}, '$action', now(), '$description')");
+    $db->query();
 }
