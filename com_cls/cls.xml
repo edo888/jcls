@@ -12,6 +12,7 @@
     <description>Complaint Logging System</description>
 
     <files>
+        <folder>views</folder>
         <filename>cls.php</filename>
         <filename>metadata.xml</filename>
         <filename>base64.php</filename>
