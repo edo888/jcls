@@ -13,6 +13,7 @@
 
     <files>
         <filename>cls.php</filename>
+        <filename>metadata.xml</filename>
         <filename>base64.php</filename>
         <filename>lsans.ttf</filename>
         <filename>captcha.gif</filename>
