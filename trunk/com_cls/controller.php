@@ -18,6 +18,7 @@ class CLSController extends JController {
         parent::__construct($default);
         $this->registerTask('download_report', 'downloadReport');
         $this->registerTask('submit', 'submitComplaint');
+        $this->registerTask('newcomplaint', 'newComplaint');
     }
 
     function display() {
@@ -129,6 +130,45 @@ class CLSController extends JController {
         $mail->Send();
 
         $this->setRedirect(JRoute::_('index.php?option=com_cls&Itemid='.JRequest::getInt('Itemid')), JText::_('COMPLAINT_FORM_SUBMIT'));
+    }
+
+    function newComplaint() {
+        $db =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Viewer');
+
+        // generating message_id
+        $date = date('Y-m-d');
+        $query = "select count(*) from #__complaints where date_received >= '$date 00:00:00' and date_received <= '$date 23:59:59'";
+        $db->setQuery($query);
+        $count = $db->loadResult();
+        if($count == 0) { // reset the counter for current day
+            $db->setQuery('delete from #__complaint_message_ids');
+            $db->query();
+            $db->setQuery('alter table #__complaint_message_ids auto_increment = 0');
+            $db->query();
+        }
+        $db->setQuery('insert into #__complaint_message_ids value(null)');
+        $db->query();
+        $message_id = $db->insertid();
+        $message_id = $date.'-'.str_pad($message_id, 4, '0', STR_PAD_LEFT);
+
+        // constructing the complaint object
+        $complaint = new JTable('#__complaints', 'id', $db);
+        $complaint->set('message_id', $message_id);
+        $complaint->set('name', JRequest::getVar('name'));
+        $complaint->set('email', JRequest::getVar('email'));
+        $complaint->set('phone', JRequest::getVar('phone'));
+        $complaint->set('address', JRequest::getVar('address'));
+        $complaint->set('raw_message', JRequest::getVar('raw_message'));
+        $complaint->set('date_received', date('Y-m-d H:i:s'));
+        $complaint->set('message_source', JRequest::getVar('message_source'));
+        $complaint->store();
+
+        // adding notification
+        clsLog('New front-end complaint', 'New front-end complaint created #' . $message_id);
+
+        $this->setRedirect('index.php?option=com_cls&view=complaints', JText::_('Complaint successfully created'));
     }
 }
 
