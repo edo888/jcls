@@ -19,6 +19,8 @@ class CLSController extends JController {
         $this->registerTask('download_report', 'downloadReport');
         $this->registerTask('submit', 'submitComplaint');
         $this->registerTask('newcomplaint', 'newComplaint');
+        $this->registerTask('edit', 'editComplaint');
+        $this->registerTask('save', 'saveComplaint');
     }
 
     function display() {
@@ -169,6 +171,14 @@ class CLSController extends JController {
         clsLog('New front-end complaint', 'New front-end complaint created #' . $message_id);
 
         $this->setRedirect('index.php?option=com_cls&view=complaints', JText::_('Complaint successfully created'));
+    }
+
+    function editComplaint() {
+        echo 'edit ku';
+    }
+
+    function saveComplaint() {
+        echo 'save ku';
     }
 }
 

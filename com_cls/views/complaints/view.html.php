@@ -15,6 +15,13 @@ class CLSViewComplaints extends JView {
     function display($tpl = null) {
         global $mainframe, $option;
 
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Viewer');
+        if($user_type != 'Viewer' and $user_type != 'Resolver' and $user_type != 'Auditor' and $user_type != 'Super User' and $user_type != 'Administrator') {
+            JError::raiseWarning(403, 'You are not authorized to view this page.');
+            return;
+        }
+
         $document =& JFactory::getDocument();
         $document->addScript(JURI::base().'includes/js/joomla.javascript.js');
 

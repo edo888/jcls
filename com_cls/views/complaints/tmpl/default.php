@@ -104,8 +104,8 @@ jimport('joomla.filter.output');
                 <?php echo $checked; ?>
             </td-->
             <td align="center" nowrap="nowrap">
-                <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Complaint' ); ?>">
-                    <?php echo $row->message_id; ?></a>
+                <?php /*<a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Complaint' ); ?>">*/ ?>
+                    <?php echo $row->message_id; ?><?php /*</a>*/ ?>
             </td>
             <td align="center" nowrap="nowrap">
                 <?php echo $row->message_source; ?>

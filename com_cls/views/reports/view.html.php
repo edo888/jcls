@@ -13,6 +13,13 @@ jimport( 'joomla.application.component.view');
 
 class CLSViewReports extends JView {
     function display($tpl = null) {
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Viewer');
+        if($user_type != 'Viewer' and $user_type != 'Resolver' and $user_type != 'Auditor' and $user_type != 'Super User' and $user_type != 'Administrator') {
+            JError::raiseWarning(403, 'You are not authorized to view this page.');
+            return;
+        }
+
         $db =& JFactory::getDBO();
         $config =& JComponentHelper::getParams('com_cls');
         $center_map = $config->get('center_map');
