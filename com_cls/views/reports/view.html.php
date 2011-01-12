@@ -31,21 +31,21 @@ class CLSViewReports extends JView {
 
         # -- Complaints Averages --
         $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day)");
-        $complaints_received = $db->loadResult();
+        $n_complaints_received = $complaints_received = $db->loadResult();
         $complaints_received_per_day = round($complaints_received/$statistics_period, 2);
         $db->setQuery("select count(*) from #__complaints where date_processed >= DATE_ADD(now(), interval -$statistics_period day)");
         $complaints_processed = $db->loadResult();
         $complaints_processed_per_day = round($complaints_processed/$statistics_period, 2);
         $db->setQuery("select count(*) from #__complaints where date_resolved >= DATE_ADD(now(), interval -$statistics_period day)");
-        $complaints_resolved = $db->loadResult();
+        $n_complaints_resolved = $complaints_resolved = $db->loadResult();
         $complaints_resolved_per_day = round($complaints_resolved/$statistics_period, 2);
         $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and date_processed >= DATE_ADD(now(), interval -$statistics_period day) and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= now()");
         $complaints_delayed = $db->loadResult();
 
         $complaints_outstanding = $complaints_received - $complaints_resolved < 0 ? 0 : $complaints_received - $complaints_resolved;
 
-        $this->assignRef('complaints_received', $complaints_received);
-        $this->assignRef('complaints_resolved', $complaints_resolved);
+        $this->assignRef('complaints_received', $n_complaints_received);
+        $this->assignRef('complaints_resolved', $n_complaints_resolved);
         $this->assignRef('complaints_outstanding', $complaints_outstanding);
         $this->assignRef('complaints_delayed', $complaints_delayed);
 
