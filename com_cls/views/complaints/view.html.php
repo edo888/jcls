@@ -24,6 +24,7 @@ class CLSViewComplaints extends JView {
 
         $document =& JFactory::getDocument();
         $document->addScript(JURI::base().'includes/js/joomla.javascript.js');
+        $document->addStyleSheet(JURI::base().'administrator/templates/khepri/css/general.css');
 
         $db               =& JFactory::getDBO();
         $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
