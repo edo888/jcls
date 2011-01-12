@@ -90,7 +90,7 @@ jimport('joomla.filter.output');
 
         if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received))
             JError::raiseNotice(0, 'Complaint #' . $row->message_id . ' is not processed yet.');
-        if($row->confirmed_closed == 'N' and $processed_complaint_warning_period*24*60*60 < time() - strtotime($row->date_processed))
+        if($row->confirmed_closed == 'N' and $row->date_processed != '' and $processed_complaint_warning_period*24*60*60 < time() - strtotime($row->date_processed))
             JError::raiseNotice(0, 'Complaint #' . $row->message_id . ' is not resolved yet.');
 
         $link        = JRoute::_('index.php?option=com_cls&task=edit&cid[]='. $row->id);
@@ -157,6 +157,7 @@ jimport('joomla.filter.output');
 </div>
 
 <input type="hidden" name="option" value="com_cls" />
+<input type="hidden" name="view" value="complaints" />
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />

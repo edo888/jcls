@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `#__complaints` (
   `resolution` text,
   `message_source` ENUM('SMS', 'Email', 'Website'),
   `message_priority` ENUM('Low', 'Medium', 'High'),
-  `confirmed_closed` ENUM('Y', 'N'),
+  `confirmed_closed` ENUM('Y', 'N') not null default 'N',
   `comments` text,
   PRIMARY KEY (`id`),
   KEY `message_id` (`message_id`)

@@ -639,7 +639,7 @@ class CLSView {
 
                 if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received))
                     JError::raiseNotice(0, 'Complaint #' . $row->message_id . ' is not processed yet.');
-                if($row->confirmed_closed == 'N' and $processed_complaint_warning_period*24*60*60 < time() - strtotime($row->date_processed))
+                if($row->confirmed_closed == 'N' and $row->date_processed != '' and $processed_complaint_warning_period*24*60*60 < time() - strtotime($row->date_processed))
                     JError::raiseNotice(0, 'Complaint #' . $row->message_id . ' is not resolved yet.');
 
                 $link        = JRoute::_('index.php?option=com_cls&task=edit&cid[]='. $row->id);

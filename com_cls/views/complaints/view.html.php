@@ -15,6 +15,9 @@ class CLSViewComplaints extends JView {
     function display($tpl = null) {
         global $mainframe, $option;
 
+        $document =& JFactory::getDocument();
+        $document->addScript(JURI::base().'includes/js/joomla.javascript.js');
+
         $db               =& JFactory::getDBO();
         $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
         $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
