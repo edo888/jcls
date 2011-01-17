@@ -18,17 +18,43 @@ class TOOLBAR_CLS {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Viewer');
 
-        JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' ]</small></small>');
-        if($user_type != 'Viewer')
-            JToolBarHelper::save();
-        if($text !== JText::_('New') and $user_type != 'Viewer')
-            JToolBarHelper::apply();
-        if($cid[0])
-            JToolBarHelper::cancel('cancel', 'Close');
-        else
-            JToolBarHelper::cancel();
+        if(JRequest::getCmd('task') == 'edit' or JRequest::getCmd('task') == 'add') {
+            JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' ]</small></small>');
+            if($user_type != 'Viewer')
+                JToolBarHelper::save();
+            if($text !== JText::_('New') and $user_type != 'Viewer')
+                JToolBarHelper::apply();
+            if($cid[0])
+                JToolBarHelper::cancel('cancel', 'Close');
+            else
+                JToolBarHelper::cancel();
 
-        JToolBarHelper::help('screen.cls.new', true);
+            JToolBarHelper::help('screen.cls.new', true);
+        } elseif(JRequest::getCmd('task') == 'editContract' or JRequest::getCmd('task') == 'addContract') {
+            JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Contract ]</small></small>');
+            if($user_type != 'Viewer')
+                JToolBarHelper::save('saveContract');
+            if($text !== JText::_('New') and $user_type != 'Viewer')
+                JToolBarHelper::apply('applyContract');
+            if($cid[0])
+                JToolBarHelper::cancel('cancelContract', 'Close');
+            else
+                JToolBarHelper::cancel('cancelContract');
+
+            JToolBarHelper::help('screen.cls.newContract', true);
+        } elseif(JRequest::getCmd('task') == 'editSection' or JRequest::getCmd('task') == 'addSection') {
+            JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Section ]</small></small>');
+            if($user_type != 'Viewer')
+                JToolBarHelper::save('saveSection');
+            if($text !== JText::_('New') and $user_type != 'Viewer')
+                JToolBarHelper::apply('applySection');
+            if($cid[0])
+                JToolBarHelper::cancel('cancelSection', 'Close');
+            else
+                JToolBarHelper::cancel('cancelSection');
+
+            JToolBarHelper::help('screen.cls.newSection', true);
+        }
     }
 
     function _DEFAULT() {
@@ -39,6 +65,10 @@ class TOOLBAR_CLS {
             JToolBarHelper::title(JText::_('Complaints'));
         elseif(JRequest::getCmd('c', 'complaints') == 'notifications')
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Notifications ]</small></small>');
+        elseif(JRequest::getCmd('c', 'complaints') == 'contracts')
+            JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Contracts ]</small></small>');
+        elseif(JRequest::getCmd('c', 'complaints') == 'sections')
+            JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Sections ]</small></small>');
         else
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Reports ]</small></small>');
 
@@ -48,6 +78,18 @@ class TOOLBAR_CLS {
             JToolBarHelper::editListX();
             if($user_type == 'Super User')
                 JToolBarHelper::deleteList();
+        } elseif(JRequest::getCmd('c', 'complaints') == 'contracts') {
+            if($user_type == 'Super User' or $user_type == 'Admin')
+                JToolBarHelper::addNewX('addContract');
+            JToolBarHelper::editListX('editContract');
+            if($user_type == 'Super User')
+                JToolBarHelper::deleteList('', 'removeContract');
+        } elseif(JRequest::getCmd('c', 'complaints') == 'sections') {
+            if($user_type == 'Super User' or $user_type == 'Admin')
+                JToolBarHelper::addNewX('addSection');
+            JToolBarHelper::editListX('editSection');
+            if($user_type == 'Super User')
+                JToolBarHelper::deleteList('', 'removeSection');
         }
 
         if($user_type == 'Super User')

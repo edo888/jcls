@@ -12,6 +12,8 @@ require_once(JApplicationHelper::getPath('toolbar_html'));
 
 switch($task) {
     case 'edit':
+    case 'editContract':
+    case 'editSection':
         $cid = JRequest::getVar('cid',array(0),'','array');
         if(!is_array($cid))
             $cid = array(0);
@@ -19,6 +21,8 @@ switch($task) {
         break;
 
     case 'add'  :
+    case 'addContract':
+    case 'addSection':
     case 'editA':
         $id = JRequest::getVar('id',0,'','int');
         TOOLBAR_CLS::_EDIT($id);

@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `#__complaints` (
 ALTER TABLE `#__complaints` MODIFY `message_source` ENUM('SMS', 'Email', 'Website', 'Telephone Call', 'Personal Visit', 'Field Visit by Project Staff', 'Other');
 ALTER TABLE `#__complaints` ADD COLUMN `address` varchar(250) NOT NULL default '' AFTER `phone`;
 ALTER TABLE `#__complaints` ADD COLUMN `location` varchar(250) NOT NULL default '' AFTER `processed_message`;
+ALTER TABLE `#__complaints` ADD COLUMN `contract_id` int(11) NOT NULL default 0 AFTER `processed_message`;
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
   `id` int(11) NOT NULL auto_increment,
@@ -36,6 +37,23 @@ CREATE TABLE IF NOT EXISTS `#__complaint_notifications` (
   `user_id` int(11) NOT NULL default 0,
   `action` varchar(100) NOT NULL default '',
   `date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `#__complaint_contracts` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(100) NOT NULL default '',
+  `section_id` int(11) NOT NULL default 0,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `#__complaint_sections` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(100) NOT NULL default '',
+  `polygon` text,
+  `polyline` text,
   `description` text,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
