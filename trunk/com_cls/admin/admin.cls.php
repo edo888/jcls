@@ -18,6 +18,18 @@ class CLSController extends JController {
         $this->registerTask('save', 'saveComplaint');
         $this->registerTask('apply', 'saveComplaint');
         $this->registerTask('remove', 'removeComplaint');
+        $this->registerTask('addContract' , 'editContract');
+        $this->registerTask('editContract', 'editContract');
+        $this->registerTask('saveContract', 'saveContract');
+        $this->registerTask('applyContract', 'saveContract');
+        $this->registerTask('removeContract', 'removeContract');
+        $this->registerTask('cancelContract', 'showContracts');
+        $this->registerTask('addSection' , 'editSection');
+        $this->registerTask('editSection', 'editSection');
+        $this->registerTask('saveSection', 'saveSection');
+        $this->registerTask('applySection', 'saveSection');
+        $this->registerTask('removeSection', 'removeSection');
+        $this->registerTask('cancelSection', 'showSections');
         $this->registerTask('download_report', 'downloadReport');
         $this->registerTask('notify_sms_process', 'notifySMSProcess');
         $this->registerTask('notify_email_process', 'notifyEmailProcess');
@@ -28,15 +40,16 @@ class CLSController extends JController {
     function showComplaints() {
         global $mainframe, $option;
 
-        $db               =& JFactory::getDBO();
-        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
-        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
-        $filter_area_id   = $mainframe->getUserStateFromRequest("$option.filter_area_id",'filter_area_id','');
-        $filter_source    = $mainframe->getUserStateFromRequest("$option.filter_source",'filter_source','');
-        $filter_priority  = $mainframe->getUserStateFromRequest("$option.filter_priority",'filter_priority','');
-        $filter_status    = $mainframe->getUserStateFromRequest("$option.filter_status",'filter_status','');
-        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
-        $search           = $db->getEscaped(trim(JString::strtolower($search)));
+        $db                 =& JFactory::getDBO();
+        $filter_order       = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
+        $filter_order_Dir   = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
+        $filter_area_id     = $mainframe->getUserStateFromRequest("$option.filter_area_id",'filter_area_id','');
+        $filter_contract_id = $mainframe->getUserStateFromRequest("$option.filter_contract_id",'filter_contract_id','');
+        $filter_source      = $mainframe->getUserStateFromRequest("$option.filter_source",'filter_source','');
+        $filter_priority    = $mainframe->getUserStateFromRequest("$option.filter_priority",'filter_priority','');
+        $filter_status      = $mainframe->getUserStateFromRequest("$option.filter_status",'filter_status','');
+        $search             = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $search             = $db->getEscaped(trim(JString::strtolower($search)));
 
         $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
         $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
@@ -45,6 +58,9 @@ class CLSController extends JController {
 
         if($filter_area_id)
             $where[] = 'm.complaint_area_id = "'.$filter_area_id.'"';
+
+        if($filter_contract_id)
+            $where[] = 'm.contract_id = "'.$filter_contract_id.'"';
 
         if($filter_source)
             $where[] = 'm.message_source = "'.$filter_source.'"';
@@ -86,6 +102,15 @@ class CLSController extends JController {
         foreach($areas as $a)
             $area[] = array('key' => $a->id, 'value' => $a->area);
         $lists['area'] = JHTML::_('select.genericlist', $area, 'filter_area_id', 'onchange=submitform();', 'key', 'value', $filter_area_id);
+
+        // contract_id filter
+        $query = 'select * from #__complaint_contracts';
+        $db->setQuery($query);
+        $contracts = $db->loadObjectList();
+        $contract[] = array('key' => '', 'value' => '- Select Contract -');
+        foreach($contracts as $a)
+            $contract[] = array('key' => $a->id, 'value' => $a->name);
+        $lists['contract'] = JHTML::_('select.genericlist', $contract, 'filter_contract_id', 'onchange=submitform();', 'key', 'value', $filter_contract_id);
 
         // source filter
         $lists['source'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Source -' ), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Email', 'value' => 'Email'), array('key' => 'Website', 'value' => 'Website'), array('key' => 'Telephone Call', 'value' => 'Telephone Call'), array('key' => 'Personal Visit', 'value' => 'Personal Visit'), array('key' => 'Field Visit by Project Staff', 'value' => 'Field Visit by Project Staff'), array('key' => 'Other', 'value' => 'Other')), 'filter_source', 'onchange=submitform();', 'key', 'value', $filter_source);
@@ -195,6 +220,113 @@ class CLSController extends JController {
         CLSView::showNotifications($rows, $pageNav, $option, $lists);
     }
 
+    function showContracts() {
+        global $mainframe, $option;
+
+        $db               =& JFactory::getDBO();
+        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
+        $filter_section   = $mainframe->getUserStateFromRequest("$option.filter_section",'filter_section','');
+        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $search           = $db->getEscaped(trim(JString::strtolower($search)));
+
+        $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+
+        $where = array();
+
+        if($filter_section)
+            $where[] = 'm.section_id = "'.$filter_section.'"';
+
+        if($search)
+            $where[] = '(m.name LIKE "%'.$search.'%" OR m.description LIKE "%'.$search.'%")';
+
+        $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+        $orderby = ' ORDER BY '. $filter_order .' '. $filter_order_Dir;
+
+        $query = 'SELECT COUNT(m.id) FROM #__complaint_contracts as m left join #__complaint_sections as s on (m.section_id = s.id) '.$where;
+        $db->setQuery($query);
+        $total = $db->loadResult();
+
+        jimport('joomla.html.pagination');
+        $pageNav = new JPagination($total,$limitstart,$limit);
+
+        $query = 'SELECT m.*, s.name as section_name FROM #__complaint_contracts as m left join #__complaint_sections as s on (m.section_id = s.id) '.$where.' '.$orderby;
+        $db->setQuery($query, $pageNav->limitstart, $pageNav->limit);
+        $rows = $db->loadObjectList();
+        //echo $query;
+
+        if($db->getErrorNum()) {
+            echo $db->stderr();
+            return false;
+        }
+
+        // section filter
+        $query = 'select * from #__complaint_sections';
+        $db->setQuery($query);
+        $sections = $db->loadObjectList();
+        $section[] = array('key' => '', 'value' => '- Select Section -');
+        foreach($sections as $a)
+            $section[] = array('key' => $a->id, 'value' => $a->name);
+        $lists['section'] = JHTML::_('select.genericlist', $section, 'filter_section', 'onchange=submitform();', 'key', 'value', $filter_section);
+
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order']     = $filter_order;
+
+        // search filter
+        $lists['search'] = $search;
+
+        CLSView::showContracts($rows, $pageNav, $option, $lists);
+    }
+
+    function showSections() {
+        global $mainframe, $option;
+
+        $db               =& JFactory::getDBO();
+        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
+        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $search           = $db->getEscaped(trim(JString::strtolower($search)));
+
+        $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+
+        $where = array();
+
+        if($search)
+            $where[] = '(name LIKE "%'.$search.'%" OR description LIKE "%'.$search.'%")';
+
+        $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+        $orderby = ' ORDER BY '. $filter_order .' '. $filter_order_Dir;
+
+        $query = 'SELECT COUNT(m.id) FROM #__complaint_sections as m '.$where;
+        $db->setQuery($query);
+        $total = $db->loadResult();
+
+        jimport('joomla.html.pagination');
+        $pageNav = new JPagination($total,$limitstart,$limit);
+
+        $query = 'SELECT m.* FROM #__complaint_sections as m '.$where.' '.$orderby;
+        $db->setQuery($query, $pageNav->limitstart, $pageNav->limit);
+        $rows = $db->loadObjectList();
+        //echo $query;
+
+        if($db->getErrorNum()) {
+            echo $db->stderr();
+            return false;
+        }
+
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order']     = $filter_order;
+
+        // search filter
+        $lists['search'] = $search;
+
+        CLSView::showSections($rows, $pageNav, $option, $lists);
+    }
+
     function downloadReport() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
@@ -247,7 +379,7 @@ class CLSController extends JController {
             $cid = array( 0 );
         }
 
-        $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id) where c.id = ' . $cid[0];
+        $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area, p.name as contract from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id) left join #__complaint_contracts as p on (c.contract_id = p.id) where c.id = ' . $cid[0];
         $db->setQuery($query);
         $row = $db->loadObject();
 
@@ -259,6 +391,15 @@ class CLSController extends JController {
         foreach($areas as $a)
             $area[] = array('key' => $a->id, 'value' => $a->area);
         $lists['area'] = JHTML::_('select.genericlist', $area, 'complaint_area_id', null, 'key', 'value', $row->complaint_area_id);
+
+        // contract_id list
+        $query = 'select * from #__complaint_contracts';
+        $db->setQuery($query);
+        $contracts = $db->loadObjectList();
+        $contract[] = array('key' => '', 'value' => '- Select Contract -');
+        foreach($contracts as $a)
+            $contract[] = array('key' => $a->id, 'value' => $a->name);
+        $lists['contract'] = JHTML::_('select.genericlist', $contract, 'contract_id', null, 'key', 'value', $row->contract_id);
 
         // editor list
         $query = 'select * from #__users where params like "%role=Auditor%" or params like "%role=Admin%" or params like "%role=Super User%"';
@@ -288,6 +429,55 @@ class CLSController extends JController {
         $lists['confirmed'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Confirmation -' ), array('key' => 'Y', 'value' => 'Yes'), array('key' => 'N', 'value' => 'No')), 'confirmed_closed', null, 'key', 'value', $row->confirmed_closed);
 
         CLSView::editComplaint($row, $lists, $user_type);
+    }
+
+    function editContract() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Viewer');
+
+        if($this->_task == 'editContract') {
+            $cid = JRequest::getVar('cid', array(0), 'method', 'array');
+            $cid = array((int) $cid[0]);
+        } else {
+            $cid = array( 0 );
+        }
+
+        $query = 'select c.*, s.name as section_name from #__complaint_contracts as c left join #__complaint_sections as s on (c.section_id = s.id) where c.id = ' . $cid[0];
+        $db->setQuery($query);
+        $row = $db->loadObject();
+
+        // section list
+        $query = 'select * from #__complaint_sections';
+        $db->setQuery($query);
+        $sections = $db->loadObjectList();
+        $section[] = array('key' => '', 'value' => '- Select Section -');
+        foreach($sections as $a)
+            $section[] = array('key' => $a->id, 'value' => $a->name);
+        $lists['section'] = JHTML::_('select.genericlist', $section, 'section_id', null, 'key', 'value', $row->section_id);
+
+        CLSView::editContract($row, $lists, $user_type);
+    }
+
+    function editSection() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Viewer');
+
+        if($this->_task == 'editSection') {
+            $cid = JRequest::getVar('cid', array(0), 'method', 'array');
+            $cid = array((int) $cid[0]);
+        } else {
+            $cid = array( 0 );
+        }
+
+        $query = 'select c.* from #__complaint_sections as c where c.id = ' . $cid[0];
+        $db->setQuery($query);
+        $row = $db->loadObject();
+
+        $lists = array();
+
+        CLSView::editSection($row, $lists, $user_type);
     }
 
     function saveComplaint() {
@@ -344,6 +534,7 @@ class CLSController extends JController {
             $complaint->set('editor_id', null);
             $complaint->set('raw_message', null);
             $complaint->set('processed_message', null);
+            $complaint->set('contract_id', null);
             $complaint->set('location', null);
             $complaint->set('complaint_area_id', null);
             $complaint->set('date_received', null);
@@ -379,6 +570,7 @@ class CLSController extends JController {
                 $complaint->set('message_priority', JRequest::getVar('message_priority'));
                 $complaint->set('complaint_area_id', JRequest::getInt('complaint_area_id'));
                 $complaint->set('processed_message', JRequest::getVar('processed_message'));
+                $complaint->set('contract_id', JRequest::getInt('contract_id'));
                 if(JRequest::getVar('location') != '')
                     $complaint->set('location', JRequest::getVar('location'));
                 if($complaint->date_processed == '' and $complaint->processed_message != '') {
@@ -441,6 +633,98 @@ class CLSController extends JController {
         }
     }
 
+    function saveContract() {
+        $db =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Viewer');
+        $id = JRequest::getInt('id', 0);
+
+        if($id == 0) { // going to insert new contract
+            // constructing the contract object
+            $contract = new JTable('#__complaint_contracts', 'id', $db);
+            $contract->set('name', JRequest::getVar('name'));
+            $contract->set('section_id', JRequest::getInt('section_id'));
+            $contract->set('description', JRequest::getVar('description'));
+            $contract->store();
+
+            // adding notification
+            clsLog('New contract', 'New contract created #' . $db->insertid());
+
+            $this->setRedirect('index.php?option=com_cls&c=contracts', JText::_('Contract successfully created'));
+        } else { // going to update section
+            // constructing the contract object
+            $contract = new JTable('#__complaint_contracts', 'id', $db);
+            $contract->set('id', $id);
+            $contract->set('name', null);
+            $contract->set('section_id', null);
+            $contract->set('description', null);
+            $contract->load();
+
+            if($user_type == 'Super User' or $user_type == 'Administrator') {
+                $contract->set('name', JRequest::getVar('name'));
+                $contract->set('section_id', JRequest::getInt('section_id'));
+                $contract->set('description', JRequest::getVar('description'));
+
+                // storing updated data
+                $contract->store();
+                clsLog('Contract updated', 'The user updated contract #' . $contract->id . ' data');
+            }
+
+            if($this->_task == 'saveContract')
+                $this->setRedirect('index.php?option=com_cls&c=contracts', JText::_('Contract successfully saved'));
+            elseif($this->_task == 'applyContract')
+                $this->setRedirect('index.php?option=com_cls&task=editContract&cid[]='.$id, JText::_('Contract successfully saved'));
+            else
+                $this->setRedirect('index.php?option=com_cls', JText::_('Unknown task'));
+        }
+    }
+
+    function saveSection() {
+        $db =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Viewer');
+        $id = JRequest::getInt('id', 0);
+
+        if($id == 0) { // going to insert new section
+            // constructing the section object
+            $section = new JTable('#__complaint_sections', 'id', $db);
+            $section->set('name', JRequest::getVar('name'));
+            $section->set('description', JRequest::getVar('description'));
+            // TODO: polyline and polygon are missing
+            $section->store();
+
+            // adding notification
+            clsLog('New section', 'New section created #' . $db->insertid());
+
+            $this->setRedirect('index.php?option=com_cls&c=sections', JText::_('Section successfully created'));
+        } else { // going to update section
+            // constructing the section object
+            $section = new JTable('#__complaint_sections', 'id', $db);
+            $section->set('id', $id);
+            $section->set('name', null);
+            $section->set('polyline', null);
+            $section->set('polygon', null);
+            $section->set('description', null);
+            $section->load();
+
+            if($user_type == 'Super User' or $user_type == 'Administrator') {
+                $section->set('name', JRequest::getVar('name'));
+                $section->set('description', JRequest::getVar('description'));
+
+                // storing updated data
+                $section->store();
+                clsLog('Section updated', 'The user updated section #' . $section->id . ' data');
+            }
+
+            if($this->_task == 'saveSection')
+                $this->setRedirect('index.php?option=com_cls&c=sections', JText::_('Section successfully saved'));
+            elseif($this->_task == 'applySection')
+                $this->setRedirect('index.php?option=com_cls&task=editSection&cid[]='.$id, JText::_('Section successfully saved'));
+            else
+                $this->setRedirect('index.php?option=com_cls', JText::_('Unknown task'));
+        }
+    }
+
     function removeComplaint() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
@@ -455,6 +739,44 @@ class CLSController extends JController {
             }
 
             $this->setRedirect('index.php?option=com_cls', JText::_('Complaint(s) successfully deleted'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
+        }
+    }
+
+    function removeContract() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
+
+        if($user->getParam('role', 'Viewer') == 'Super User') {
+            for($i = 0, $n = count($cid); $i < $n; $i++) {
+                $query = "delete from #__complaint_contracts where id = $cid[$i]";
+                $db->setQuery($query);
+                $db->query();
+                clsLog('Contract removed', 'The contract with ID=' . $cid[$i] . ' has been removed');
+            }
+
+            $this->setRedirect('index.php?option=com_cls&c=contracts', JText::_('Contract(s) successfully deleted'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
+        }
+    }
+
+    function removeSection() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
+
+        if($user->getParam('role', 'Viewer') == 'Super User') {
+            for($i = 0, $n = count($cid); $i < $n; $i++) {
+                $query = "delete from #__complaint_sections where id = $cid[$i]";
+                $db->setQuery($query);
+                $db->query();
+                clsLog('Section removed', 'The section with ID=' . $cid[$i] . ' has been removed');
+            }
+
+            $this->setRedirect('index.php?option=com_cls&c=sections', JText::_('Section(s) successfully deleted'));
         } else {
             $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
         }
@@ -558,6 +880,8 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls', true);
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
         JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
 
         JHTML::_('behavior.tooltip');
 
@@ -579,6 +903,7 @@ class CLSView {
                 </td>
                 <td nowrap="nowrap">
                     <?php echo $lists['area']; ?>
+                    <?php echo $lists['contract']; ?>
                     <?php echo $lists['source']; ?>
                     <?php echo $lists['priority']; ?>
                     <?php echo $lists['status']; ?>
@@ -719,6 +1044,8 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports', true);
         JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
 
         $db =& JFactory::getDBO();
         $config =& JComponentHelper::getParams('com_cls');
@@ -864,6 +1191,8 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
         JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications', true);
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
 
         JHTML::_('behavior.tooltip');
 
@@ -949,6 +1278,203 @@ class CLSView {
         <input type="hidden" name="option" value="com_cls" />
         <input type="hidden" name="c" value="notifications" />
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="" />
+        <?php echo JHTML::_( 'form.token' ); ?>
+        </form>
+        <?php
+    }
+
+    function showContracts($rows, $pageNav, $option, $lists) {
+        JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts', true);
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JHTML::_('behavior.tooltip');
+
+        $config =& JComponentHelper::getParams('com_cls');
+
+        jimport('joomla.filter.output');
+        ?>
+        <form action="index.php?option=com_cls" method="post" name="adminForm">
+
+        <table>
+            <tr>
+                <td align="left" width="100%">
+                    <?php echo JText::_('Filter'); ?>:
+                    <input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+                    <button onclick="this.form.submit();"><?php echo JText::_('Go'); ?></button>
+                    <button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_('Reset'); ?></button>
+                </td>
+                <td nowrap="nowrap">
+                    <?php echo $lists['section']; ?>
+                </td>
+            </tr>
+        </table>
+
+        <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="1%" align="center">
+                        <input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
+                    </th>
+                    <th width="20%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Name', 'm.name', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="77%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Section', 's.name', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="1%" nowrap="nowrap">
+                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($rows); $i < $n; $i++) {
+                $row = &$rows[$i];
+                JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+
+                $link        = JRoute::_('index.php?option=com_cls&task=editContract&cid[]='. $row->id);
+                $checked     = JHTML::_('grid.checkedout',$row,$i);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $pageNav->getRowOffset( $i ); ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $checked; ?>
+                    </td>
+                    <td align="center">
+                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Contract' ); ?>">
+                            <?php echo $row->name; ?></a>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->section_name; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->id; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
+            <tfoot>
+                <td colspan="13">
+                    <?php echo $pageNav->getListFooter(); ?>
+                </td>
+            </tfoot>
+            </table>
+        </div>
+
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="c" value="contracts" />
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="boxchecked" value="0" />
+        <input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="" />
+        <?php echo JHTML::_( 'form.token' ); ?>
+        </form>
+        <?php
+    }
+
+    function showSections($rows, $pageNav, $option, $lists) {
+        JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections', true);
+        JHTML::_('behavior.tooltip');
+
+        $config =& JComponentHelper::getParams('com_cls');
+
+        jimport('joomla.filter.output');
+        ?>
+        <form action="index.php?option=com_cls" method="post" name="adminForm">
+
+        <table>
+            <tr>
+                <td align="left" width="100%">
+                    <?php echo JText::_('Filter'); ?>:
+                    <input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+                    <button onclick="this.form.submit();"><?php echo JText::_('Go'); ?></button>
+                    <button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_('Reset'); ?></button>
+                </td>
+                <td nowrap="nowrap">
+                </td>
+            </tr>
+        </table>
+
+        <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="1%" align="center">
+                        <input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
+                    </th>
+                    <th width="20%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Name', 'm.name', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="77%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Description', 'm.description', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="1%" nowrap="nowrap">
+                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($rows); $i < $n; $i++) {
+                $row = &$rows[$i];
+                JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+
+                $link        = JRoute::_('index.php?option=com_cls&task=editSection&cid[]='. $row->id);
+                $checked     = JHTML::_('grid.checkedout',$row,$i);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $pageNav->getRowOffset( $i ); ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $checked; ?>
+                    </td>
+                    <td align="center">
+                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Section' ); ?>">
+                            <?php echo $row->name; ?></a>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->description; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->id; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
+            <tfoot>
+                <td colspan="13">
+                    <?php echo $pageNav->getListFooter(); ?>
+                </td>
+            </tfoot>
+            </table>
+        </div>
+
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="c" value="sections" />
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="boxchecked" value="0" />
         <input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="" />
         <?php echo JHTML::_( 'form.token' ); ?>
@@ -1163,6 +1689,23 @@ class CLSView {
                         echo '<pre>', @$row->processed_message, '</pre>';
                     else
                         echo '<textarea name="processed_message" id="processed_message" cols="80" rows="5">', @$row->processed_message, '</textarea>';
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if(property_exists($row, 'contract_id')): ?>
+            <tr>
+                <td class="key">
+                    <label for="path">
+                        <?php echo JText::_( 'Contract' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($user_type != 'Super User' and $user_type != 'Administrator')
+                        echo @$row->contract;
+                    else
+                        echo $lists['contract'];
                     ?>
                 </td>
             </tr>
@@ -1422,6 +1965,146 @@ class CLSView {
     <?php
     }
 
+    function editContract($row, $lists, $user_type) {
+        //TODO: Make sure the user is authorized to view this page
+        jimport('joomla.filter.output');
+        JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+
+        JHTML::_('behavior.modal');
+
+        //echo '<pre>', print_r($row, true), '</pre>';
+    ?>
+        <script language="javascript" type="text/javascript">
+        function submitbutton(pressbutton) {
+            var form = document.adminForm;
+            if(pressbutton == 'cancelContract') {
+                submitform(pressbutton);
+                return;
+            }
+
+            // validation
+            if(form.name && form.name.value == "")
+                alert('Name is required');
+            else if(form.section_id && form.section_id.value == "")
+                alert('Section is required');
+            else
+                submitform(pressbutton);
+        }
+        </script>
+        <form action="index.php" method="post" name="adminForm">
+
+        <fieldset class="adminform">
+            <legend><?php echo JText::_('Details'); ?></legend>
+
+            <table class="admintable">
+            <tr>
+                <td width="200" class="key">
+                    <label for="alias">
+                        <?php echo JText::_( 'Name' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="key">
+                    <label for="path">
+                        <?php echo JText::_( 'Section' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo $lists['section']; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="key" valign="top">
+                    <label for="path">
+                        <?php echo JText::_( 'Description' ); ?>
+                    </label>
+                </td>
+                <td>
+                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @$row->description, '</textarea>'; ?>
+                </td>
+            </tr>
+            </table>
+        </fieldset>
+
+        <div class="clr"></div>
+
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
+        <input type="hidden" name="cid[]" value="<?php echo @$row->id; ?>" />
+        <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
+        </form>
+    <?php
+    }
+
+    function editSection($row, $lists, $user_type) {
+        //TODO: Make sure the user is authorized to view this page
+        jimport('joomla.filter.output');
+        JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+
+        JHTML::_('behavior.modal');
+
+        //echo '<pre>', print_r($row, true), '</pre>';
+    ?>
+        <script language="javascript" type="text/javascript">
+        function submitbutton(pressbutton) {
+            var form = document.adminForm;
+            if(pressbutton == 'cancelSection') {
+                submitform(pressbutton);
+                return;
+            }
+
+            // validation
+            if(form.name && form.name.value == "")
+                alert('Name is required');
+            else
+                submitform(pressbutton);
+        }
+        </script>
+        <form action="index.php" method="post" name="adminForm">
+
+        <fieldset class="adminform">
+            <legend><?php echo JText::_('Details'); ?></legend>
+
+            <table class="admintable">
+            <tr>
+                <td width="200" class="key">
+                    <label for="alias">
+                        <?php echo JText::_( 'Name' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="key" valign="top">
+                    <label for="path">
+                        <?php echo JText::_( 'Description' ); ?>
+                    </label>
+                </td>
+                <td>
+                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @$row->description, '</textarea>'; ?>
+                </td>
+            </tr>
+            </table>
+        </fieldset>
+
+        <div class="clr"></div>
+
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
+        <input type="hidden" name="cid[]" value="<?php echo @$row->id; ?>" />
+        <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
+        </form>
+    <?php
+    }
+
     function viewLocation() {
         JRequest::setVar('tmpl', 'component'); //force the component template
         $document =& JFactory::getDocument();
@@ -1515,6 +2198,8 @@ switch(JRequest::getCmd('c', 'complaints')) {
     case 'complaints': $controller = new CLSController(array('default_task' => 'showComplaints')); break;
     case 'view_location': $controller = new CLSController(array('default_task' => 'viewLocation')); break;
     case 'edit_location': $controller = new CLSController(array('default_task' => 'editLocation')); break;
+    case 'contracts': $controller = new CLSController(array('default_task' => 'showContracts')); break;
+    case 'sections': $controller = new CLSController(array('default_task' => 'showSections')); break;
     default: $controller = new CLSController(array('default_task' => 'showComplaints')); break;
 }
 
