@@ -139,6 +139,14 @@ class CLSController extends JController {
         CLSView::editLocation();
     }
 
+    function viewSectionMap() {
+        CLSView::viewSectionMap();
+    }
+
+    function editSectionMap() {
+        CLSView::editSectionMap();
+    }
+
     function showReports() {
         CLSView::showReports();
     }
@@ -2091,6 +2099,21 @@ class CLSView {
                         <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @$row->description, '</textarea>'; ?>
                 </td>
             </tr>
+            <tr>
+                <td class="key" valign="top">
+                    <label for="path">
+                        <?php echo JText::_( 'Tag on the map' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                        if($user_type != 'Super User' and $user_type != 'Administrator')
+                            echo '<a href="index.php?option=com_cls&c=view_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
+                        else
+                            echo '<input type="hidden" name="polygon" id="polygon" value="', @$row->polygon, '" /><input type="hidden" name="polyline" id="polyline" value="', @$row->polyline, '" /><a href="index.php?option=com_cls&c=edit_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( (empty($row->polygon) and empty($row->polyline)) ? 'Add a tag' : 'Edit the tag' ).'</a>';
+                    ?>
+                </td>
+            </tr>
             </table>
         </fieldset>
 
@@ -2181,6 +2204,119 @@ class CLSView {
         </script>
         <?php
     }
+
+    function viewSectionMap() {
+        JRequest::setVar('tmpl', 'component'); //force the component template
+        $document =& JFactory::getDocument();
+        $document->addStyleDeclaration('html, body {margin:0 !important;padding:0 !important;height:100% !important;}');
+
+        $config =& JComponentHelper::getParams('com_cls');
+        $center_map = $config->get('center_map');
+        $map_api_key = $config->get('map_api_key');
+        $zoom_level = $config->get('zoom_level');
+
+        $document =& JFactory::getDocument();
+        $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+
+        $db =& JFactory::getDBO();
+        $db->setQuery('select polyline, polygon from #__complaint_sections where id = ' . JRequest::getInt('id', 0));
+        $row = $db->loadObject();
+        $polyline = empty($row->polyline) ? array() : explode(';', $row->polyline);
+        $polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
+        ?>
+        <div id="map" style="width:100%;height:100%;"></div>
+        <script type="text/javascript">
+        //<![CDATA[
+            var map = new GMap2(document.getElementById("map"));
+            var myLatlng = new GLatLng(<?php echo $center_map; ?>);
+            map.setCenter(myLatlng, <?php echo $zoom_level; ?>);
+            map.addControl(new GMapTypeControl(1));
+            map.addControl(new GLargeMapControl());
+            map.enableContinuousZoom();
+            map.enableScrollWheelZoom();
+            map.enableDoubleClickZoom();
+            <?php if(count($polyline)): ?>
+            var polyline = new GPolyline([
+                <?php
+                foreach($polyline as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                ?>
+            ], "#aa5555", 5);
+            map.addOverlay(polyline);
+            <?php endif; ?>
+            <?php if(count($polygon)): ?>
+            var polygon = new GPolygon([
+                <?php
+                foreach($polygon as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                ?>
+            ], "#f33f00", 5, 1, "#ff0000", 0.2);
+            map.addOverlay(polygon);
+            <?php endif; ?>
+        //]]>
+        </script>
+        <?php
+    }
+
+    function editSectionMap() {
+        JRequest::setVar('tmpl', 'component'); //force the component template
+        $document =& JFactory::getDocument();
+        $document->addStyleDeclaration('html, body {margin:0 !important;padding:0 !important;height:100% !important;}');
+
+        $config =& JComponentHelper::getParams('com_cls');
+        $center_map = $config->get('center_map');
+        $map_api_key = $config->get('map_api_key');
+        $zoom_level = $config->get('zoom_level');
+
+        $document =& JFactory::getDocument();
+        $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+
+        $db =& JFactory::getDBO();
+        $db->setQuery('select polyline, polygon from #__complaint_sections where id = ' . JRequest::getInt('id', 0));
+        $row = $db->loadObject();
+        $polyline = empty($row->polyline) ? array() : explode(';', $row->polyline);
+        $polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
+        ?>
+        <div style="width:100%;height:100%;">
+            <div id="controls" style="height:5%;">Draw Line Draw Polygon</div>
+            <div id="map" style="width:100%;height:95%;"></div>
+        </div>
+        <script type="text/javascript">
+        //<![CDATA[
+            var map = new GMap2(document.getElementById("map"));
+            var myLatlng = new GLatLng(<?php echo $center_map; ?>);
+            map.setCenter(myLatlng, <?php echo $zoom_level; ?>);
+            map.addControl(new GMapTypeControl(1));
+            map.addControl(new GLargeMapControl());
+            map.enableContinuousZoom();
+            map.enableScrollWheelZoom();
+            map.enableDoubleClickZoom();
+            <?php if(count($polyline)): ?>
+            var polyline = new GPolyline([
+                <?php
+                foreach($polyline as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                ?>
+            ], "#aa5555", 5);
+            map.addOverlay(polyline);
+            <?php endif; ?>
+            <?php if(count($polygon)): ?>
+            var polygon = new GPolygon([
+                <?php
+                foreach($polygon as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                ?>
+            ], "#f33f00", 5, 1, "#ff0000", 0.2);
+            map.addOverlay(polygon);
+            <?php endif; ?>
+        //]]>
+        </script>
+        <?php
+    }
 }
 
 function clsLog($action, $description) {
@@ -2198,6 +2334,8 @@ switch(JRequest::getCmd('c', 'complaints')) {
     case 'complaints': $controller = new CLSController(array('default_task' => 'showComplaints')); break;
     case 'view_location': $controller = new CLSController(array('default_task' => 'viewLocation')); break;
     case 'edit_location': $controller = new CLSController(array('default_task' => 'editLocation')); break;
+    case 'view_section_map': $controller = new CLSController(array('default_task' => 'viewSectionMap')); break;
+    case 'edit_section_map': $controller = new CLSController(array('default_task' => 'editSectionMap')); break;
     case 'contracts': $controller = new CLSController(array('default_task' => 'showContracts')); break;
     case 'sections': $controller = new CLSController(array('default_task' => 'showSections')); break;
     default: $controller = new CLSController(array('default_task' => 'showComplaints')); break;
