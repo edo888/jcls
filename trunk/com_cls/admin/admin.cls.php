@@ -1731,9 +1731,9 @@ class CLSView {
                 <td>
                     <?php
                     if($user_type != 'Super User' and $user_type != 'Administrator' and $user_type != 'Auditor')
-                        echo '<a href="index.php?option=com_cls&c=view_location&ll=' . @$row->location . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
+                        echo '<a href="index.php?option=com_cls&c=view_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
                     else
-                        echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&c=edit_location&ll=' . @$row->location . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
+                        echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&c=edit_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
                     ?>
                 </td>
             </tr>
@@ -2143,6 +2143,13 @@ class CLSView {
 
         $document =& JFactory::getDocument();
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+
+        $db =& JFactory::getDBO();
+        $db->setQuery('select polyline, polygon, location from #__complaint_sections as s right join #__complaint_contracts as c on (c.section_id = s.id) right join #__complaints as m on (m.contract_id = c.id) where m.id = ' . JRequest::getInt('cid', 0));
+        $row = $db->loadObject();
+        $polyline = empty($row->polyline) ? array() : explode(';', $row->polyline);
+        $polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
+        $location = $row->location;
         ?>
         <div id="map" style="width:100%;height:100%;"></div>
         <script type="text/javascript">
@@ -2155,9 +2162,33 @@ class CLSView {
             map.enableContinuousZoom();
             map.enableScrollWheelZoom();
             map.enableDoubleClickZoom();
-            var point = new GLatLng(<?php echo JRequest::getVar('ll'); ?>);
+            <?php if(count($polyline)): ?>
+            var polyline = new GPolyline([
+                <?php
+                foreach($polyline as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                unset($points);
+                ?>
+            ], "#885555", 5);
+            map.addOverlay(polyline);
+            <?php endif; ?>
+            <?php if(count($polygon)): ?>
+            var polygon = new GPolygon([
+                <?php
+                foreach($polygon as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                unset($points);
+                ?>
+            ], "#f33f00", 5, 1, "#ff0000", 0.2);
+            map.addOverlay(polygon);
+            <?php endif; ?>
+            <?php if($location != ''): ?>
+            var point = new GLatLng(<?php echo $location; ?>);
             var markerD2 = new GMarker(point, {icon:G_DEFAULT_ICON, draggable: false});
             map.addOverlay(markerD2);
+            <?php endif; ?>
         //]]>
         </script>
         <?php
@@ -2175,13 +2206,20 @@ class CLSView {
 
         $document =& JFactory::getDocument();
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+
+        $db =& JFactory::getDBO();
+        $db->setQuery('select polyline, polygon, location from #__complaint_sections as s right join #__complaint_contracts as c on (c.section_id = s.id) right join #__complaints as m on (m.contract_id = c.id) where m.id = ' . JRequest::getInt('cid', 0));
+        $row = $db->loadObject();
+        $polyline = empty($row->polyline) ? array() : explode(';', $row->polyline);
+        $polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
+        $location = $row->location;
         ?>
         <div id="map" style="width:100%;height:100%;"></div>
         <script type="text/javascript">
         //<![CDATA[
             var map = new GMap2(document.getElementById("map"));
-            <?php if(JRequest::getVar('ll') != ''): ?>
-            var myLatlng = new GLatLng(<?php echo JRequest::getVar('ll'); ?>);
+            <?php if($location != ''): ?>
+            var myLatlng = new GLatLng(<?php echo $location; ?>);
             <?php else: ?>
             var myLatlng = new GLatLng(<?php echo $center_map; ?>);
             <?php endif; ?>
@@ -2191,9 +2229,30 @@ class CLSView {
             map.enableContinuousZoom();
             map.enableScrollWheelZoom();
             map.enableDoubleClickZoom();
-
-            <?php if(JRequest::getVar('ll') != ''): ?>
-            var point = new GLatLng(<?php echo JRequest::getVar('ll'); ?>);
+            <?php if(count($polyline)): ?>
+            var polyline = new GPolyline([
+                <?php
+                foreach($polyline as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                unset($points);
+                ?>
+            ], "#885555", 5);
+            map.addOverlay(polyline);
+            <?php endif; ?>
+            <?php if(count($polygon)): ?>
+            var polygon = new GPolygon([
+                <?php
+                foreach($polygon as $point)
+                    $points[] = 'new GLatLng(' . $point . ')';
+                echo implode(',', $points);
+                unset($points);
+                ?>
+            ], "#f33f00", 5, 1, "#ff0000", 0.2);
+            map.addOverlay(polygon);
+            <?php endif; ?>
+            <?php if($location != ''): ?>
+            var point = new GLatLng(<?php echo $location; ?>);
             <?php else: ?>
             var point = new GLatLng(<?php echo $center_map; ?>);
             <?php endif; ?>
@@ -2244,6 +2303,7 @@ class CLSView {
                 foreach($polyline as $point)
                     $points[] = 'new GLatLng(' . $point . ')';
                 echo implode(',', $points);
+                unset($points);
                 ?>
             ], "#885555", 5);
             map.addOverlay(polyline);
@@ -2254,6 +2314,7 @@ class CLSView {
                 foreach($polygon as $point)
                     $points[] = 'new GLatLng(' . $point . ')';
                 echo implode(',', $points);
+                unset($points);
                 ?>
             ], "#f33f00", 5, 1, "#ff0000", 0.2);
             map.addOverlay(polygon);
@@ -2275,15 +2336,9 @@ class CLSView {
 
         $document =& JFactory::getDocument();
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
-
-        $db =& JFactory::getDBO();
-        $db->setQuery('select polyline, polygon from #__complaint_sections where id = ' . JRequest::getInt('id', 0));
-        $row = $db->loadObject();
-        $polyline = empty($row->polyline) ? array() : explode(';', $row->polyline);
-        $polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
         ?>
         <div style="width:100%;height:100%;">
-            <div id="controls" style="height:5%;">Mode: <input type="radio" id="drawPolyline" name="type" checked /> Polyline <input type="radio" id="drawPolygon" name="type" /> Polygon <input type="button" onclick="editline()" value="Edit Poly Shape" /> <input type="button" onclick="finishedit()" value="Done Editing" /> <input type="button" onclick="closepolyshape()" value="Close Polyshape" /> <input type="button" onclick="removelastpoint()" value="Remove last point" /></div>
+            <div id="controls" style="height:5%;">Mode: <input type="radio" id="drawPolyline" name="type" style="vertical-align:bottom;" checked /> Polyline <input type="radio" id="drawPolygon" name="type" style="vertical-align:bottom;" /> Polygon <input type="button" onclick="editline()" value="Edit Poly Shape" /> <input type="button" onclick="finishedit()" value="Done Editing" /> <input type="button" onclick="closepolyshape()" value="Close Polyshape" /> <input type="button" onclick="removelastpoint()" value="Remove last point" /></div>
             <div id="map" style="width:100%;height:95%;"></div>
         </div>
         <script type="text/javascript">
