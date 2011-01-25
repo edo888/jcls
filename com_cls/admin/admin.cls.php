@@ -698,7 +698,8 @@ class CLSController extends JController {
             $section = new JTable('#__complaint_sections', 'id', $db);
             $section->set('name', JRequest::getVar('name'));
             $section->set('description', JRequest::getVar('description'));
-            // TODO: polyline and polygon are missing
+            $section->set('polyline', JRequest::getVar('polyline'));
+            $section->set('polygon', JRequest::getVar('polygone'));
             $section->store();
 
             // adding notification
@@ -718,6 +719,8 @@ class CLSController extends JController {
             if($user_type == 'Super User' or $user_type == 'Administrator') {
                 $section->set('name', JRequest::getVar('name'));
                 $section->set('description', JRequest::getVar('description'));
+                $section->set('polyline', JRequest::getVar('polyline'));
+                $section->set('polygon', JRequest::getVar('polygon'));
 
                 // storing updated data
                 $section->store();
@@ -2242,7 +2245,7 @@ class CLSView {
                     $points[] = 'new GLatLng(' . $point . ')';
                 echo implode(',', $points);
                 ?>
-            ], "#aa5555", 5);
+            ], "#885555", 5);
             map.addOverlay(polyline);
             <?php endif; ?>
             <?php if(count($polygon)): ?>
@@ -2280,7 +2283,7 @@ class CLSView {
         $polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
         ?>
         <div style="width:100%;height:100%;">
-            <div id="controls" style="height:5%;">Draw Line Draw Polygon</div>
+            <div id="controls" style="height:5%;">Mode: <input type="radio" id="drawPolyline" name="type" checked /> Polyline <input type="radio" id="drawPolygon" name="type" /> Polygon <input type="button" onclick="editline()" value="Edit Poly Shape" /> <input type="button" onclick="finishedit()" value="Done Editing" /> <input type="button" onclick="closepolyshape()" value="Close Polyshape" /> <input type="button" onclick="removelastpoint()" value="Remove last point" /></div>
             <div id="map" style="width:100%;height:95%;"></div>
         </div>
         <script type="text/javascript">
@@ -2293,26 +2296,165 @@ class CLSView {
             map.enableContinuousZoom();
             map.enableScrollWheelZoom();
             map.enableDoubleClickZoom();
-            <?php if(count($polyline)): ?>
-            var polyline = new GPolyline([
-                <?php
-                foreach($polyline as $point)
-                    $points[] = 'new GLatLng(' . $point . ')';
-                echo implode(',', $points);
-                ?>
-            ], "#aa5555", 5);
-            map.addOverlay(polyline);
-            <?php endif; ?>
-            <?php if(count($polygon)): ?>
-            var polygon = new GPolygon([
-                <?php
-                foreach($polygon as $point)
-                    $points[] = 'new GLatLng(' . $point . ')';
-                echo implode(',', $points);
-                ?>
-            ], "#f33f00", 5, 1, "#ff0000", 0.2);
-            map.addOverlay(polygon);
-            <?php endif; ?>
+            var mapListener;
+            var editListener;
+            var dropPolypointListener;
+            var polyline = null;
+            var polygon = null;
+            var polylinepoints = [];
+            var polygonpoints = [];
+
+            parentpoints = window.parent.document.getElementById("polyline").value.split(';');
+            if(parentpoints.length > 1)
+                for(var i = 0; i < parentpoints.length; i++)
+                    polylinepoints.push(eval('new GLatLng('+parentpoints[i]+')'));
+
+            parentpoints = window.parent.document.getElementById("polygon").value.split(';');
+            if(parentpoints.length > 1)
+                for(var i = 0; i < parentpoints.length; i++)
+                    polygonpoints.push(eval('new GLatLng('+parentpoints[i]+')'));
+
+            if(polylinepoints.length) {
+                polyline = new GPolyline(polylinepoints, "#885555", 5);
+                map.addOverlay(polyline);
+            }
+            if(polygonpoints.length) {
+                var polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
+                map.addOverlay(polygon);
+            }
+            var mapListener = GEvent.addListener(map, "click", mapClick);
+
+            function mapClick(section, point) {
+                if(section == null) {
+                    if(document.getElementById('drawPolyline').checked) {
+                        if(polyline == null) {
+                            polylinepoints.push(point);
+                            polyline = new GPolyline(polylinepoints, "#885555", 5);
+                            map.addOverlay(polyline);
+                        } else {
+                            map.removeOverlay(polyline);
+                            polylinepoints.push(point);
+                            polyline = new GPolyline(polylinepoints, "#885555", 5);
+                            map.addOverlay(polyline);
+                        }
+                    } else if(document.getElementById('drawPolygon').checked) {
+                        if(polygon == null) {
+                            polygonpoints.push(point);
+                            polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
+                            map.addOverlay(polygon);
+                        } else {
+                            map.removeOverlay(polygon);
+                            polygonpoints.push(point);
+                            polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
+                            map.addOverlay(polygon);
+                        }
+                    }
+                }
+                updateParentCoordinates();
+            }
+
+            function editline() {
+                if(polyline == null && polygon == null)
+                    return;
+
+                GEvent.removeListener(mapListener);
+                if(document.getElementById('drawPolyline').checked) {
+                    if(polyline !== null) {
+                        polyline.enableEditing();
+                        editListener = GEvent.addListener(polyline, 'lineupdated', updateCoordinates);
+                        dropPolypointListener = GEvent.addListener(polyline, 'click', function(latlng, index) {
+                            if(typeof index == 'number') {
+                                polyline.deleteVertex(index);
+                                updateCoordinates();
+                            }
+                        });
+                    }
+                } else if(document.getElementById('drawPolygon').checked) {
+                    if(polygon !== null) {
+                        polygon.enableEditing();
+                        editListener = GEvent.addListener(polygon, 'lineupdated', updateCoordinates);
+                        dropPolypointListener = GEvent.addListener(polygon, 'click', function(latlng, index) {
+                            if(typeof index == 'number') {
+                                polygon.deleteVertex(index);
+                                updateCoordinates();
+                            }
+                        });
+                    }
+                }
+            }
+
+            function finishedit() {
+                mapListener = GEvent.addListener(map, "click", mapClick);
+                GEvent.removeListener(editListener);
+                GEvent.removeListener(dropPolypointListener);
+                if(polyline !== null)
+                    polyline.disableEditing();
+                if(polygon !== null)
+                    polygon.disableEditing();
+
+                updateParentCoordinates();
+            }
+
+            function closepolyshape() {
+                if(document.getElementById('drawPolyline').checked) {
+                    if(polyline !== null) {
+                        map.removeOverlay(polyline);
+                        polylinepoints.push(polylinepoints[0]);
+                        polyline = new GPolyline(polylinepoints, "#885555", 5);
+                        map.addOverlay(polyline);
+                    }
+                } else if(document.getElementById('drawPolygon').checked) {
+                    if(polygon !== null) {
+                        map.removeOverlay(polygon);
+                        polygonpoints.push(polygonpoints[0]);
+                        polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
+                        map.addOverlay(polygon);
+                    }
+                }
+
+                updateParentCoordinates();
+            }
+
+            function removelastpoint() {
+                if(document.getElementById('drawPolyline').checked) {
+                    if(polyline !== null) {
+                        map.removeOverlay(polyline);
+                        polylinepoints.pop();
+                        polyline = new GPolyline(polylinepoints, "#885555", 5);
+                        map.addOverlay(polyline);
+                    }
+                } else if(document.getElementById('drawPolygon').checked) {
+                    if(polygon !== null) {
+                        map.removeOverlay(polygon);
+                        polygonpoints.pop();
+                        polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
+                        map.addOverlay(polygon);
+                    }
+                }
+
+                updateParentCoordinates();
+            }
+
+            function updateCoordinates() {
+                if(document.getElementById('drawPolyline').checked) {
+                    polylinepoints = [];
+                    var j = polyline.getVertexCount(); // get the amount of points
+                    for(var i = 0; i < j; i++)
+                        polylinepoints[i] = polyline.getVertex(i); // update polyPoints array
+                } else if(document.getElementById('drawPolygon').checked) {
+                    polygonpoints = [];
+                    var j = polygon.getVertexCount(); // get the amount of points
+                    for(var i = 0; i < j; i++)
+                        polygonpoints[i] = polygon.getVertex(i); // update polyPoints array
+                }
+
+                updateParentCoordinates();
+            }
+
+            function updateParentCoordinates() {
+                window.parent.document.getElementById("polyline").value = polylinepoints.toString().replace(/\)\,\(/g, ';').replace(/[\(\)]/g, '');
+                window.parent.document.getElementById("polygon").value = polygonpoints.toString().replace(/\)\,\(/g, ';').replace(/[\(\)]/g, '');
+            }
         //]]>
         </script>
         <?php
