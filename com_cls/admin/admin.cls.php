@@ -35,6 +35,7 @@ class CLSController extends JController {
         $this->registerTask('notify_email_process', 'notifyEmailProcess');
         $this->registerTask('notify_sms_resolve', 'notifySMSResolve');
         $this->registerTask('notify_email_resolve', 'notifyEmailResolve');
+        $this->registerTask('upload_picture', 'uploadPicture');
     }
 
     function showComplaints() {
@@ -390,6 +391,11 @@ class CLSController extends JController {
         $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area, p.name as contract from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id) left join #__complaint_contracts as p on (c.contract_id = p.id) where c.id = ' . $cid[0];
         $db->setQuery($query);
         $row = $db->loadObject();
+
+        // complaint pictures
+        $query = 'select * from #__complaint_pictures where complaint_id = ' . $cid[0];
+        $db->setQuery($query);
+        $row->pictures = $db->loadObjectList();
 
         // area_id list
         $query = 'select * from #__complaint_areas';
@@ -880,6 +886,110 @@ class CLSController extends JController {
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('Email notification successfully sent'));
         } else {
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('You don\'t have permission to send notifications'));
+        }
+    }
+
+    function uploadPicture() {
+        //import joomlas filesystem functions, we will do all the filewriting with joomlas functions,
+        //so if the ftp layer is on, joomla will write with that, not the apache user, which might
+        //not have the correct permissions
+        jimport('joomla.filesystem.file');
+        jimport('joomla.filesystem.folder');
+
+        //this is the name of the field in the html form, filedata is the default name for swfupload
+        //so we will leave it as that
+        $fieldName = 'Filedata';
+
+        //any errors the server registered on uploading
+        $fileError = $_FILES[$fieldName]['error'];
+        if($fileError > 0)  {
+            switch ($fileError) {
+                case 1:
+                    echo JText::_( 'FILE TO LARGE THAN PHP INI ALLOWS' );
+                    return;
+                case 2:
+                    echo JText::_( 'FILE TO LARGE THAN HTML FORM ALLOWS' );
+                    return;
+                case 3:
+                    echo JText::_( 'ERROR PARTIAL UPLOAD' );
+                    return;
+                case 4:
+                   echo JText::_( 'ERROR NO FILE' );
+                   return;
+            }
+        }
+
+        //check for filesize
+        $fileSize = $_FILES[$fieldName]['size'];
+        if($fileSize > 2000000)
+            echo JText::_( 'FILE BIGGER THAN 2MB' );
+
+        //check the file extension is ok
+        $fileName = $_FILES[$fieldName]['name'];
+        $uploadedFileNameParts = explode('.',$fileName);
+        $uploadedFileExtension = array_pop($uploadedFileNameParts);
+
+        $validFileExts = explode(',', 'jpeg,jpg,png,gif');
+
+        //assume the extension is false until we know its ok
+        $extOk = false;
+
+        //go through every ok extension, if the ok extension matches the file extension (case insensitive)
+        //then the file extension is ok
+        foreach($validFileExts as $key => $value)
+            if(preg_match("/$value/i", $uploadedFileExtension))
+                $extOk = true;
+
+        if($extOk == false) {
+            echo JText::_( 'INVALID EXTENSION' );
+            return;
+        }
+
+        //the name of the file in PHP's temp directory that we are going to move to our folder
+        $fileTemp = $_FILES[$fieldName]['tmp_name'];
+
+        //for security purposes, we will also do a getimagesize on the temp file (before we have moved it
+        //to the folder) to check the MIME type of the file, and whether it has a width and height
+        $imageinfo = getimagesize($fileTemp);
+
+        //we are going to define what file extensions/MIMEs are ok, and only let these ones in (whitelisting), rather than try to scan for bad
+        //types, where we might miss one (whitelisting is always better than blacklisting)
+        $okMIMETypes = 'image/jpeg,image/pjpeg,image/png,image/x-png,image/gif';
+        $validFileTypes = explode(",", $okMIMETypes);
+
+        //if the temp file does not have a width or a height, or it has a non ok MIME, return
+        if(!is_int($imageinfo[0]) or !is_int($imageinfo[1]) or  !in_array($imageinfo['mime'], $validFileTypes)) {
+            echo JText::_( 'INVALID FILETYPE' );
+            return;
+        }
+
+        //lose any special characters in the filename
+        $fileName = ereg_replace("[^A-Za-z0-9.]", "-", $fileName);
+
+        // generate random filename
+        $fileName = uniqid(JRequest::getInt('id').'_') . '-' . $fileName;
+
+        //always use constants when making file paths, to avoid the possibilty of remote file inclusion
+        $uploadPath = JPATH_ADMINISTRATOR.'/components/com_cls/pictures/'.$fileName;
+
+        if(!JFile::upload($fileTemp, $uploadPath)) {
+            echo JText::_( 'ERROR MOVING FILE' );
+            return;
+        } else {
+            // going to insert the picture into db
+            $db =& JFactory::getDBO();
+            $user =& JFactory::getUser();
+            $user_type = $user->getParam('role', 'Viewer');
+            $id = JRequest::getInt('id', 0);
+            if($user_type != 'Viewer') {
+                $picture = new JTable('#__complaint_pictures', 'id', $db);
+                $picture->set('complaint_id', JRequest::getInt('id'));
+                $picture->set('path', str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath));
+                $picture->store();
+            }
+
+           // success, exit with code 0 for Mac users, otherwise they receive an IO Error
+           exit(0);
         }
     }
 }
@@ -1517,6 +1627,74 @@ class CLSView {
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
+        //add the links to the external files into the head of the webpage (note the 'administrator' in the path, which is not nescessary if you are in the frontend)
+        $document =& JFactory::getDocument();
+        $document->addScript(JURI::base(true).'/components/com_cls/swfupload/swfupload.js');
+        $document->addScript(JURI::base(true).'/components/com_cls/swfupload/swfupload.queue.js');
+        $document->addScript(JURI::base(true).'/components/com_cls/swfupload/fileprogress.js');
+        $document->addScript(JURI::base(true).'/components/com_cls/swfupload/handlers.js');
+        $document->addStyleSheet(JURI::base(true).'/components/com_cls/swfupload/default.css');
+
+        //when we send the files for upload, we have to tell Joomla our session, or we will get logged out
+        $session = & JFactory::getSession();
+
+        $swfUploadHeadJs ='
+        var swfu;
+
+        window.onload = function() {
+            var settings = {
+                //this is the path to the flash file, you need to put your components name into it
+                flash_url : "'.JURI::base(true).'/components/com_cls/swfupload/swfupload.swf",
+
+                //we can not put any vars into the url for complicated reasons, but we can put them into the post...
+                upload_url: "index.php",
+                post_params: {
+                    "option" : "com_cls",
+                    "task" : "upload_picture",
+                    "id" : "'.$row->id.'",
+                    "'.$session->getName().'" : "'.$session->getId().'",
+                    "format" : "raw"
+                },
+                //you need to put the session and the "format raw" in there, the other ones are what you would normally put in the url
+                file_size_limit : "8 MB",
+                //client side file chacking is for usability only, you need to check server side for security
+                file_types : "*.jpg;*.jpeg;*.gif;*.png",
+                file_types_description : "Images only",
+                file_upload_limit : 20,
+                file_queue_limit : 20,
+                custom_settings : {
+                    progressTarget : "fsUploadProgress",
+                    cancelButtonId : "btnCancel"
+                },
+                debug: false,
+
+                // Button settings
+                button_image_url: "'.JURI::base(true).'/components/com_cls/swfupload/TestImageNoText_65x29.png",
+                button_width: "65",
+                button_height: "29",
+                button_placeholder_id: "spanButtonPlaceHolder",
+                button_text: \'<span class="theFont">Select</span>\',
+                button_text_style: ".theFont { font-size: 13; }",
+                button_text_left_padding: 5,
+                button_text_top_padding: 5,
+
+                // The event handler functions are defined in handlers.js
+                file_queued_handler : fileQueued,
+                file_queue_error_handler : fileQueueError,
+                file_dialog_complete_handler : fileDialogComplete,
+                upload_start_handler : uploadStart,
+                upload_progress_handler : uploadProgress,
+                upload_error_handler : uploadError,
+                upload_success_handler : uploadSuccess,
+                upload_complete_handler : uploadComplete,
+                queue_complete_handler : queueComplete     // Queue plugin event
+            };
+            swfu = new SWFUpload(settings);
+        };';
+
+        //add the javascript to the head of the html document
+        $document->addScriptDeclaration($swfUploadHeadJs);
+
         JHTML::_('behavior.modal');
 
         //echo '<pre>', print_r($row, true), '</pre>';
@@ -1882,6 +2060,32 @@ class CLSView {
         <input type="hidden" name="cid[]" value="<?php echo @$row->id; ?>" />
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
         </form>
+
+        <?php if(count($row->pictures)): ?>
+        <fieldset class="adminform">
+            <legend><?php echo JText::_('Pictures'); ?></legend>
+            <?php
+            foreach($row->pictures as $i => $picture)
+                echo '<a class="modal" href="'.JURI::base(true).'/'.$picture->path.'"><img src="'.JURI::base(true).'/'.$picture->path.'" border="0" alt="Picture #'.$i.'" style="max-height:150px;max-width:150px" /></a> ';
+            ?>
+        </fieldset>
+        <div class="clr"></div>
+        <?php endif; ?>
+
+        <?php if($user_type != 'Viewer'): ?>
+        <form id="form1" action="index.php" method="post" enctype="multipart/form-data">
+        <fieldset class="adminform">
+            <legend>Upload Picture</legend>
+            <div class="fieldset flash" id="fsUploadProgress"><span class="legend">Upload Queue</span></div>
+            <div id="divStatus">0 Files Uploaded</div>
+                <div>
+                    <span id="spanButtonPlaceHolder"></span>
+                    <input id="btnCancel" type="button" value="Cancel All Uploads" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left:2px;font-size:8pt;height:29px;" />
+                </div>
+        </fieldset>
+        </form>
+        <?php endif; ?>
+
 
         <?php if(isset($row->id)): ?>
         <form action="index.php" method="post" name="notificationForm">
