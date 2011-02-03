@@ -52,6 +52,8 @@
             <filename>uninstall.cls.sql</filename>
             <filename>config.xml</filename>
             <filename>index.html</filename>
+            <folder>help</folder>
+            <folder>swfupload</folder>
         </files>
     </administration>
 </install>
