@@ -41,7 +41,7 @@ function validate() {
     return true;
 }
 </script>
-<form name="complaint_form" action="index.php" method="post" onsubmit="return validate();">
+<form name="complaint_form" action="index.php" method="post" enctype="multipart/form-data" onsubmit="return validate();">
     <table>
         <tr>
             <td><?php echo JText::_('CLS_NAME') ?>:</td>
@@ -58,6 +58,14 @@ function validate() {
         <tr>
             <td><?php echo JText::_('CLS_MESSAGE') ?>:</td>
             <td><textarea name="msg" cols="50" rows="8"><?php echo $this->session->get('cls_msg'); ?></textarea></td>
+        </tr>
+        <tr>
+            <td><?php echo JText::_('CLS_PICTURES') ?>:</td>
+            <td>
+                <input type="file" name="pictures[]" /><br />
+                <input type="file" name="pictures[]" /><br />
+                <input type="file" name="pictures[]" />
+            </td>
         </tr>
         <tr>
             <td><?php echo JText::_('CLS_CAPTCHA') ?>:</td>

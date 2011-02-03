@@ -112,6 +112,98 @@ class CLSController extends JController {
         $query = "insert into #__complaints (message_id, name, email, phone, ip_address, raw_message, message_source, date_received) value('$message_id', '$name', '$email', '$tel', '$ip_address', '$msg', 'Website', now())";
         $db->setQuery($query);
         $db->query();
+        $complint_id = $db->insertid();
+
+        // adding pictures if any
+        jimport('joomla.filesystem.file');
+        jimport('joomla.filesystem.folder');
+        foreach($_FILES['pictures'] as $file) { // TODO: upload file
+            $fileError = $file['error'];
+            if($fileError > 0)  {
+                switch ($fileError) {
+                    case 1:
+                        echo JText::_( 'FILE TO LARGE THAN PHP INI ALLOWS' );
+                        return;
+                    case 2:
+                        echo JText::_( 'FILE TO LARGE THAN HTML FORM ALLOWS' );
+                        return;
+                    case 3:
+                        echo JText::_( 'ERROR PARTIAL UPLOAD' );
+                        return;
+                    case 4:
+                       echo JText::_( 'ERROR NO FILE' );
+                       return;
+                }
+            }
+
+            //check for filesize
+            $fileSize = $file['size'];
+            if($fileSize > 2000000)
+                echo JText::_( 'FILE BIGGER THAN 2MB' );
+
+            //check the file extension is ok
+            $fileName = $file['name'];
+            $uploadedFileNameParts = explode('.',$fileName);
+            $uploadedFileExtension = array_pop($uploadedFileNameParts);
+
+            $validFileExts = explode(',', 'jpeg,jpg,png,gif');
+
+            //assume the extension is false until we know its ok
+            $extOk = false;
+
+            //go through every ok extension, if the ok extension matches the file extension (case insensitive)
+            //then the file extension is ok
+            foreach($validFileExts as $key => $value)
+                if(preg_match("/$value/i", $uploadedFileExtension))
+                    $extOk = true;
+
+            if($extOk == false) {
+                echo JText::_( 'INVALID EXTENSION' );
+                return;
+            }
+
+            //the name of the file in PHP's temp directory that we are going to move to our folder
+            $fileTemp = $file['tmp_name'];
+
+            //for security purposes, we will also do a getimagesize on the temp file (before we have moved it
+            //to the folder) to check the MIME type of the file, and whether it has a width and height
+            $imageinfo = getimagesize($fileTemp);
+
+            //we are going to define what file extensions/MIMEs are ok, and only let these ones in (whitelisting), rather than try to scan for bad
+            //types, where we might miss one (whitelisting is always better than blacklisting)
+            $okMIMETypes = 'image/jpeg,image/pjpeg,image/png,image/x-png,image/gif';
+            $validFileTypes = explode(",", $okMIMETypes);
+
+            //if the temp file does not have a width or a height, or it has a non ok MIME, return
+            if(!is_int($imageinfo[0]) or !is_int($imageinfo[1]) or  !in_array($imageinfo['mime'], $validFileTypes)) {
+                echo JText::_( 'INVALID FILETYPE' );
+                return;
+            }
+
+            //lose any special characters in the filename
+            $fileName = ereg_replace("[^A-Za-z0-9.]", "-", $fileName);
+
+            // generate random filename
+            $fileName = uniqid(JRequest::getInt('id').'_') . '-' . $fileName;
+
+            //always use constants when making file paths, to avoid the possibilty of remote file inclusion
+            $uploadPath = JPATH_ADMINISTRATOR.'/components/com_cls/pictures/'.$fileName;
+
+            if(!JFile::upload($fileTemp, $uploadPath)) {
+                echo JText::_( 'ERROR MOVING FILE' );
+                return;
+            } else {
+                // going to insert the picture into db
+                $db =& JFactory::getDBO();
+                if($user_type != 'Viewer') {
+                    $picture = new JTable('#__complaint_pictures', 'id', $db);
+                    $picture->set('complaint_id', $complaint_id);
+                    $picture->set('path', str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath));
+                    $picture->store();
+                }
+            }
+        }
+
 
         // Send raw complaint to members
         $config =& JComponentHelper::getParams('com_cls');
