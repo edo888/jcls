@@ -112,38 +112,34 @@ class CLSController extends JController {
         $query = "insert into #__complaints (message_id, name, email, phone, ip_address, raw_message, message_source, date_received) value('$message_id', '$name', '$email', '$tel', '$ip_address', '$msg', 'Website', now())";
         $db->setQuery($query);
         $db->query();
-        $complint_id = $db->insertid();
+        $complaint_id = $db->insertid();
 
         // adding pictures if any
         jimport('joomla.filesystem.file');
         jimport('joomla.filesystem.folder');
+
+        // fix the odd indexing of the $_FILES['field']
+        fixFilesArray($_FILES['pictures']);
+
         foreach($_FILES['pictures'] as $file) { // TODO: upload file
             $fileError = $file['error'];
             if($fileError > 0)  {
                 switch ($fileError) {
-                    case 1:
-                        echo JText::_( 'FILE TO LARGE THAN PHP INI ALLOWS' );
-                        return;
-                    case 2:
-                        echo JText::_( 'FILE TO LARGE THAN HTML FORM ALLOWS' );
-                        return;
-                    case 3:
-                        echo JText::_( 'ERROR PARTIAL UPLOAD' );
-                        return;
-                    case 4:
-                       echo JText::_( 'ERROR NO FILE' );
-                       return;
+                    case 1: JError::raiseWarning(10, JText::_('FILE TO LARGE THAN PHP INI ALLOWS')); continue 2; break;
+                    case 2: JError::raiseWarning(11, JText::_('FILE TO LARGE THAN HTML FORM ALLOWS')); continue 2; break;
+                    case 3: JError::raiseWarning(12, JText::_('ERROR PARTIAL UPLOAD')); continue 2; break;
+                    case 4: /*JError::raiseWarning(13, JText::_('ERROR NO FILE'));*/ continue 2; break;
                 }
             }
 
             //check for filesize
             $fileSize = $file['size'];
             if($fileSize > 2000000)
-                echo JText::_( 'FILE BIGGER THAN 2MB' );
+                JError::raiseWarning(14, JText::_('FILE BIGGER THAN 2MB'));
 
             //check the file extension is ok
             $fileName = $file['name'];
-            $uploadedFileNameParts = explode('.',$fileName);
+            $uploadedFileNameParts = explode('.', $fileName);
             $uploadedFileExtension = array_pop($uploadedFileNameParts);
 
             $validFileExts = explode(',', 'jpeg,jpg,png,gif');
@@ -158,8 +154,8 @@ class CLSController extends JController {
                     $extOk = true;
 
             if($extOk == false) {
-                echo JText::_( 'INVALID EXTENSION' );
-                return;
+                JError::raiseWarning(14, JText::_('INVALID EXTENSION'));
+                continue;
             }
 
             //the name of the file in PHP's temp directory that we are going to move to our folder
@@ -176,31 +172,28 @@ class CLSController extends JController {
 
             //if the temp file does not have a width or a height, or it has a non ok MIME, return
             if(!is_int($imageinfo[0]) or !is_int($imageinfo[1]) or  !in_array($imageinfo['mime'], $validFileTypes)) {
-                echo JText::_( 'INVALID FILETYPE' );
-                return;
+                JError::raiseWarning(15, JText::_('INVALID FILETYPE'));
+                continue;
             }
 
             //lose any special characters in the filename
             $fileName = ereg_replace("[^A-Za-z0-9.]", "-", $fileName);
 
             // generate random filename
-            $fileName = uniqid(JRequest::getInt('id').'_') . '-' . $fileName;
+            $fileName = uniqid($complaint_id.'_') . '-' . $fileName;
 
             //always use constants when making file paths, to avoid the possibilty of remote file inclusion
             $uploadPath = JPATH_ADMINISTRATOR.'/components/com_cls/pictures/'.$fileName;
 
             if(!JFile::upload($fileTemp, $uploadPath)) {
-                echo JText::_( 'ERROR MOVING FILE' );
-                return;
+                JError::raiseWarning(16, JText::_('ERROR MOVING FILE'));
+                continue;
             } else {
                 // going to insert the picture into db
-                $db =& JFactory::getDBO();
-                if($user_type != 'Viewer') {
-                    $picture = new JTable('#__complaint_pictures', 'id', $db);
-                    $picture->set('complaint_id', $complaint_id);
-                    $picture->set('path', str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath));
-                    $picture->store();
-                }
+                $picture = new JTable('#__complaint_pictures', 'id', $db);
+                $picture->set('complaint_id', $complaint_id);
+                $picture->set('path', str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath));
+                $picture->store();
             }
         }
 
@@ -280,4 +273,33 @@ function clsLog($action, $description) {
     $description = mysql_real_escape_string($description);
     $db->setQuery("insert into #__complaint_notifications values(null, {$user->id}, '$action', now(), '$description')");
     $db->query();
+}
+
+/**
+ * Fixes the odd indexing of multiple file uploads from the format:
+ *
+ * $_FILES['field']['key']['index']
+ *
+ * To the more standard and appropriate:
+ *
+ * $_FILES['field']['index']['key']
+ *
+ * @param array $files
+ * @author Corey Ballou
+ * @link http://www.jqueryin.com
+ */
+function fixFilesArray(&$files) {
+    $names = array( 'name' => 1, 'type' => 1, 'tmp_name' => 1, 'error' => 1, 'size' => 1);
+
+    foreach ($files as $key => $part) {
+        // only deal with valid keys and multiple files
+        $key = (string) $key;
+        if (isset($names[$key]) && is_array($part)) {
+            foreach ($part as $position => $value) {
+                $files[$position][$key] = $value;
+            }
+            // remove old key reference
+            unset($files[$key]);
+        }
+    }
 }
