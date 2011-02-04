@@ -83,10 +83,67 @@ if($argv[1] == 'install') {
 
             $query = "insert into jos_complaints (message_id, name, email, raw_message, message_source, date_received) value('$message_id', '$from_name', '$from', '$msg', 'Email', now())";
             mysql_query($query);
+            $complaint_id = mysql_insert_id();
 
             // log
             $query = "insert into jos_complaint_notifications values(null, 0, 'New email complaint', now(), 'New email complaint #{$message_id} arrived')";
             mysql_query($query);
+
+            // fetch attachements
+            $structure = imap_fetchstructure($mbox, $i);
+            $attachments = array();
+            if(isset($structure->parts) && count($structure->parts)) {
+                for($j = 0; $j < count($structure->parts); $j++) {
+                    $attachments[$j] = array(
+                        'is_attachment' => false,
+                        'filename' => '',
+                        'name' => '',
+                        'attachment' => ''
+                    );
+
+                    if($structure->parts[$j]->ifdparameters) {
+                        foreach($structure->parts[$j]->dparameters as $object) {
+                            if(strtolower($object->attribute) == 'filename') {
+                                $attachments[$j]['is_attachment'] = true;
+                                $attachments[$j]['filename'] = $object->value;
+                            }
+                        }
+                    }
+
+                    if($structure->parts[$j]->ifparameters) {
+                        foreach($structure->parts[$j]->parameters as $object) {
+                            if(strtolower($object->attribute) == 'name') {
+                                $attachments[$j]['is_attachment'] = true;
+                                $attachments[$j]['name'] = $object->value;
+                            }
+                        }
+                    }
+
+                    if($attachments[$j]['is_attachment']) {
+                        $attachments[$j]['attachment'] = imap_fetchbody($mbox, $i, $j+1);
+                        if($structure->parts[$j]->encoding == 3) { // 3 = BASE64
+                            $attachments[$j]['attachment'] = base64_decode($attachments[$j]['attachment']);
+                        }
+                        elseif($structure->parts[$j]->encoding == 4) { // 4 = QUOTED-PRINTABLE
+                            $attachments[$j]['attachment'] = quoted_printable_decode($attachments[$j]['attachment']);
+                        }
+                    }
+
+                    if(!$attachments[$j]['is_attachment'])
+                        unset($attachments[$j]);
+                }
+            }
+
+            foreach($attachments as $attachment) {
+                $fileName = $attachment['filename'];
+                //lose any special characters in the filename
+                $fileName = ereg_replace("[^A-Za-z0-9.]", "-", $fileName);
+                // generate random filename
+                $fileName = uniqid($complaint_id.'_') . '-' . $fileName;
+
+                // TODO: save file in an appropriate place
+                file_put_contents($fileName, $attachment['attachment']);
+            }
 
             // TODO: send complaint to members
             $res = mysql_query("select email, name, rand() as r from jos_users where params like '%receive_raw_messages=1%' order by r limit 3");
