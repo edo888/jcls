@@ -11,6 +11,11 @@ define('COMPLAINTS_EMAIL', 'complaints@test.com');
 define('EMAIL_PASS', 'password');
 define('NO_REPLY', 'no_reply@test.com');
 define('OUTGOING_PATH', 'C:\cygwin\var\spool\sms\outgoing');
+define('FTP_HOST', 'ftp.test.com');
+define('FTP_PORT', '21');
+define('FTP_USER', 'user');
+define('FTP_PASS', 'pass');
+define('FTP_ROOT', '/httpdocs/administrator/components/com_cls/pictures');
 
 if($argv[1] == 'install') {
     $a = win32_create_service(array(
@@ -57,7 +62,9 @@ if($argv[1] == 'install') {
 
         for($i = 1; $i <= $num; $i++) {
             $header = imap_header($mbox, $i);
-            $body = imap_body($mbox, $i);
+            $body = imap_fetchbody($mbox, $i, '1.2');
+            if(!strlen($body) > 0)
+                $body = imap_fetchbody($mbox, $i, 1);
 
             $from_name = mysql_real_escape_string($header->from[0]->personal);
             $from      = mysql_real_escape_string($header->from[0]->mailbox.'@'.$header->from[0]->host);
@@ -136,13 +143,65 @@ if($argv[1] == 'install') {
 
             foreach($attachments as $attachment) {
                 $fileName = $attachment['filename'];
+
                 //lose any special characters in the filename
                 $fileName = ereg_replace("[^A-Za-z0-9.]", "-", $fileName);
                 // generate random filename
                 $fileName = uniqid($complaint_id.'_') . '-' . $fileName;
 
-                // TODO: save file in an appropriate place
-                file_put_contents($fileName, $attachment['attachment']);
+                // save file
+                file_put_contents(dirname(__FILE__).'/'.$fileName, $attachment['attachment']);
+
+                // check file mime type and upload file to the server
+
+                //check the file extension is ok
+                $uploadedFileNameParts = explode('.', $fileName);
+                $uploadedFileExtension = array_pop($uploadedFileNameParts);
+                $validFileExts = explode(',', 'jpeg,jpg,png,gif');
+
+                //assume the extension is false until we know its ok
+                $extOk = false;
+
+                //go through every ok extension, if the ok extension matches the file extension (case insensitive)
+                //then the file extension is ok
+                foreach($validFileExts as $key => $value)
+                    if(preg_match("/$value/i", $uploadedFileExtension))
+                        $extOk = true;
+
+                if($extOk == false) {
+                    // delete file
+                    unlink(dirname(__FILE__).'/'.$fileName);
+                    continue;
+                }
+
+                //for security purposes, we will also do a getimagesize on the temp file (before we have moved it
+                //to the folder) to check the MIME type of the file, and whether it has a width and height
+                $imageinfo = getimagesize(dirname(__FILE__).'/'.$fileName);
+
+                //we are going to define what file extensions/MIMEs are ok, and only let these ones in (whitelisting), rather than try to scan for bad
+                //types, where we might miss one (whitelisting is always better than blacklisting)
+                $okMIMETypes = 'image/jpeg,image/pjpeg,image/png,image/x-png,image/gif';
+                $validFileTypes = explode(",", $okMIMETypes);
+
+                //if the temp file does not have a width or a height, or it has a non ok MIME, return
+                if(!is_int($imageinfo[0]) or !is_int($imageinfo[1]) or  !in_array($imageinfo['mime'], $validFileTypes)) {
+                    // delete file
+                    unlink(dirname(__FILE__).'/'.$fileName);
+                    continue;
+                }
+
+                $ftp_id = ftp_connect(FTP_HOST, FTP_PORT);
+                ftp_login($ftp_id, FTP_USER, FTP_PASS);
+                ftp_pasv($ftp_id, true);
+                if(ftp_put($ftp_id, FTP_ROOT.'/'.$fileName, dirname(__FILE__).'/'.$fileName, FTP_BINARY)) {
+                    // inserting picture into database
+                    $query = "insert into jos_complaint_pictures value (null, $complaint_id, 'components/com_cls/pictures/$fileName')";
+                    mysql_query($query);
+                }
+                ftp_close($ftp_id);
+
+                // delete file
+                unlink(dirname(__FILE__).'/'.$fileName);
             }
 
             // TODO: send complaint to members
