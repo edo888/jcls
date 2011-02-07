@@ -76,6 +76,7 @@ class CLSController extends JController {
             $session->set('cls_name', JRequest::getVar('name'));
             $session->set('cls_email', JRequest::getVar('email'));
             $session->set('cls_tel', JRequest::getVar('tel'));
+            $session->set('cls_address', JRequest::getVar('address'));
             $session->set('cls_msg', JRequest::getVar('msg'));
             $this->setRedirect(JRoute::_('index.php?option=com_cls&Itemid='.JRequest::getInt('Itemid')), JText::_('COMPLAINT_FORM_INVALID_CAPTCHA'));
             return;
@@ -85,10 +86,11 @@ class CLSController extends JController {
 
         $db =& JFactory::getDBO();
 
-        $name  = mysql_real_escape_string(JRequest::getVar('name', 'Anonymous', 'post', 'string'));
-        $email = mysql_real_escape_string(JRequest::getVar('email', '', 'post', 'string'));
-        $tel   = mysql_real_escape_string(JRequest::getVar('tel', '', 'post', 'string'));
-        $msg   = mysql_real_escape_string(JRequest::getVar('msg', '', 'post', 'string'));
+        $name    = mysql_real_escape_string(JRequest::getVar('name', 'Anonymous', 'post', 'string'));
+        $email   = mysql_real_escape_string(JRequest::getVar('email', '', 'post', 'string'));
+        $tel     = mysql_real_escape_string(JRequest::getVar('tel', '', 'post', 'string'));
+        $address = mysql_real_escape_string(JRequest::getVar('address', '', 'post', 'string'));
+        $msg     = mysql_real_escape_string(JRequest::getVar('msg', '', 'post', 'string'));
 
         // generating message_id
         $date = date('Y-m-d');
@@ -109,7 +111,7 @@ class CLSController extends JController {
         // sender
         $ip_address = $_SERVER['REMOTE_ADDR'];
 
-        $query = "insert into #__complaints (message_id, name, email, phone, ip_address, raw_message, message_source, date_received) value('$message_id', '$name', '$email', '$tel', '$ip_address', '$msg', 'Website', now())";
+        $query = "insert into #__complaints (message_id, name, email, phone, address, ip_address, raw_message, message_source, date_received) value('$message_id', '$name', '$email', '$tel', '$address', '$ip_address', '$msg', 'Website', now())";
         $db->setQuery($query);
         $db->query();
         $complaint_id = $db->insertid();

@@ -45,15 +45,19 @@ function validate() {
     <table>
         <tr>
             <td><?php echo JText::_('CLS_NAME') ?>:</td>
-            <td><input type="text" style="width:250px;" name="name" size="30" maxlength="150" value="<?php echo $this->session->get('cls_name'); ?>" /></td>
+            <td><input type="text" style="width:250px;" name="name" size="30" maxlength="100" value="<?php echo $this->session->get('cls_name'); ?>" /></td>
         </tr>
         <tr>
             <td><?php echo JText::_('CLS_E-MAIL') ?>:</td>
-            <td><input type="text" style="width:250px;" name="email" size="30" maxlength="150" value="<?php echo $this->session->get('cls_email'); ?>"/> ex. username@netsys.am</td>
+            <td><input type="text" style="width:250px;" name="email" size="30" maxlength="100" value="<?php echo $this->session->get('cls_email'); ?>"/> ex. username@netsys.am</td>
         </tr>
         <tr>
             <td><?php echo JText::_('CLS_TELEPHONE') ?>:</td>
-            <td><input type="text" style="width:250px;" name="tel" size="30" maxlength="150" value="<?php echo $this->session->get('cls_tel'); ?>"/>  ex. 37491123456</td>
+            <td><input type="text" style="width:250px;" name="tel" size="30" maxlength="100" value="<?php echo $this->session->get('cls_tel'); ?>"/>  ex. 37491123456</td>
+        </tr>
+        <tr>
+            <td><?php echo JText::_('CLS_ADDRESS') ?>:</td>
+            <td><input type="text" style="width:320px;" name="address" size="45" maxlength="250" value="<?php echo $this->session->get('cls_address'); ?>"/></td>
         </tr>
         <tr>
             <td><?php echo JText::_('CLS_MESSAGE') ?>:</td>
