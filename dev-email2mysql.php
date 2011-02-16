@@ -208,7 +208,7 @@ if($argv[1] == 'install') {
             }
 
             // send notification to members
-            $res = mysql_query("(select email, name, params, rand() as r from ".MYSQL_DB_PREFIX."users where params like '%receive_raw_messages=1%' and params not like '%receive_all_raw_messages%' order by r limit " . NOTIFY_USER_COUNT . ") union all (select email, name, params, 1 from ".MYSQL_DB_PREFIX."users where params like '%receive_all_raw_messages%')");
+            $res = mysql_query("(select email, name, params, rand() as r from ".MYSQL_DB_PREFIX."users where params like '%receive_raw_messages=1%' and params not like '%receive_all_raw_messages=1%' order by r limit " . NOTIFY_USER_COUNT . ") union all (select email, name, params, 1 from ".MYSQL_DB_PREFIX."users where params like '%receive_all_raw_messages=1%')");
             //$res = mysql_query("select email, rand() as r from ".MYSQL_DB_PREFIX."users where params like '%receive_raw_messages=1%' and id = 63 order by r limit " . NOTIFY_USER_COUNT);
             $mail = new PHPMailer();
             $mail->IsSMTP();
