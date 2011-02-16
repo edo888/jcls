@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `#__complaint_message_queue` (
   `msg_to` varchar(20) NOT NULL default '',
   `msg` text,
   `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
-  `msg_type` ENUM('Processed', 'Resolved') default 'Processed',
+  `msg_type` ENUM('Processed', 'Resolved', 'Notification') default 'Processed',
   `status` ENUM('Sent', 'Pending', 'Outgoing', 'Failed') default 'Pending',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

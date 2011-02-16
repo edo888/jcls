@@ -5,6 +5,7 @@ define('MYSQL_HOST', '127.0.0.1');
 define('MYSQL_USER', 'user');
 define('MYSQL_PASS', 'pass');
 define('MYSQL_DB', 'db');
+define('MYSQL_DB_PREFIX', 'jos_');
 define('IMAP_MAILBOX', '{mail.test.com:110/pop3/novalidate-cert}INBOX');
 define('EMAIL_HOST', 'mail.test.com');
 define('COMPLAINTS_EMAIL', 'complaints@test.com');
@@ -16,6 +17,8 @@ define('FTP_PORT', '21');
 define('FTP_USER', 'user');
 define('FTP_PASS', 'pass');
 define('FTP_ROOT', '/httpdocs/administrator/components/com_cls/pictures');
+define('NOTIFY_USER_COUNT', '3');
+define('SLEEP_TIME', 10); // seconds
 
 if($argv[1] == 'install') {
     $a = win32_create_service(array(
@@ -73,14 +76,14 @@ if($argv[1] == 'install') {
 
             // generating message_id
             $date = date('Y-m-d');
-            $query = "select count(*) from jos_complaints where date_received >= '$date 00:00:00' and date_received <= '$date 23:59:59'";
+            $query = "select count(*) from ".MYSQL_DB_PREFIX."complaints where date_received >= '$date 00:00:00' and date_received <= '$date 23:59:59'";
             $res = mysql_query($query);
             $count = mysql_result($res, 0, 0);
             if($count == 0) { // reset the counter for current day
-                mysql_query('delete from jos_complaint_message_ids');
-                mysql_query('alter table jos_complaint_message_ids auto_increment = 0');
+                mysql_query('delete from '.MYSQL_DB_PREFIX.'complaint_message_ids');
+                mysql_query('alter table '.MYSQL_DB_PREFIX.'complaint_message_ids auto_increment = 0');
             }
-            mysql_query('insert into jos_complaint_message_ids value(null)');
+            mysql_query('insert into '.MYSQL_DB_PREFIX.'complaint_message_ids value(null)');
             $id = mysql_insert_id();
             $message_id = $date.'-'.str_pad($id, 4, '0', STR_PAD_LEFT);
             #echo 'Message received: ', $message_id, "\n";
@@ -88,12 +91,12 @@ if($argv[1] == 'install') {
             // generating raw message
             $msg = 'Subject: ' . $subject . "\n\n" . $msg;
 
-            $query = "insert into jos_complaints (message_id, name, email, raw_message, message_source, date_received) value('$message_id', '$from_name', '$from', '$msg', 'Email', now())";
+            $query = "insert into ".MYSQL_DB_PREFIX."complaints (message_id, name, email, raw_message, message_source, date_received) value('$message_id', '$from_name', '$from', '$msg', 'Email', now())";
             mysql_query($query);
             $complaint_id = mysql_insert_id();
 
             // log
-            $query = "insert into jos_complaint_notifications values(null, 0, 'New email complaint', now(), 'New email complaint #{$message_id} arrived')";
+            $query = "insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'New email complaint', now(), 'New email complaint #{$message_id} arrived')";
             mysql_query($query);
 
             // fetch attachements
@@ -195,7 +198,7 @@ if($argv[1] == 'install') {
                 ftp_pasv($ftp_id, true);
                 if(ftp_put($ftp_id, FTP_ROOT.'/'.$fileName, dirname(__FILE__).'/'.$fileName, FTP_BINARY)) {
                     // inserting picture into database
-                    $query = "insert into jos_complaint_pictures value (null, $complaint_id, 'components/com_cls/pictures/$fileName')";
+                    $query = "insert into ".MYSQL_DB_PREFIX."complaint_pictures value (null, $complaint_id, 'components/com_cls/pictures/$fileName')";
                     mysql_query($query);
                 }
                 ftp_close($ftp_id);
@@ -204,9 +207,9 @@ if($argv[1] == 'install') {
                 unlink(dirname(__FILE__).'/'.$fileName);
             }
 
-            // TODO: send complaint to members
-            $res = mysql_query("select email, name, rand() as r from jos_users where params like '%receive_raw_messages=1%' order by r limit 3");
-            //$res = mysql_query("select email, rand() as r from jos_users where params like '%receive_raw_messages=1%' and id = 63 order by r limit 3");
+            // send notification to members
+            $res = mysql_query("(select email, name, params, rand() as r from ".MYSQL_DB_PREFIX."users where params like '%receive_raw_messages=1%' and params not like '%receive_all_raw_messages%' order by r limit " . NOTIFY_USER_COUNT . ") union all (select email, name, params, 1 from ".MYSQL_DB_PREFIX."users where params like '%receive_all_raw_messages%')");
+            //$res = mysql_query("select email, rand() as r from ".MYSQL_DB_PREFIX."users where params like '%receive_raw_messages=1%' and id = 63 order by r limit " . NOTIFY_USER_COUNT);
             $mail = new PHPMailer();
             $mail->IsSMTP();
             $mail->SMTPAuth = true;
@@ -221,11 +224,26 @@ if($argv[1] == 'install') {
             $mail->msgHTML('<p>New complaint received from ' . htmlspecialchars($header->fromaddress) . '. Login to http://www.test.com/administrator/index.php?option=com_cls to process it.</p>' . $body);
             $mail->AddReplyTo(NO_REPLY);
             while($row = mysql_fetch_array($res, MYSQL_NUM)) {
-                $mail->AddAddress($row[0]);
+                if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                    $mail->AddAddress($row[0]);
 
-                // log
-                $query = "insert into jos_complaint_notifications values(null, 0, 'New email complaint notification', now(), 'New complaint #{$message_id} notification has been sent to $row[0]')";
-                mysql_query($query);
+                    // log
+                    $query = "insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'New email complaint notification', now(), 'New complaint #{$message_id} notification has been sent to $row[0]')";
+                    mysql_query($query);
+                }
+
+                if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
+                    preg_match('/telephone=(.*)/', $a, $matches);
+                    if(isset($matches[1]) and $matches[1] != '') {
+                        $telephone = $matches[1];
+                        $query = "insert into ".MYSQL_DB_PREFIX."complaint_message_queue value(null, $complaint_id, 'CLS', '$telephone', 'New complaint received, please login to the system to process it.', now(), 'Pending', 'Notification')";
+                        mysql_query($query);
+
+                        // log
+                        $query = "insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'New SMS complaint notification', now(), 'New complaint #{$message_id} notification has been sent to $telephone')";
+                        mysql_query($query);
+                    }
+                }
             }
             $mail->Send();
 
@@ -233,7 +251,7 @@ if($argv[1] == 'install') {
         }
 
         // check sms queue
-        $res = mysql_query("select q.*, c.message_id from jos_complaint_message_queue as q left join jos_complaints as c on (q.complaint_id = c.id) where q.status = 'Pending'");
+        $res = mysql_query("select q.*, c.message_id from ".MYSQL_DB_PREFIX."complaint_message_queue as q left join ".MYSQL_DB_PREFIX."complaints as c on (q.complaint_id = c.id) where q.status = 'Pending'");
         while($row = mysql_fetch_array($res, MYSQL_ASSOC)) {
             $sms_body = "From: $row[msg_from]\n";
             $sms_body .= "To: $row[msg_to]\n";
@@ -241,10 +259,10 @@ if($argv[1] == 'install') {
             $sms_body .= "Alphabet: ISO\n\n";
             $sms_body .= $row['msg'];
             file_put_contents(OUTGOING_PATH.'\out_'.$row['id'].'.txt', $sms_body);
-            mysql_query("update jos_complaint_message_queue set status = 'Outgoing' where id = " . $row['id']);
+            mysql_query("update ".MYSQL_DB_PREFIX."complaint_message_queue set status = 'Outgoing' where id = " . $row['id']);
 
             // log
-            $query = "insert into jos_complaint_notifications values(null, 0, 'SMS notification status changed', now(), 'Complaint #{$row[message_id]} SMS notification status changed to Outgoing')";
+            $query = "insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'SMS notification status changed', now(), 'Complaint #{$row[message_id]} SMS notification status changed to Outgoing')";
             mysql_query($query);
         }
 
@@ -256,6 +274,6 @@ if($argv[1] == 'install') {
 
         imap_close($mbox);
         mysql_close($lnk);
-        sleep(10);
+        sleep(SLEEP_TIME);
     }
 }
