@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <params>
-        <param name="@spacer" type="spacer" default="" label="" description="" />
         <param name="raw_message_send_count" type="text" default="3" label="User count for raw messages" description="The number of users who will get raw messages" size="4" />
         <param name="processed_message_send_count" type="text" default="3" label="User count for processed messages" description="The number of users who will get processed messages" size="4" />
         <param name="@spacer" type="spacer" default="" label="" description="" />
@@ -15,5 +14,15 @@
         <param name="map_api_key" type="text" default="" label="Map API key" description="Google Maps API key, you can get one from: http://code.google.com/apis/maps/signup.html" size="20" />
         <param name="center_map" type="text" default="40.313043,44.736328" label="Map center point" description="Complaints map center point (lat,lng)" size="20" />
         <param name="zoom_level" type="text" default="6" label="Map zoom level" description="Google Maps zoom level" size="4" />
+        <param name="@spacer" type="spacer" default="" label="" description="" />
+        <param name="sms_acknowledgment" type="radio" default="0" label="SMS Acknowledgment" description="The complainer will receive SMS acknowledgment message after the complaint is received">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </param>
+        <param name="email_acknowledgment" type="radio" default="0" label="Email Acknowledgment" description="The complainer will receive Email acknowledgment message after the complaint is received">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </param>
+        <param name="acknowledgment_text" type="text" default="Thank you, your complaint #%s is received. You will get further details soon." label="Acknowledgment text" description="The formatted text to be used" size="50" />
     </params>
 </config>
