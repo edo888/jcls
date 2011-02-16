@@ -233,7 +233,7 @@ if($argv[1] == 'install') {
                 }
 
                 if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
-                    preg_match('/telephone=(.*)/', $a, $matches);
+                    preg_match('/telephone=(.*)/', $row[2], $matches);
                     if(isset($matches[1]) and $matches[1] != '') {
                         $telephone = $matches[1];
                         $query = "insert into ".MYSQL_DB_PREFIX."complaint_message_queue value(null, $complaint_id, 'CLS', '$telephone', 'New complaint received, please login to the system to process it.', now(), 'Pending', 'Notification')";
