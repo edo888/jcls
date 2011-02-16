@@ -224,7 +224,7 @@ if($argv[1] == 'install') {
                 $mail->AddAddress($row[0]);
 
                 // log
-                $query = "insert into jos_complaint_notifications values(null, 0, 'New email complaint notification', now(), 'New complaint #{$message_id} notification has been sent to $row[1]')";
+                $query = "insert into jos_complaint_notifications values(null, 0, 'New email complaint notification', now(), 'New complaint #{$message_id} notification has been sent to $row[0]')";
                 mysql_query($query);
             }
             $mail->Send();
