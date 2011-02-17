@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <params>
+        <param name="complaints_email" type="text" default="complaints@localhost" label="Complaints Email" description="" size="20" />
+        <param name="@spacer" type="spacer" default="" label="" description="" />
         <param name="raw_message_send_count" type="text" default="3" label="User count for raw messages" description="The number of users who will get raw messages" size="4" />
         <param name="processed_message_send_count" type="text" default="3" label="User count for processed messages" description="The number of users who will get processed messages" size="4" />
         <param name="@spacer" type="spacer" default="" label="" description="" />

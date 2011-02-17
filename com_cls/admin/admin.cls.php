@@ -592,24 +592,37 @@ class CLSController extends JController {
 
                     clsLog('Complaint processed', 'The user processed the complaint #' . $complaint->message_id);
 
-                    // Send processed complaint to members
+                    // Send processed complaint notification to members
                     $config =& JComponentHelper::getParams('com_cls');
                     $processed_message_send_count = (int) $config->get('processed_message_send_count', 3);
 
-                    $db->setQuery("select email, name, rand() as r from #__users where params like '%receive_processed_messages=1%' order by r limit $processed_message_send_count");
+                    $db->setQuery("(select email, name, params, rand() as r from #__users where params like '%receive_processed_messages=1%' and params not like '%receive_all_processed_messages=1%' order by r limit $processed_message_send_count) union all (select email, name, params, 1 from #__users where params like '%receive_all_processed_messages=1%')");
                     $res = $db->query();
 
                     jimport('joomla.mail.mail');
                     $mail = new JMail();
-                    $mail->From = 'complaints@lrip.am';
+                    $mail->From = $config->get('complaints_email');
                     $mail->FromName = 'Complaint Logging System';
                     $mail->Subject = 'New Processed Complaint: #' . $complaint->message_id;
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                    $mail->msgHTML('<p>A complaint was processed. Login to http://www.lrip.am/administrator/index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
-                    $mail->AddReplyTo('no_reply@lrip.am');
+                    $mail->msgHTML('<p>A complaint was processed. Login to http://'.$_SERVER['HTTP_HOST'].'/administrator/index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
+                    $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
                     while($row = mysql_fetch_array($res, MYSQL_NUM)) {
-                        $mail->AddAddress($row[0]);
-                        clsLog('Processed notification send', 'Complaint #' . $complaint->message_id . ' processed notification send to ' . $row[1]);
+                        if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                            $mail->AddAddress($row[0]);
+                            clsLog('Processed notification sent', 'Complaint #' . $complaint->message_id . ' processed notification sent to ' . $row[1]);
+                        }
+
+                        if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
+                            preg_match('/telephone=(.*)/', $row[2], $matches);
+                            if(isset($matches[1]) and $matches[1] != '') {
+                                $telephone = $matches[1];
+                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id processed, please login to the system to resolve it.', now(), 'Pending', 'Notification')");
+                                $db->query();
+
+                                clsLog('Processed notification sent', 'Complaint #' . $complaint->message_id . ' processed notification sent to ' . $telephone);
+                            }
+                        }
                     }
                     $mail->Send();
                 }
@@ -828,7 +841,7 @@ class CLSController extends JController {
         if($user->getParam('role', 'Viewer') != 'Viewer') {
             jimport('joomla.mail.mail');
             $mail = new JMail();
-            $mail->setSender(array('no_reply@lrip.am', 'Complaint Logging System'));
+            $mail->setSender(array('no_reply@'.$_SERVER['HTTP_HOST'], 'Complaint Logging System'));
             $mail->setSubject('Complaint Processed: #'.$complaint->message_id);
             $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
             $mail->MsgHTML('<p>Thank you, your complaint was processed, we will contact you soon.</p>');
@@ -874,7 +887,7 @@ class CLSController extends JController {
         if($user->getParam('role', 'Viewer') != 'Viewer') {
             jimport('joomla.mail.mail');
             $mail = new JMail();
-            $mail->setSender(array('no_reply@lrip.am', 'Complaint Logging System'));
+            $mail->setSender(array('no_reply@'.$_SERVER['HTTP_HOST'], 'Complaint Logging System'));
             $mail->setSubject('Complaint Resolved: #'.$complaint->message_id);
             $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
             $mail->MsgHTML('<p>Thank you, your complaint was resolved. Feel free to send further complaints if any.</p>');
@@ -1891,7 +1904,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'Super User' and $user_type != 'Administrator')
+                    if($user_type != 'Super User' and $user_type != 'Administrator' and $user_type != 'Auditor')
                         echo @$row->contract;
                     else
                         echo $lists['contract'];
@@ -1916,7 +1929,7 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if(property_exists($row, 'editor_id')): ?>
+            <?php if(property_exists($row, 'editor_id') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key">
                     <label for="path">
@@ -1979,7 +1992,7 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if(property_exists($row, 'confirmed_closed')): ?>
+            <?php if(property_exists($row, 'confirmed_closed') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key">
                     <label for="path">
@@ -1996,7 +2009,7 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if(property_exists($row, 'resolution')): ?>
+            <?php if(property_exists($row, 'resolution') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key" valign="top">
                     <label for="custom_script">
@@ -2013,7 +2026,7 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if(property_exists($row, 'resolver_id')): ?>
+            <?php if(property_exists($row, 'resolver_id') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key">
                     <label for="path">
