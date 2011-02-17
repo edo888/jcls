@@ -54,7 +54,7 @@ class CLSViewComplaints extends JView {
             $where[] = 'confirmed_closed = "'.$filter_status.'"';
 
         if($search)
-            $where[] = '(raw_message LIKE "%'.$search.'%" OR processed_message LIKE "%'.$search.'%" OR resolution LIKE "%'.$search.'%")';
+            $where[] = '(message_id LIKE "%'.$search.'%" OR raw_message LIKE "%'.$search.'%" OR processed_message LIKE "%'.$search.'%" OR resolution LIKE "%'.$search.'%")';
 
         $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
         $orderby = ' ORDER BY '. $filter_order .' '. $filter_order_Dir;
