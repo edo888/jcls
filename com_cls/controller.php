@@ -11,16 +11,41 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
+require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'controller.php');
+require_once(JPATH_COMPONENT.DS.'cls.html.php');
+
 // TODO: authorize
 
-class CLSController extends JController {
+class CLSControllerFront extends JController {
     function __construct($default = array()) {
         parent::__construct($default);
         $this->registerTask('download_report', 'downloadReport');
         $this->registerTask('submit', 'submitComplaint');
         $this->registerTask('newcomplaint', 'newComplaint');
-        $this->registerTask('edit', 'editComplaint');
-        $this->registerTask('save', 'saveComplaint');
+
+        // backend tasks referencing
+        $this->registerTask('edit', 'adminRefferenceTask');
+        $this->registerTask('save', 'adminRefferenceTask');
+        $this->registerTask('apply', 'adminRefferenceTask');
+        $this->registerTask('remove', 'adminRefferenceTask');
+        #$this->registerTask('addContract', 'adminRefferenceTask');
+        #$this->registerTask('editContract', 'adminRefferenceTask');
+        #$this->registerTask('saveContract', 'adminRefferenceTask');
+        #$this->registerTask('applyContract', 'adminRefferenceTask');
+        #$this->registerTask('removeContract', 'adminRefferenceTask');
+        #$this->registerTask('cancelContract', 'adminRefferenceTask');
+        #$this->registerTask('addSection', 'adminRefferenceTask');
+        #$this->registerTask('editSection', 'adminRefferenceTask');
+        #$this->registerTask('saveSection', 'adminRefferenceTask');
+        #$this->registerTask('applySection', 'adminRefferenceTask');
+        #$this->registerTask('removeSection', 'adminRefferenceTask');
+        #$this->registerTask('cancelSection', 'adminRefferenceTask');
+        #$this->registerTask('download_report', 'adminRefferenceTask');
+        $this->registerTask('notify_sms_process', 'adminRefferenceTask');
+        $this->registerTask('notify_email_process', 'adminRefferenceTask');
+        $this->registerTask('notify_sms_resolve', 'adminRefferenceTask');
+        $this->registerTask('notify_email_resolve', 'adminRefferenceTask');
+        $this->registerTask('upload_picture', 'adminRefferenceTask');
     }
 
     function display() {
@@ -204,19 +229,60 @@ class CLSController extends JController {
         $config =& JComponentHelper::getParams('com_cls');
         $raw_message_send_count = (int) $config->get('raw_message_send_count', 3);
 
-        $db->setQuery("select email, rand() as r from #__users where params like '%receive_raw_messages=1%' order by r limit $raw_message_send_count");
+        $db->setQuery("(select email, name, params, rand() as r from #__users where params like '%receive_raw_messages=1%' and params not like '%receive_all_raw_messages=1%' order by r limit $raw_message_send_count) union all (select email, name, params, 1 from #__users where params like '%receive_all_raw_messages=1%')");
         $res = $db->query();
 
         jimport('joomla.mail.mail');
         $mail = new JMail();
-        $mail->setSender(array('complaints@lrip.am', 'Complaint Logging System'));
+        $mail->setSender(array($config->get('complaints_email'), 'Complaint Logging System'));
         $mail->setSubject('New Website Complaint: #' . $message_id);
         $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-        $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Login to http://www.lrip.am/administrator/index.php?option=com_cls to process it.</p>' . $msg);
-        $mail->AddReplyTo('no_reply@lrip.am');
-        while($row = mysql_fetch_array($res, MYSQL_NUM))
-            $mail->AddAddress($row[0]);
+        $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Login to http://'.$_SERVER['HTTP_HOST'].'/administrator/index.php?option=com_cls to process it.</p>' . $msg);
+        $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+        while($row = mysql_fetch_array($res, MYSQL_NUM)) {
+            if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                $mail->AddAddress($row[0]);
+                clsLog('New email complaint notification', "New complaint #{$message_id} notification has been sent to $row[1]");
+            }
+
+            if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
+                preg_match('/telephone=(.*)/', $row[2], $matches);
+                if(isset($matches[1]) and $matches[1] != '') {
+                    $telephone = $matches[1];
+                    $db->setQuery("insert into #__complaint_message_queue value(null, $complaint_id, 'CLS', '$telephone', 'New complaint #{$message_id} received, please login to the system to process it.', now(), 'Pending', 'Notification')");
+                    $db->query();
+
+                    clsLog('New SMS complaint notification', "New complaint #{$message_id} notification has been sent to $telephone");
+                }
+            }
+        }
         $mail->Send();
+
+        // Send acknowledgment email to the complainer
+        $sms_acknowledgment = (int) $config->get('sms_acknowledgment', 0);
+        $email_acknowledgment = (int) $config->get('email_acknowledgment', 0);
+        $acknowledgment_text = sprintf($config->get('acknowledgment_text'), $message_id);
+
+        if($email_acknowledgment and $email != '') {
+            $mail = new JMail();
+            $mail->setSender(array($config->get('complaints_email'), 'Complaint Logging System'));
+            $mail->setSubject('Your Complaint Received: #' . $message_id);
+            $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+            $mail->MsgHTML('<p>'.$acknowledgment_text.'</p>' . 'http://'.$_SERVER['HTTP_HOST']);
+            $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+            $mail->AddAddress($email);
+            $mail->Send();
+
+            clsLog('New complaint acknowledgment', "New complaint #{$message_id} acknowledgment has been sent to $email");
+        }
+
+        if($sms_acknowledgment and $tel != '') {
+            $acknowledgment_text = mysql_real_escape_string($acknowledgment_text);
+            $db->setQuery("insert into #__complaint_message_queue value(null, $complaint_id, 'CLS', '$tel', '$acknowledgment_text', now(), 'Pending', 'Notification')");
+            $db->query();
+
+            clsLog('New complaint acknowledgment', "New complaint #{$message_id} acknowledgment has been sent to $tel");
+        }
 
         $this->setRedirect(JRoute::_('index.php?option=com_cls&Itemid='.JRequest::getInt('Itemid')), JText::_('COMPLAINT_FORM_SUBMIT'));
     }
@@ -260,8 +326,9 @@ class CLSController extends JController {
         $this->setRedirect('index.php?option=com_cls&view=complaints', JText::_('Complaint successfully created'));
     }
 
-    function editComplaint() {
-        echo 'edit ku';
+    function adminRefferenceTask() {
+        $controller = new CLSController();
+        $controller->execute(JRequest::getVar('task'));
     }
 
     function saveComplaint() {
