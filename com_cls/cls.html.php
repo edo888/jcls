@@ -746,7 +746,7 @@ class CLSView {
                 submitform(pressbutton);
         }
         </script>
-        <form action="index.php" method="post" name="adminForm">
+        <form action="<?php echo JURI::base(true) ?>/index.php" method="post" name="adminForm">
 
         <fieldset class="adminform">
             <legend><?php echo JText::_('Details'); ?></legend>
@@ -1101,7 +1101,7 @@ class CLSView {
         <?php endif; ?>
 
         <?php if($user_type != 'Viewer'): ?>
-        <form id="form1" action="index.php" method="post" enctype="multipart/form-data">
+        <form id="form1" action="<?php echo JURI::base(true) ?>/index.php" method="post" enctype="multipart/form-data">
         <fieldset class="adminform">
             <legend>Upload Picture</legend>
             <div class="fieldset flash" id="fsUploadProgress"><span class="legend">Upload Queue</span></div>
@@ -1116,7 +1116,7 @@ class CLSView {
 
 
         <?php if(isset($row->id)): ?>
-        <form action="index.php" method="post" name="notificationForm">
+        <form action="<?php echo JURI::base(true) ?>/index.php" method="post" name="notificationForm">
         <fieldset class="adminform">
             <legend><?php echo JText::_('Notifications'); ?></legend>
 
@@ -1234,7 +1234,7 @@ class CLSView {
                 submitform(pressbutton);
         }
         </script>
-        <form action="index.php" method="post" name="adminForm">
+        <form action="<?php echo JURI::base(true) ?>/index.php" method="post" name="adminForm">
 
         <fieldset class="adminform">
             <legend><?php echo JText::_('Details'); ?></legend>
@@ -1308,7 +1308,7 @@ class CLSView {
                 submitform(pressbutton);
         }
         </script>
-        <form action="index.php" method="post" name="adminForm">
+        <form action="<?php echo JURI::base(true) ?>/index.php" method="post" name="adminForm">
 
         <fieldset class="adminform">
             <legend><?php echo JText::_('Details'); ?></legend>

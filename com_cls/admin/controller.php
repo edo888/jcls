@@ -993,16 +993,20 @@ class CLSController extends JController {
             $db =& JFactory::getDBO();
             $user =& JFactory::getUser();
             $user_type = $user->getParam('role', 'Viewer');
-            $id = JRequest::getInt('id', 0);
+            $complaint_id = JRequest::getInt('id', 0);
             if($user_type != 'Viewer') {
                 $picture = new JTable('#__complaint_pictures', 'id', $db);
-                $picture->set('complaint_id', JRequest::getInt('id'));
+                $picture->set('complaint_id', $complaint_id);
                 $picture->set('path', str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath));
                 $picture->store();
             }
 
-           // success, exit with code 0 for Mac users, otherwise they receive an IO Error
-           exit(0);
+            $db->setQuery('select message_id from #__complaints where id = ' . $complaint_id);
+            $complaint = $db->loadObject();
+            clsLog('Image uploaded', 'User uploaded an image for Complaint #' . $complaint->message_id);
+
+            // success, exit with code 0 for Mac users, otherwise they receive an IO Error
+            exit(0);
         }
     }
 }
