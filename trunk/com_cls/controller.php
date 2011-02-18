@@ -331,9 +331,6 @@ class CLSControllerFront extends JController {
         $controller->execute(JRequest::getVar('task'));
     }
 
-    function saveComplaint() {
-        echo 'save ku';
-    }
 }
 
 function clsLog($action, $description) {
