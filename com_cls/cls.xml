@@ -14,6 +14,7 @@
     <files>
         <folder>views</folder>
         <filename>cls.php</filename>
+        <filename>cls.html.php</filename>
         <filename>controller.php</filename>
         <filename>metadata.xml</filename>
         <filename>base64.php</filename>
@@ -46,6 +47,8 @@
 
         <files folder="admin">
             <filename>admin.cls.php</filename>
+            <filename>admin.cls.html.php</filename>
+            <filename>controller.php</filename>
             <filename>toolbar.cls.html.php</filename>
             <filename>toolbar.cls.php</filename>
             <filename>install.cls.sql</filename>
