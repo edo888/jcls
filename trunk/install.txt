@@ -6,7 +6,7 @@
 6. Install plg_cls_users.zip plugin and enable it from Plugins Manager - This will redirect Auditors, Resolvers and Viewers directly to Complaints component
 
 7. To enable e-mail complaint logging on a windows computer install a service which will check complaint emails.
-   Put this 3 files somewhere (class.phpmailer.php, class.smtp.php, email2mysql.php). Edit email2mysql.php and write appropriate configuration in the header, then open Command Line and write:
+    Rename dev-* files and remove dev- prefix. Put this 3 files somewhere (class.phpmailer.php, class.smtp.php, email2mysql.php). Edit email2mysql.php and write appropriate configuration in the header, then open Command Line and write:
 
    > php email2mysql.php install
 
@@ -15,6 +15,8 @@
    > php email2mysql.php start
 
    Note that you need to have installed PHP with php_win32service.dll extension.
+
+   email2mysql.php is responsible for receiving email complaints and sms queue.
 
 8. To enable SMS complaint logging you should have a modem connected to your computer.
    Follow this steps to install SMSTools: http://smstools.meinemullemaus.de/windows.html
