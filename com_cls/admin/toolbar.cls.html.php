@@ -42,7 +42,7 @@ class TOOLBAR_CLS {
             else
                 JToolBarHelper::cancel('cancelContract');
 
-            JToolBarHelper::help('screen.cls.newContract', true);
+            JToolBarHelper::help('screen.cls.contracts', true);
         } elseif(JRequest::getCmd('task') == 'editSection' or JRequest::getCmd('task') == 'addSection') {
             JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Section ]</small></small>');
             if($user_type != 'Viewer')
@@ -54,7 +54,7 @@ class TOOLBAR_CLS {
             else
                 JToolBarHelper::cancel('cancelSection');
 
-            JToolBarHelper::help('screen.cls.newSection', true);
+            JToolBarHelper::help('screen.cls.sections', true);
         }
     }
 
@@ -97,6 +97,11 @@ class TOOLBAR_CLS {
         if($user_type == 'Super User' and $mainframe->isAdmin())
             JToolBarHelper::preferences('com_cls', '550', '570', 'Settings');
 
-        JToolBarHelper::help('screen.cls', true);
+        if(JRequest::getCmd('c', 'complaints') == 'complaints')
+            JToolBarHelper::help('screen.cls', true);
+        elseif(JRequest::getCmd('c', 'complaints') == 'contracts')
+            JToolBarHelper::help('screen.cls.contracts', true);
+        elseif(JRequest::getCmd('c', 'complaints') == 'sections')
+            JToolBarHelper::help('screen.cls.sections', true);
     }
 }
