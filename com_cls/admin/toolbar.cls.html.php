@@ -66,7 +66,7 @@ class TOOLBAR_CLS {
         if(JRequest::getCmd('c', 'complaints') == 'complaints')
             JToolBarHelper::title(JText::_('Complaints'));
         elseif(JRequest::getCmd('c', 'complaints') == 'notifications')
-            JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Notifications ]</small></small>');
+            JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Activity Log ]</small></small>');
         elseif(JRequest::getCmd('c', 'complaints') == 'contracts')
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Contracts ]</small></small>');
         elseif(JRequest::getCmd('c', 'complaints') == 'sections')
