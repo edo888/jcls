@@ -114,13 +114,13 @@ class CLSView {
                 $row = &$rows[$i];
                 JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
-                if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received))
-                    JError::raiseNotice(0, 'Complaint #' . $row->message_id . ' is not processed yet.');
-                if($row->confirmed_closed == 'N' and $row->date_processed != '' and $processed_complaint_warning_period*24*60*60 < time() - strtotime($row->date_processed))
-                    JError::raiseNotice(0, 'Complaint #' . $row->message_id . ' is not resolved yet.');
-
                 $link        = JRoute::_('index.php?option=com_cls&task=edit&cid[]='. $row->id);
                 $checked     = JHTML::_('grid.checkedout',$row,$i);
+
+                if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received))
+                    JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not processed yet.');
+                if($row->confirmed_closed == 'N' and $row->date_processed != '' and $processed_complaint_warning_period*24*60*60 < time() - strtotime($row->date_processed))
+                    JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.');
                 ?>
                 <tr class="<?php echo "row$k"; ?>">
                     <td>
