@@ -1110,7 +1110,7 @@ class CLSView {
         <?php if(isset($row->id)): ?>
         <form action="index.php" method="post" name="notificationForm">
         <fieldset class="adminform">
-            <legend><?php echo JText::_('Activity Log'); ?></legend>
+            <legend><?php echo JText::_('Notifications'); ?></legend>
 
             <p><i>Save your changes before sending a notification.</i></p>
 
