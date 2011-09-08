@@ -208,15 +208,15 @@ class CLSView {
         $statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
         $delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
 
-        # -- Complaints Downloads --
-        echo '<h3>Complaints Downloads</h3>';
+        # -- Complaint Downloads --
+        echo '<h3>Complaint Downloads</h3>';
         echo '<a href="index.php?option=com_cls&amp;task=download_report&period=current_month">Download Current Month</a><br />';
         echo '<a href="index.php?option=com_cls&amp;task=download_report&period=prev_month">Download Previous Month</a><br />';
         //echo '<a href="index.php?option=com_cls&amp;task=download_report&period=month">Download Month</a><br />';
         echo '<a href="index.php?option=com_cls&amp;task=download_report&period=all">Download All</a>';
-        # -- End Complaints Downloads --
+        # -- End Complaint Downloads --
 
-        # -- Complaints Averages --
+        # -- Complaint Averages --
         $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day)");
         $complaints_received = $db->loadResult();
         $complaints_received_per_day = round($complaints_received/$statistics_period, 2);
@@ -240,19 +240,19 @@ class CLSView {
         $complaints_processed_growth = ($complaints_processed_per_day >= $complaints_processed_per_day2 ? '+' : '-') . round(abs($complaints_processed_per_day - $complaints_processed_per_day2)/$complaints_processed_per_day*100, 2) . '%';
         $complaints_resolved_growth = ($complaints_resolved_per_day >= $complaints_resolved_per_day2 ? '+' : '-') . round(abs($complaints_resolved_per_day - $complaints_resolved_per_day2)/$complaints_resolved_per_day*100, 2) . '%';
 
-        echo '<h3>Summary of Complaints</h3>';
+        echo '<h3>Summary of Complaint</h3>';
         echo '<i>Complaints Received Per Day:</i> ' . $complaints_received_per_day . ' <small style="color:#cc0000;">' . $complaints_received_growth . '</small><br />';
         echo '<i>Complaints Processed Per Day:</i> ' . $complaints_processed_per_day . ' <small style="color:#cc0000;">' . $complaints_processed_growth . '</small><br />';
         echo '<i>Complaints Resolved Per Day:</i> ' . $complaints_resolved_per_day . ' <small style="color:#cc0000;">' . $complaints_resolved_growth . '</small><br />';
         echo '<i>Number of Complaints Received:</i> ' . $complaints_received . ' <br />';
         echo '<i>Number of Complaints Resolved:</i> ' . $complaints_resolved . ' <br />';
         echo '<i>Number of Complaints Outstanding:</i> ' . ($complaints_received - $complaints_resolved < 0 ? 0 : $complaints_received - $complaints_resolved) . ' <br />';
-        echo '<i>Number of With Delayed Resolution:</i> ' . $complaints_delayed . ' <br />';
+        echo '<i>Number of Complaints with Delayed Resolution:</i> ' . $complaints_delayed . ' <br />';
 
         echo '<br /><small><i>The averages are based on ' . $statistics_period . ' days period data.</i></small>';
-        # -- End Complaints Averages --
+        # -- End Complaint Averages --
 
-        # -- Complaints Statistics --
+        # -- Complaint Statistics --
         for($i = 0, $time = strtotime("-$statistics_period days"); $time < time() + 86400; $i++, $time = strtotime("-$statistics_period days +$i days"))
             $dates[date('M j', $time)] = 0;
         //echo '<pre>', print_r($dates, true), '</pre>';
@@ -302,12 +302,12 @@ class CLSView {
         $complaints_per_day_link .= "chxl=0:|".$x_axis."|1:|".$y_axis."&amp;";
         $complaints_per_day_link .= "chd=s:".self::simpleEncode($complaints_received, 0, $max).",".self::simpleEncode($complaints_processed, 0, $max).",".self::simpleEncode($complaints_resolved, 0, $max).",".self::simpleEncode($delayed_resolution, 0, $max);
 
-        echo '<h3>Complaints Statistics</h3>';
+        echo '<h3>Complaint Statistics</h3>';
         echo '<img src="' . $complaints_per_day_link . '" alt="complaints statistics" />';
-        # -- End Complaints Statistics --
+        # -- End Complaint Statistics --
 
-        # -- Complaints Map --
-        echo '<h3>Complaints Map</h3>';
+        # -- Complaint Map --
+        echo '<h3>Complaint Map</h3>';
         $document =& JFactory::getDocument();
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
         $db->setQuery("select * from #__complaints where location != '' and date_received >= DATE_ADD(now(), interval -$statistics_period day)");
@@ -336,7 +336,7 @@ class CLSView {
         //]]>
         </script>
         <?php
-        # -- End Complaints Map --
+        # -- End Complaint Map --
     }
 
     function showNotifications($rows, $pageNav, $options, $lists) {
