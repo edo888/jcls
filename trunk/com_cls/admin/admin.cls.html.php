@@ -14,7 +14,7 @@ class CLSView {
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls', true);
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
 
@@ -181,7 +181,7 @@ class CLSView {
     function showReports() {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports', true);
-        JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
 
@@ -328,7 +328,7 @@ class CLSView {
     function showNotifications($rows, $pageNav, $options, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications', true);
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications', true);
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
 
@@ -426,7 +426,7 @@ class CLSView {
     function showContracts($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts', true);
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JHTML::_('behavior.tooltip');
@@ -525,7 +525,7 @@ class CLSView {
     function showSections($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Notifications'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections', true);
         JHTML::_('behavior.tooltip');
@@ -1110,7 +1110,7 @@ class CLSView {
         <?php if(isset($row->id)): ?>
         <form action="index.php" method="post" name="notificationForm">
         <fieldset class="adminform">
-            <legend><?php echo JText::_('Notifications'); ?></legend>
+            <legend><?php echo JText::_('Activity Log'); ?></legend>
 
             <p><i>Save your changes before sending a notification.</i></p>
 
