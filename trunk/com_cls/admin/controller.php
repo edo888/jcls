@@ -217,7 +217,7 @@ class CLSController extends JController {
         $action[] = array('key' => '', 'value' => '- Select Action -');
         foreach($actions as $a)
             $action[] = array('key' => $a->action, 'value' => $a->action);
-        $lists['action'] = JHTML::_('select.genericlist', $action, 'filter_user_id', 'onchange=submitform();', 'key', 'value', $filter_action);
+        $lists['action'] = JHTML::_('select.genericlist', $action, 'filter_action', 'onchange=submitform();', 'key', 'value', $filter_action);
 
         // table ordering
         $lists['order_Dir'] = $filter_order_Dir;
