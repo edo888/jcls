@@ -80,7 +80,8 @@ class CLSViewComplaints extends JView {
         $query = 'select * from #__complaint_areas';
         $db->setQuery($query);
         $areas = $db->loadObjectList();
-        $area[] = array('key' => '', 'value' => '- Select Area -');
+        //$area[] = array('key' => '', 'value' => '- Select Area -');
+        $area[] = array('key' => '', 'value' => '- Select Category -');
         foreach($areas as $a)
             $area[] = array('key' => $a->id, 'value' => $a->area);
         $lists['area'] = JHTML::_('select.genericlist', $area, 'filter_area_id', 'onchange=submitform();', 'key', 'value', $filter_area_id);

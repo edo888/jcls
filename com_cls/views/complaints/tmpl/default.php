@@ -60,7 +60,10 @@ jimport('joomla.filter.output');
                 <?php echo JHTML::_('grid.sort', 'Received', 'm.date_received', @$this->lists['order_Dir'], @$this->lists['order']); ?>
             </th-->
             <th width="20" align="center">
-                <?php echo JHTML::_('grid.sort', 'Area', 'g.area', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+                <?php
+                //echo JHTML::_('grid.sort', 'Area', 'g.area', @$this->lists['order_Dir'], @$this->lists['order']);
+                echo JHTML::_('grid.sort', 'Category', 'g.area', @$this->lists['order_Dir'], @$this->lists['order']);
+                ?>
             </th>
             <th width="15" align="center">
                 <?php echo JHTML::_('grid.sort', 'Priority', 'm.message_priority', @$this->lists['order_Dir'], @$this->lists['order']); ?>

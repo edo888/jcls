@@ -83,7 +83,10 @@ class CLSView {
                         <?php echo JHTML::_('grid.sort', 'Received', 'm.date_received', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="4%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Area', 'g.area', @$lists['order_Dir'], @$lists['order']); ?>
+                        <?php
+                        // echo JHTML::_('grid.sort', 'Area', 'g.area', @$lists['order_Dir'], @$lists['order']);
+                        echo JHTML::_('grid.sort', 'Category', 'g.area', @$lists['order_Dir'], @$lists['order']);
+                        ?>
                     </th>
                     <th width="4%" align="center">
                         <?php echo JHTML::_('grid.sort', 'Priority', 'm.message_priority', @$lists['order_Dir'], @$lists['order']); ?>
@@ -965,7 +968,10 @@ class CLSView {
             <tr>
                 <td class="key">
                     <label for="path">
-                        <?php echo JText::_( 'Complaint Area' ); ?>
+                        <?php
+                        // echo JText::_( 'Complaint Area' );
+                        echo JText::_( 'Complaint Category' );
+                        ?>
                     </label>
                 </td>
                 <td>
