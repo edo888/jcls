@@ -185,25 +185,57 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
 
+        JHTML::_('behavior.calendar');
+
         $db =& JFactory::getDBO();
+        $session =& JFactory::getSession();
         $config =& JComponentHelper::getParams('com_cls');
         $center_map = $config->get('center_map');
         $map_api_key = $config->get('map_api_key');
         $zoom_level = $config->get('zoom_level');
-        $statistics_period = (int) $config->get('statistics_period', 20);
+        $statistics_period = (int) $session->get('statistics_period', $config->get('statistics_period', 20));
         $statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
         $delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
 
+        $startdate = JRequest::getCmd('startdate', $session->get('startdate', date('Y-m-d', strtotime("-$statistics_period days")), 'com_cls'));
+        $session->set('startdate', $startdate, 'com_cls');
+        $enddate = JRequest::getCmd('enddate', $session->get('enddate', date('Y-m-d'), 'com_cls'));
+        $session->set('enddate', $enddate, 'com_cls');
+
+        $statistics_period = (int) ((strtotime($enddate) - strtotime($startdate)) / 86400);
+        ?>
+
+        <h3>Statistics Period</h3>
+        <form action="index.php?option=com_cls" method="post" name="adminForm">
+        <table>
+            <tr>
+                <td><?php echo JText::_('Start Date'); ?></td>
+                <td><input class="inputbox" type="text" name="startdate" id="startdate" size="25" maxlength="25" value="<?php echo $startdate; ?>" /> <input type="reset" class="button" value="..." onclick="return showCalendar('startdate','%Y-%m-%d');" /></td>
+            </tr>
+            <tr>
+                <td><?php echo JText::_('End Date'); ?></td>
+                <td><input class="inputbox" type="text" name="enddate" id="enddate" size="25" maxlength="25" value="<?php echo $enddate; ?>" /> <input type="reset" class="button" value="..." onclick="return showCalendar('enddate','%Y-%m-%d');" /></td>
+            </tr>
+        </table>
+        <br />
+        <input type="submit" name="submit" value="Submit" />
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="task" value="showReports" />
+        <?php echo JHTML::_( 'form.token' ); ?>
+        </form>
+
+        <?php
+
         # -- Complaint Downloads --
         echo '<h3>Complaint Downloads</h3>';
+        echo '<a href="index.php?option=com_cls&amp;task=download_report&period=period">Download Selected Period</a><br />';
         echo '<a href="index.php?option=com_cls&amp;task=download_report&period=current_month">Download Current Month</a><br />';
         echo '<a href="index.php?option=com_cls&amp;task=download_report&period=prev_month">Download Previous Month</a><br />';
-        //echo '<a href="index.php?option=com_cls&amp;task=download_report&period=month">Download Month</a><br />';
         echo '<a href="index.php?option=com_cls&amp;task=download_report&period=all">Download All</a>';
         # -- End Complaint Downloads --
 
         # -- Complaint Averages --
-        $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day)");
+        $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day))");
         $complaints_received = $db->loadResult();
         $complaints_received_per_day = round($complaints_received/$statistics_period, 2);
         $db->setQuery("select count(*) from #__complaints where date_processed >= DATE_ADD(now(), interval -$statistics_period day)");
@@ -289,7 +321,7 @@ class CLSView {
         $complaints_per_day_link .= "chd=s:".self::simpleEncode($complaints_received, 0, $max).",".self::simpleEncode($complaints_processed, 0, $max).",".self::simpleEncode($complaints_resolved, 0, $max).",".self::simpleEncode($delayed_resolution, 0, $max);
 
         echo '<h3>Complaint Statistics</h3>';
-        echo '<img src="' . $complaints_per_day_link . '" alt="complaints statistics" />';
+        echo '<img src="' . $complaints_per_day_link . '" alt="complaints statistics :: drawing failed, select shorter period" />';
         # -- End Complaint Statistics --
 
         # -- Complaint Map --
