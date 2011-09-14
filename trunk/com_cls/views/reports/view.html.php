@@ -21,6 +21,7 @@ class CLSViewReports extends JView {
         }
 
         $db =& JFactory::getDBO();
+        $session =& JFactory::getSession();
         $config =& JComponentHelper::getParams('com_cls');
         $center_map = $config->get('center_map');
         $map_api_key = $config->get('map_api_key');
@@ -28,6 +29,16 @@ class CLSViewReports extends JView {
         $statistics_period = (int) $config->get('statistics_period', 20);
         $statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
         $delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
+
+        $startdate = JRequest::getCmd('startdate', $session->get('startdate', date('Y-m-d', strtotime("-$statistics_period days")), 'com_cls'));
+        $session->set('startdate', $startdate, 'com_cls');
+        $enddate = JRequest::getCmd('enddate', $session->get('enddate', date('Y-m-d'), 'com_cls'));
+        $session->set('enddate', $enddate, 'com_cls');
+
+        $this->assignRef('startdate', $startdate);
+        $this->assignRef('enddate', $enddate);
+
+        $statistics_period = (int) ((strtotime($enddate) - strtotime($startdate)) / 86400);
 
         # -- Complaints Averages --
         $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day)");
