@@ -13,6 +13,8 @@ jimport( 'joomla.application.component.view');
 
 class CLSViewComplaints extends JView {
     function display($tpl = null) {
+        CLSView::showToolbar();
+
         global $mainframe, $option;
 
         $user =& JFactory::getUser();

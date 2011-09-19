@@ -13,6 +13,8 @@ jimport( 'joomla.application.component.view');
 
 class CLSViewReports extends JView {
     function display($tpl = null) {
+        CLSView::showToolbar();
+
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Viewer');
         if($user_type != 'Viewer' and $user_type != 'Resolver' and $user_type != 'Auditor' and $user_type != 'Super User' and $user_type != 'Administrator') {
