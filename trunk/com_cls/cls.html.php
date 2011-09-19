@@ -14,16 +14,10 @@ $document->addStyleSheet(JURI::base().'administrator/templates/khepri/css/genera
 $document->addStyleSheet(JURI::base().'administrator/templates/khepri/css/rounded.css');
 $document->addStyleSheet(JURI::base().'administrator/templates/khepri/css/icon.css');
 
-echo '<div id="toolbar-box"><div class="t"><div class="t"><div class="t"></div></div></div><div class="m">';
-jimport('joomla.html.toolbar');
-$bar = & JToolBar::getInstance('toolbar');
-echo $bar->render('toolbar');
-global $mainframe;
-echo $mainframe->get('JComponentTitle');
-echo '<div class="clr"></div></div><div class="b"><div class="b"><div class="b"></div></div></div></div>';
-
 class CLSView {
     function showComplaints($rows, $pageNav, $options, $lists) {
+        self::showToolbar();
+
         $user = & JFactory::getUser();
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls', true);
@@ -193,6 +187,8 @@ class CLSView {
     }
 
     function showReports() {
+        self::showToolbar();
+
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports', true);
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
@@ -340,6 +336,8 @@ class CLSView {
     }
 
     function showNotifications($rows, $pageNav, $options, $lists) {
+        self::showToolbar();
+
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications', true);
@@ -438,6 +436,8 @@ class CLSView {
     }
 
     function showContracts($rows, $pageNav, $option, $lists) {
+        self::showToolbar();
+
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
@@ -537,6 +537,8 @@ class CLSView {
     }
 
     function showSections($rows, $pageNav, $option, $lists) {
+        self::showToolbar();
+
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
@@ -654,6 +656,8 @@ class CLSView {
     }
 
     function editComplaint($row, $lists, $user_type) {
+        self::showToolbar();
+
         //TODO: Make sure the user is authorized to view this page
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
@@ -1215,6 +1219,8 @@ class CLSView {
     }
 
     function editContract($row, $lists, $user_type) {
+        self::showToolbar();
+
         //TODO: Make sure the user is authorized to view this page
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
@@ -1291,6 +1297,8 @@ class CLSView {
     }
 
     function editSection($row, $lists, $user_type) {
+        self::showToolbar();
+
         //TODO: Make sure the user is authorized to view this page
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
@@ -1751,5 +1759,15 @@ class CLSView {
         //]]>
         </script>
         <?php
+    }
+
+    function showToolbar() {
+        echo '<div id="toolbar-box"><div class="t"><div class="t"><div class="t"></div></div></div><div class="m">';
+        jimport('joomla.html.toolbar');
+        $bar = & JToolBar::getInstance('toolbar');
+        echo $bar->render('toolbar');
+        global $mainframe;
+        echo $mainframe->get('JComponentTitle');
+        echo '<div class="clr"></div></div><div class="b"><div class="b"><div class="b"></div></div></div></div>';
     }
 }
