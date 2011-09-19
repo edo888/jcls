@@ -68,8 +68,6 @@ class CLSControllerFront extends JController {
 
         $period = JRequest::getVar('period', 'all');
 
-        http://extensions.joomla.org/about-the-jed-team
-
         $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id)';
 
         switch($period) {
