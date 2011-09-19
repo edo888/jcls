@@ -13,6 +13,8 @@ jimport( 'joomla.application.component.view');
 
 class CLSViewComplain extends JView {
     function display($tpl = null) {
+        CLSView::showToolbar();
+
         $session =& JFactory::getSession();
 
         $this->assignRef('session', $session);
