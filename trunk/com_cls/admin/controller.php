@@ -342,11 +342,21 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $doc  =& JFactory::getDocument();
 
+        $session =& JFactory::getSession();
+        $config =& JComponentHelper::getParams('com_cls');
+
+        $statistics_period = (int) $config->get('statistics_period', 20);
+        $startdate = JRequest::getCmd('startdate', $session->get('startdate', date('Y-m-d', strtotime("-$statistics_period days")), 'com_cls'));
+        $session->set('startdate', $startdate, 'com_cls');
+        $enddate = JRequest::getCmd('enddate', $session->get('enddate', date('Y-m-d'), 'com_cls'));
+        $session->set('enddate', $enddate, 'com_cls');
+
         $period = JRequest::getVar('period', 'all');
 
         $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id)';
 
         switch($period) {
+            case 'period': $query .= " where date_received >= '$startdate' and date_received <= '$enddate'"; break;
             case 'month': $query .= ' where date_received >= DATE_ADD(now(), interval -1 month)'; break;
             case 'current_month': $query .= " where date_received >= '" . date("Y-m-01") . "'"; break;
             case 'prev_month': $query .= " where date_received < '" . date("Y-m-01") . "' and date_received >= DATE_ADD('".date("Y-m-01")."', interval -1 month)"; break;
