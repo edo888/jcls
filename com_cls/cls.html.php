@@ -938,7 +938,7 @@ class CLSView {
             <tr>
                 <td class="key" valign="top">
                     <label for="path">
-                        <?php echo JText::_( 'Location' ); ?>
+                        <?php echo JText::_( 'Location where Issue was Identified' ); ?>
                     </label>
                 </td>
                 <td>
