@@ -22,6 +22,10 @@ class CLSView {
 
         $config =& JComponentHelper::getParams('com_cls');
         $raw_complaint_warning_period = (int) $config->get('raw_complaint_warning_period', 2);
+        // TODO: add check for resolved but not confirmed complaints
+        $delayed_confirmation_warning_period = (int) $config->get('delayed_confirmation_warning_period', 3);
+
+        // TODO: set separate warning periods for low, medium, high priorities
         $processed_complaint_warning_period = (int) $config->get('processed_complaint_warning_period', 4);
 
         jimport('joomla.filter.output');
