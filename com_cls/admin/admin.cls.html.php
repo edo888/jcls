@@ -22,11 +22,11 @@ class CLSView {
 
         $config =& JComponentHelper::getParams('com_cls');
         $raw_complaint_warning_period = (int) $config->get('raw_complaint_warning_period', 2);
-        // TODO: add check for resolved but not confirmed complaints
-        $delayed_confirmation_warning_period = (int) $config->get('delayed_confirmation_warning_period', 3);
 
-        // TODO: set separate warning periods for low, medium, high priorities
-        $processed_complaint_warning_period = (int) $config->get('processed_complaint_warning_period', 4);
+        // set separate warning periods for low, medium, high priorities
+        $action_period_low = (int) $config->get('action_period_low', 30);
+        $action_period_medium = (int) $config->get('action_period_medium', 10);
+        $action_period_high = (int) $config->get('action_period_high', 5);
 
         jimport('joomla.filter.output');
         ?>
@@ -109,8 +109,13 @@ class CLSView {
 
                 if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received))
                     JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not processed yet.');
-                if($row->confirmed_closed == 'N' and $row->date_processed != '' and $processed_complaint_warning_period*24*60*60 < time() - strtotime($row->date_processed))
-                    JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.');
+                if($row->confirmed_closed == 'N' and $row->date_processed != '') {
+                    switch($row->message_priority) {
+                        case 'Low': if($action_period_low*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.'); break;
+                        case 'Medium': if($action_period_medium*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.'); break;
+                        case 'High': if($action_period_high*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.'); break;
+                    }
+                }
                 ?>
                 <tr class="<?php echo "row$k"; ?>">
                     <td>
