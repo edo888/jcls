@@ -450,7 +450,22 @@ class CLSController extends JController {
         $lists['source'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Source -' ), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Email', 'value' => 'Email'), array('key' => 'Website', 'value' => 'Website'), array('key' => 'Telephone Call', 'value' => 'Telephone Call'), array('key' => 'Personal Visit', 'value' => 'Personal Visit'), array('key' => 'Field Visit by Project Staff', 'value' => 'Field Visit by Project Staff'), array('key' => 'Other', 'value' => 'Other')), 'message_source', null, 'key', 'value', $row->message_source);
 
         // priority list
-        $lists['priority'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Priority -' ), array('key' => 'Low', 'value' => 'Low'), array('key' => 'Medium', 'value' => 'Medium'), array('key' => 'High', 'value' => 'High')), 'message_priority', null, 'key', 'value', $row->message_priority);
+        //$lists['priority'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Priority -' ), array('key' => 'Low', 'value' => 'Low'), array('key' => 'Medium', 'value' => 'Medium'), array('key' => 'High', 'value' => 'High')), 'message_priority', null, 'key', 'value', $row->message_priority);
+
+        $config =& JComponentHelper::getParams('com_cls');
+        JHTML::_('behavior.tooltip');
+
+        $priority[0] = new stdClass();
+        $priority[0]->value = 'Low';
+        $priority[0]->text = JHTML::tooltip($config->get('low_priority_description', ''), JText::_('Low'), '', JText::_('Low'));
+        $priority[1] = new stdClass();
+        $priority[1]->value = 'Medium';
+        $priority[1]->text = JHTML::tooltip($config->get('medium_priority_description', ''), JText::_('Medium'), '', JText::_('Medium'));
+        $priority[2] = new stdClass();
+        $priority[2]->value = 'High';
+        $priority[2]->text = JHTML::tooltip($config->get('high_priority_description', ''), JText::_('High'), '', JText::_('High'));
+
+        $lists['priority'] = JHTML::_('select.radiolist', $priority, 'message_priority', null, 'value', 'text', $row->message_priority);
 
         // confirmed_closed list
         $lists['confirmed'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Confirmation -' ), array('key' => 'Y', 'value' => 'Yes'), array('key' => 'N', 'value' => 'No')), 'confirmed_closed', null, 'key', 'value', $row->confirmed_closed);
