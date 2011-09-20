@@ -9,11 +9,11 @@
         <param name="statistics_period" type="text" default="20" label="Statistics Period" description="Statistics period in days" size="4" />
         <param name="statistics_period_compare" type="text" default="5" label="Compare Period" description="Statistics compare period in days" size="4" />
         <param name="@spacer" type="spacer" default="" label="" description="" />
-        <param name="low_priority_description" type="text" default="Write when the complaint priority should be set to Low." label="Low Priority Description" description="" size="50" />
+        <param name="low_priority_description" type="text" default="Other issues which are not critical to the successful completion of the project." label="Low Priority Description" description="" size="50" />
         <param name="action_period_low" type="text" default="30" label="Action Period" description="Expected number of days to solve low priority complaints" size="4" />
-        <param name="medium_priority_description" type="text" default="Write when the complaint priority should be set to Medium." label="Medium Priority Description" description="" size="50" />
+        <param name="medium_priority_description" type="text" default="Issues which could potentially cause cost increases or time delays on a significant component of the project; and/or be in conflict with law." label="Medium Priority Description" description="" size="50" />
         <param name="action_period_medium" type="text" default="10" label="Action Period" description="Expected number of days to solve medium priority complaints" size="4" />
-        <param name="high_priority_description" type="text" default="Write when the complaint priority should be set to High." label="High Priority Description" description="" size="50" />
+        <param name="high_priority_description" type="text" default="Issues which potentially affect Safety at the project site, or which can cause significant Environmental Damage." label="High Priority Description" description="" size="50" />
         <param name="action_period_high" type="text" default="5" label="Action Period" description="Expected number of days to solve high priority complaints" size="4" />
         <param name="@spacer" type="spacer" default="" label="" description="" />
         <param name="raw_complaint_warning_period" type="text" default="2" label="Raw Complaint Warning Period" description="Show a warning message if a raw complaint was not processed after N days" size="4" />
