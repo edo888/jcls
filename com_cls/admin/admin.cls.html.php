@@ -85,13 +85,13 @@ class CLSView {
                         <?php echo JHTML::_('grid.sort', 'Processed', 'm.date_processed', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="6%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Editor', 'e.name', @$lists['order_Dir'], @$lists['order']); ?>
+                        <?php echo JHTML::_('grid.sort', 'Processed by', 'e.name', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="6%" align="center">
                         <?php echo JHTML::_('grid.sort', 'Resolved', 'm.date_resolved', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="6%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Resolver', 'u.name', @$lists['order_Dir'], @$lists['order']); ?>
+                        <?php echo JHTML::_('grid.sort', 'Resolved by', 'u.name', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="1%" nowrap="nowrap">
                         <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$lists['order_Dir'], @$lists['order']); ?>
@@ -973,7 +973,7 @@ class CLSView {
             <tr>
                 <td class="key">
                     <label for="path">
-                        <?php echo JText::_( 'Editor' ); ?>
+                        <?php echo JText::_( 'Processed by' ); ?>
                     </label>
                 </td>
                 <td>
@@ -1073,7 +1073,7 @@ class CLSView {
             <tr>
                 <td class="key">
                     <label for="path">
-                        <?php echo JText::_( 'Resolver' ); ?>
+                        <?php echo JText::_( 'Resolved by' ); ?>
                     </label>
                 </td>
                 <td>

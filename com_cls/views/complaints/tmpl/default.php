@@ -72,13 +72,13 @@ jimport('joomla.filter.output');
                 <?php echo JHTML::_('grid.sort', 'Processed', 'm.date_processed', @$this->lists['order_Dir'], @$this->lists['order']); ?>
             </th>
             <!--th width="6%" align="center">
-                <?php echo JHTML::_('grid.sort', 'Editor', 'e.name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+                <?php echo JHTML::_('grid.sort', 'Processed by', 'e.name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
             </th-->
             <th width="15" align="center">
                 <?php echo JHTML::_('grid.sort', 'Resolved', 'm.date_resolved', @$this->lists['order_Dir'], @$this->lists['order']); ?>
             </th>
             <!--th width="6%" align="center">
-                <?php echo JHTML::_('grid.sort', 'Resolver', 'u.name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+                <?php echo JHTML::_('grid.sort', 'Resolved by', 'u.name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
             </th-->
             <!--th width="1%" nowrap="nowrap">
                 <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$this->lists['order_Dir'], @$this->lists['order']); ?>
