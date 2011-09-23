@@ -65,6 +65,21 @@ CREATE TABLE IF NOT EXISTS `#__complaint_sections` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `#__complaint_support_groups` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(100) NOT NULL default '',
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `#__complaint_support_groups_users_map` (
+  `id` int(11) NOT NULL auto_increment,
+  `group_id` int(11) NOT NULL default 0,
+  `user_id` int(11) NOT NULL default 0,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`, `user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 INSERT INTO `#__complaint_notifications` VALUES (null, 0, 'CLS installed', now(), 'System installed or upgraded');
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_queue` (
