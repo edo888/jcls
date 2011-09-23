@@ -587,17 +587,18 @@ class CLSController extends JController {
             $cid = array( 0 );
         }
 
-        echo 'edit support group';
-
-        /*
-        $query = 'select c.* from #__complaint_sections as c where c.id = ' . $cid[0];
+        $query = 'select c.* from #__complaint_support_groups as c where c.id = ' . $cid[0];
         $db->setQuery($query);
         $row = $db->loadObject();
+
+        // TODO: use this query instead $query = "select u.id as user_id, u.name, c.id as map_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id) where u.params like '%role=Level 2%'";
+        $query = "select u.id as user_id, u.name, c.id as map_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id)";
+        $db->setQuery($query);
+        $row->users = $db->loadObjectList();
 
         $lists = array();
 
         CLSView::editSupportGroup($row, $lists, $user_type);
-        */
     }
 
     function saveComplaint() {
