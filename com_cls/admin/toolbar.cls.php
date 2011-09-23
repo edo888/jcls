@@ -14,15 +14,17 @@ switch($task) {
     case 'edit':
     case 'editContract':
     case 'editSection':
+    case 'editSupportGroup':
         $cid = JRequest::getVar('cid',array(0),'','array');
         if(!is_array($cid))
             $cid = array(0);
         TOOLBAR_CLS::_EDIT($cid[0]);
         break;
 
-    case 'add'  :
+    case 'add':
     case 'addContract':
     case 'addSection':
+    case 'addSupportGroup':
     case 'editA':
         $id = JRequest::getVar('id',0,'','int');
         TOOLBAR_CLS::_EDIT($id);
