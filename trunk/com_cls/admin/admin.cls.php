@@ -30,6 +30,7 @@ switch(JRequest::getCmd('c', 'complaints')) {
     case 'edit_section_map': $controller = new CLSController(array('default_task' => 'editSectionMap')); break;
     case 'contracts': $controller = new CLSController(array('default_task' => 'showContracts')); break;
     case 'sections': $controller = new CLSController(array('default_task' => 'showSections')); break;
+    case 'SupportGroups': $controller = new CLSController(array('default_task' => 'showSupportGroups')); break;
     default: $controller = new CLSController(array('default_task' => 'showComplaints')); break;
 }
 
