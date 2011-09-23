@@ -10,26 +10,14 @@
         <param name="organization" type="text" default="" label="Organization" description="" size="40" />
         <param name="area" type="text" default="" label="Area" description="The area of specialty" size="40" />
         <param name="telephone" type="text" default="" label="Telephone" description="The SMS notifications will be sent to it." size="40" />
-        <param name="role" type="list" default="Viewer" label="Role" description="">
-            <option value="Super User">Super User - Full access and control including deleting records</option>
-            <option value="Administrator">Administrator - Full access and control to all functionality but cannot delete</option>
-            <option value="Auditor">Auditor - Can enter data related to specific complaints</option>
-            <option value="Resolver">Resolver - People who are to follow up on messages received</option>
-            <option value="Viewer">Viewer - Can view messages and stats</option>
+        <param name="role" type="list" default="Guest" label="Roles and Responsibilities" description="">
+            <option value="System Administrator">System Administrator - Manage Users and Global Configuration</option>
+            <option value="Level 1">Level 1 - Manage complaints data and assign them to Level 2 groups</option>
+            <option value="Level 2">Level 2 - Responsible for resolving the complaints assigned by Level 1</option>
+            <option value="Supervisor">Supervisor - Can add comments and view all complaints</option>
+            <option value="Guest">Guest - Can view reports and statistics</option>
         </param>
-        <param name="receive_raw_messages" type="radio" default="0" label="Receive Raw Messages" description="The system will consider this user on random basis when sending notifications. Receiving the notification is possible if checked, but not necessary.">
-            <option value="0">No</option>
-            <option value="1">Yes</option>
-        </param>
-        <param name="receive_all_raw_messages" type="radio" default="0" label="Receive All Raw Messages" description="The system will send notification message to the user.">
-            <option value="0">No</option>
-            <option value="1">Yes</option>
-        </param>
-        <param name="receive_processed_messages" type="radio" default="0" label="Receive Processed Messages" description="The system will consider this user on random basis when sending notifications. Receiving the notification is possible if checked, but not necessary.">
-            <option value="0">No</option>
-            <option value="1">Yes</option>
-        </param>
-        <param name="receive_all_processed_messages" type="radio" default="0" label="Receive All Processed Messages" description="The system will send notification message to the user.">
+        <param name="receive_notifications" type="radio" default="1" label="Receive Notifications" description="">
             <option value="0">No</option>
             <option value="1">Yes</option>
         </param>
