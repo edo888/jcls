@@ -681,8 +681,91 @@ class CLSView {
         $config =& JComponentHelper::getParams('com_cls');
 
         jimport('joomla.filter.output');
+        ?>
+        <form action="index.php?option=com_cls" method="post" name="adminForm">
 
-        echo 'show support groups';
+        <table>
+            <tr>
+                <td align="left" width="100%">
+                    <?php echo JText::_('Filter'); ?>:
+                    <input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+                    <button onclick="this.form.submit();"><?php echo JText::_('Go'); ?></button>
+                    <button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_('Reset'); ?></button>
+                </td>
+                <td nowrap="nowrap">
+                </td>
+            </tr>
+        </table>
+
+        <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="1%" align="center">
+                        <input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
+                    </th>
+                    <th width="20%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Name', 'm.name', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="77%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Description', 'm.description', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="1%" nowrap="nowrap">
+                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($rows); $i < $n; $i++) {
+                $row = &$rows[$i];
+                JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+
+                $link        = JRoute::_('index.php?option=com_cls&task=editSupportGroup&cid[]='. $row->id);
+                $checked     = JHTML::_('grid.checkedout',$row,$i);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $pageNav->getRowOffset( $i ); ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $checked; ?>
+                    </td>
+                    <td align="center">
+                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Support Group' ); ?>">
+                            <?php echo $row->name; ?></a>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->description; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->id; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
+            <tfoot>
+                <td colspan="13">
+                    <?php echo $pageNav->getListFooter(); ?>
+                </td>
+            </tfoot>
+            </table>
+        </div>
+
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="c" value="SupportGroups" />
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="boxchecked" value="0" />
+        <input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="" />
+        <?php echo JHTML::_( 'form.token' ); ?>
+        </form>
+        <?php
     }
 
     /**

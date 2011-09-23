@@ -346,6 +346,47 @@ class CLSController extends JController {
     function showSupportGroups() {
         global $mainframe, $option;
 
+        $db               =& JFactory::getDBO();
+        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
+        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $search           = $db->getEscaped(trim(JString::strtolower($search)));
+
+        $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+
+        $where = array();
+
+        if($search)
+            $where[] = '(name LIKE "%'.$search.'%" OR description LIKE "%'.$search.'%")';
+
+        $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+        $orderby = ' ORDER BY '. $filter_order .' '. $filter_order_Dir;
+
+        $query = 'SELECT COUNT(m.id) FROM #__complaint_support_groups as m '.$where;
+        $db->setQuery($query);
+        $total = $db->loadResult();
+
+        jimport('joomla.html.pagination');
+        $pageNav = new JPagination($total,$limitstart,$limit);
+
+        $query = 'SELECT m.* FROM #__complaint_support_groups as m '.$where.' '.$orderby;
+        $db->setQuery($query, $pageNav->limitstart, $pageNav->limit);
+        $rows = $db->loadObjectList();
+        //echo $query;
+
+        if($db->getErrorNum()) {
+            echo $db->stderr();
+            return false;
+        }
+
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order']     = $filter_order;
+
+        // search filter
+        $lists['search'] = $search;
+
         CLSView::showSupportGroups($rows, $pageNav, $option, $lists);
     }
 
