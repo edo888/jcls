@@ -1529,7 +1529,6 @@ class CLSView {
         </script>
         <form action="index.php" method="post" name="adminForm">
 
-        <div class="col width-50">
         <fieldset class="adminform">
             <legend><?php echo JText::_('Details'); ?></legend>
 
@@ -1551,14 +1550,12 @@ class CLSView {
                     </label>
                 </td>
                 <td>
-                        <?php echo '<textarea name="description" id="description" cols="40" rows="5">', @$row->description, '</textarea>'; ?>
+                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @$row->description, '</textarea>'; ?>
                 </td>
             </tr>
             </table>
         </fieldset>
-        </div>
 
-        <div class="col width-50">
         <fieldset class="adminform">
             <legend><?php echo JText::_('Users'); ?></legend>
 
@@ -1571,7 +1568,7 @@ class CLSView {
                     <select multiple="multiple" size="15" class="inputbox" id="users" name="users[]">
                         <?php
                             foreach($row->users as $user) {
-                                if($user->map_id)
+                                if($user->group_id)
                                     echo '<option value="'.$user->user_id.'" selected>'.$user->name.'</option>';
                                 else
                                     echo '<option value="'.$user->user_id.'">'.$user->name.'</option>';
@@ -1582,7 +1579,6 @@ class CLSView {
             </tr>
             </table>
         </fieldset>
-        </div>
 
         <div class="clr"></div>
 
