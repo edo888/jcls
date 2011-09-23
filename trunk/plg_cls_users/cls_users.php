@@ -49,7 +49,7 @@ class  plgSystemCLS_Users extends JPlugin {
     function onAfterDispatch() {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        if($user_type != 'Super Administrator') {
+        if($user_type != 'System Administrator') {
             if(JRequest::getVar('option') != 'com_cls') {
                 JRequest::setVar('option', 'com_cls');
 
