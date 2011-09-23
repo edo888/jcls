@@ -43,6 +43,7 @@
             <menu link="option=com_cls&amp;c=notifications">Activity Log</menu>
             <menu link="option=com_cls&amp;c=Contracts">Contracts</menu>
             <menu link="option=com_cls&amp;c=Sections">Sections</menu>
+            <menu link="option=com_cls&amp;c=SupportGroups">Support Groups</menu>
         </submenu>
 
         <files folder="admin">
