@@ -17,6 +17,7 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
 
         JHTML::_('behavior.tooltip');
 
@@ -193,6 +194,7 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
 
         JHTML::_('behavior.calendar');
 
@@ -372,6 +374,7 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications', true);
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
 
         JHTML::_('behavior.tooltip');
 
@@ -470,6 +473,8 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts', true);
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+
         JHTML::_('behavior.tooltip');
 
         $config =& JComponentHelper::getParams('com_cls');
@@ -569,6 +574,8 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections', true);
+        JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+
         JHTML::_('behavior.tooltip');
 
         $config =& JComponentHelper::getParams('com_cls');
@@ -659,6 +666,23 @@ class CLSView {
         <?php echo JHTML::_( 'form.token' ); ?>
         </form>
         <?php
+    }
+
+    function showSupportGroups($rows, $pageNav, $option, $lists) {
+        JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups', true);
+
+        JHTML::_('behavior.tooltip');
+
+        $config =& JComponentHelper::getParams('com_cls');
+
+        jimport('joomla.filter.output');
+
+        echo 'show support groups';
     }
 
     /**
@@ -1394,6 +1418,9 @@ class CLSView {
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
         </form>
     <?php
+    }
+
+    function editSupportGroup($row, $lists, $user_type) {
     }
 
     function viewLocation() {

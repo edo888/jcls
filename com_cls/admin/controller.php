@@ -30,6 +30,12 @@ class CLSController extends JController {
         $this->registerTask('applySection', 'saveSection');
         $this->registerTask('removeSection', 'removeSection');
         $this->registerTask('cancelSection', 'showSections');
+        $this->registerTask('addSupportGroup' , 'editSupportGroup');
+        $this->registerTask('editSupportGroup', 'editSupportGroup');
+        $this->registerTask('saveSupportGroup', 'saveSupportGroup');
+        $this->registerTask('applySupportGroup', 'saveSupportGroup');
+        $this->registerTask('removeSupportGroup', 'removeSupportGroup');
+        $this->registerTask('cancelSupportGroup', 'showSupportGroups');
         $this->registerTask('download_report', 'downloadReport');
         $this->registerTask('notify_sms_process', 'notifySMSProcess');
         $this->registerTask('notify_email_process', 'notifyEmailProcess');
@@ -337,6 +343,12 @@ class CLSController extends JController {
         CLSView::showSections($rows, $pageNav, $option, $lists);
     }
 
+    function showSupportGroups() {
+        global $mainframe, $option;
+
+        CLSView::showSupportGroups($rows, $pageNav, $option, $lists);
+    }
+
     function downloadReport() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
@@ -520,6 +532,31 @@ class CLSController extends JController {
         $lists = array();
 
         CLSView::editSection($row, $lists, $user_type);
+    }
+
+    function editSupportGroup() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        if($this->_task == 'editSupportGroup') {
+            $cid = JRequest::getVar('cid', array(0), 'method', 'array');
+            $cid = array((int) $cid[0]);
+        } else {
+            $cid = array( 0 );
+        }
+
+        echo 'edit support group';
+
+        /*
+        $query = 'select c.* from #__complaint_sections as c where c.id = ' . $cid[0];
+        $db->setQuery($query);
+        $row = $db->loadObject();
+
+        $lists = array();
+
+        CLSView::editSupportGroup($row, $lists, $user_type);
+        */
     }
 
     function saveComplaint() {
@@ -783,6 +820,10 @@ class CLSController extends JController {
         }
     }
 
+    function saveSupportGroup() {
+        echo 'saveSupportGroup';
+    }
+
     function removeComplaint() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
@@ -838,6 +879,10 @@ class CLSController extends JController {
         } else {
             $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
         }
+    }
+
+    function removeSupportGroup() {
+        echo 'removeSupportGroup';
     }
 
     function notifySMSProcess() {
