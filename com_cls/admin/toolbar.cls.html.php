@@ -55,6 +55,17 @@ class TOOLBAR_CLS {
                 JToolBarHelper::cancel('cancelSection');
 
             JToolBarHelper::help('screen.cls.sections', true);
+        } elseif($user_type == 'System Administrator' and (JRequest::getCmd('task') == 'editSupportGroup' or JRequest::getCmd('task') == 'addSupportGroup')) {
+            JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Support Group ]</small></small>');
+            JToolBarHelper::save('saveSupportGroup');
+            if($text !== JText::_('New'))
+                JToolBarHelper::apply('applySupportGroup');
+            if($cid[0])
+                JToolBarHelper::cancel('cancelSupportGroup', 'Close');
+            else
+                JToolBarHelper::cancel('cancelSupportGroup');
+
+            JToolBarHelper::help('screen.cls.supportgroups', true);
         }
     }
 
@@ -71,6 +82,8 @@ class TOOLBAR_CLS {
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Contracts ]</small></small>');
         elseif(JRequest::getCmd('c', 'complaints') == 'sections')
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Sections ]</small></small>');
+        elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups')
+            JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Support Groups ]</small></small>');
         else
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Reports ]</small></small>');
 
@@ -92,9 +105,13 @@ class TOOLBAR_CLS {
             JToolBarHelper::editListX('editSection');
             if($user_type == 'Super User')
                 JToolBarHelper::deleteList('', 'removeSection');
+        } elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups' and $user_type == 'System Administrator') {
+            JToolBarHelper::addNewX('addSupportGroup');
+            JToolBarHelper::editListX('editSupportGroup');
+            JToolBarHelper::deleteList('', 'removeSupportGroup');
         }
 
-        if($user_type == 'Super User' and $mainframe->isAdmin())
+        if($user_type == 'System Administrator' and $mainframe->isAdmin())
             JToolBarHelper::preferences('com_cls', '550', '570', 'Settings');
 
         if(JRequest::getCmd('c', 'complaints') == 'complaints')
@@ -103,5 +120,7 @@ class TOOLBAR_CLS {
             JToolBarHelper::help('screen.cls.contracts', true);
         elseif(JRequest::getCmd('c', 'complaints') == 'sections')
             JToolBarHelper::help('screen.cls.sections', true);
+        elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups')
+            JToolBarHelper::help('screen.cls.supportgroups', true);
     }
 }
