@@ -444,7 +444,7 @@ class CLSController extends JController {
     function editComplaint() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
 
         if($this->_task == 'edit') {
             $cid = JRequest::getVar('cid', array(0), 'method', 'array');
@@ -529,7 +529,7 @@ class CLSController extends JController {
     function editContract() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
 
         if($this->_task == 'editContract') {
             $cid = JRequest::getVar('cid', array(0), 'method', 'array');
@@ -557,7 +557,7 @@ class CLSController extends JController {
     function editSection() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
 
         if($this->_task == 'editSection') {
             $cid = JRequest::getVar('cid', array(0), 'method', 'array');
@@ -591,8 +591,8 @@ class CLSController extends JController {
         $db->setQuery($query);
         $row = $db->loadObject();
 
-        // TODO: use this query instead $query = "select u.id as user_id, u.name, c.group_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id) where u.params like '%role=Level 2%'";
-        $query = "select u.id as user_id, u.name, c.group_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id)";
+        // TODO: use this query instead $query = "select u.id as user_id, u.name, c.group_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id and (c.group_id is null or c.group_id = $cid[0])) where u.params like '%role=Level 2%'";
+        $query = "select u.id as user_id, u.name, c.group_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id and (c.group_id is null or c.group_id = $cid[0]))";
         $db->setQuery($query);
         $row->users = $db->loadObjectList();
 
@@ -609,7 +609,7 @@ class CLSController extends JController {
     function saveComplaint() {
         $db =& JFactory::getDBO();
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
         $id = JRequest::getInt('id', 0);
 
         if($id == 0) { // going to insert new complaint
@@ -674,10 +674,10 @@ class CLSController extends JController {
             $complaint->set('comments', null);
             $complaint->load();
 
-            if($user_type == 'Super User') {
+            if($user_type == 'System Administrator') {
             }
 
-            if($user_type == 'Super User' or $user_type == 'Administrator') {
+            if($user_type == 'System Administrator' or $user_type == 'Administrator') {
                 $complaint->set('name', JRequest::getVar('name'));
                 $complaint->set('email', JRequest::getVar('email'));
                 $complaint->set('phone', JRequest::getVar('phone'));
@@ -690,7 +690,7 @@ class CLSController extends JController {
                 $complaint->set('resolver_id', JRequest::getInt('resolver_id'));
             }
 
-            if($user_type == 'Super User' or $user_type == 'Administrator' or $user_type == 'Auditor') {
+            if($user_type == 'System Administrator' or $user_type == 'Administrator' or $user_type == 'Auditor') {
                 if($user_type == 'Auditor')
                     $complaint->set('editor_id', $user->id);
                 $complaint->set('message_priority', JRequest::getVar('message_priority'));
@@ -740,7 +740,7 @@ class CLSController extends JController {
                 }
             }
 
-            if($user_type == 'Super User' or $user_type == 'Administrator' or $user_type == 'Resolver') {
+            if($user_type == 'System Administrator' or $user_type == 'Administrator' or $user_type == 'Resolver') {
                 if($user_type == 'Resolver')
                     $complaint->set('resolver_id', $user->id);
                 $complaint->set('resolution', JRequest::getVar('resolution'));
@@ -750,7 +750,7 @@ class CLSController extends JController {
                 }
             }
 
-            if($user_type != 'Viewer') {
+            if($user_type !='Guest') {
                 if(JRequest::getVar('comments', '') != '') { // append comment
                     $complaint->set('comments', $complaint->comments . 'On ' . date('Y-m-d H:i:s') . ' ' . $user->name . " wrote:\n" . JRequest::getVar('comments') . "\n\n");
                     clsLog('Complaint comment added', 'The user added a follow up comment on the complaint #' . $complaint->message_id);
@@ -775,7 +775,7 @@ class CLSController extends JController {
     function saveContract() {
         $db =& JFactory::getDBO();
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
         $id = JRequest::getInt('id', 0);
 
         if($id == 0) { // going to insert new contract
@@ -799,7 +799,7 @@ class CLSController extends JController {
             $contract->set('description', null);
             $contract->load();
 
-            if($user_type == 'Super User' or $user_type == 'Administrator') {
+            if($user_type == 'System Administrator' or $user_type == 'Administrator') {
                 $contract->set('name', JRequest::getVar('name'));
                 $contract->set('section_id', JRequest::getInt('section_id'));
                 $contract->set('description', JRequest::getVar('description'));
@@ -821,7 +821,7 @@ class CLSController extends JController {
     function saveSection() {
         $db =& JFactory::getDBO();
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
         $id = JRequest::getInt('id', 0);
 
         if($id == 0) { // going to insert new section
@@ -847,7 +847,7 @@ class CLSController extends JController {
             $section->set('description', null);
             $section->load();
 
-            if($user_type == 'Super User' or $user_type == 'Administrator') {
+            if($user_type == 'System Administrator' or $user_type == 'Administrator') {
                 $section->set('name', JRequest::getVar('name'));
                 $section->set('description', JRequest::getVar('description'));
                 $section->set('polyline', JRequest::getVar('polyline'));
@@ -868,7 +868,73 @@ class CLSController extends JController {
     }
 
     function saveSupportGroup() {
-        echo 'saveSupportGroup';
+        $db =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+        $id = JRequest::getInt('id', 0);
+
+        $assigned_users = JRequest::getVar('users', array(), 'default', 'array');
+        //echo '<pre>', print_r($assigned_users, true), '</pre>';
+        //exit;
+
+        if($id == 0) { // going to insert new support group
+            // constructing the section object
+            $support_group = new JTable('#__complaint_support_groups', 'id', $db);
+            $support_group->set('name', JRequest::getVar('name'));
+            $support_group->set('description', JRequest::getVar('description'));
+            $support_group->store();
+
+            $group_id = $db->insertid();
+
+            // assign users to support group
+            foreach($assigned_users as $user_id) {
+                $query = "insert into #__complaint_support_groups_users_map value(null, $group_id, $user_id)";
+                $db->setQuery($query);
+                $db->query();
+            }
+
+            // adding notification
+            clsLog('New support group', 'New support group created #' . $group_id);
+
+            $this->setRedirect('index.php?option=com_cls&c=SupportGroups', JText::_('Support Group successfully created'));
+        } else { // going to update section
+            // constructing the support group object
+            $support_group = new JTable('#__complaint_support_groups', 'id', $db);
+            $support_group->set('id', $id);
+            $support_group->set('name', null);
+            $support_group->set('description', null);
+            $support_group->load();
+
+            if($user_type == 'System Administrator') {
+                $support_group->set('name', JRequest::getVar('name'));
+                $support_group->set('description', JRequest::getVar('description'));
+
+                // storing updated data
+                $support_group->store();
+
+                // delete assigned users
+                $query = "delete from #__complaint_support_groups_users_map where group_id = $id";
+                $db->setQuery($query);
+                $db->query();
+
+                // assign users to support group
+                foreach($assigned_users as $user_id) {
+                    $query = "insert into #__complaint_support_groups_users_map value(null, $id, $user_id)";
+                    $db->setQuery($query);
+                    $db->query();
+                }
+
+                // adding notification
+                clsLog('Support Group updated', 'The user updated Support Group #' . $section->id . ' data');
+            }
+
+            if($this->_task == 'saveSupportGroup')
+                $this->setRedirect('index.php?option=com_cls&c=SupportGroups', JText::_('Support Group successfully saved'));
+            elseif($this->_task == 'applySupportGroup')
+                $this->setRedirect('index.php?option=com_cls&task=editSupportGroup&cid[]='.$id, JText::_('Support Group successfully saved'));
+            else
+                $this->setRedirect('index.php?option=com_cls', JText::_('Unknown task'));
+        }
     }
 
     function removeComplaint() {
@@ -876,7 +942,7 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
-        if($user->getParam('role', 'Viewer') == 'Super User') {
+        if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaints where id = $cid[$i]";
                 $db->setQuery($query);
@@ -895,7 +961,7 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
-        if($user->getParam('role', 'Viewer') == 'Super User') {
+        if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaint_contracts where id = $cid[$i]";
                 $db->setQuery($query);
@@ -914,7 +980,7 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
-        if($user->getParam('role', 'Viewer') == 'Super User') {
+        if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaint_sections where id = $cid[$i]";
                 $db->setQuery($query);
@@ -959,7 +1025,7 @@ class CLSController extends JController {
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
-        if($user->getParam('role', 'Viewer') != 'Viewer') {
+        if($user->getParam('role', 'Guest') !='Guest') {
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, '$user->username', '$complaint->phone', 'Thank you, your complaint #{$complaint->message_id} was processed, we will contact you soon.', now(), 'Processed')");
             $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
             clsLog('Processed notification SMSed', 'Complaint #' . $complaint->message_id . ' SMS notification has been queued to be sent to ' . $complaint->phone . ' number');
@@ -977,7 +1043,7 @@ class CLSController extends JController {
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
-        if($user->getParam('role', 'Viewer') != 'Viewer') {
+        if($user->getParam('role', 'Guest') !='Guest') {
             jimport('joomla.mail.mail');
             $mail = new JMail();
             $mail->setSender(array('no_reply@'.$_SERVER['HTTP_HOST'], 'Complaint Logging System'));
@@ -1003,7 +1069,7 @@ class CLSController extends JController {
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
-        if($user->getParam('role', 'Viewer') != 'Viewer') {
+        if($user->getParam('role', 'Guest') !='Guest') {
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, '$user->username', '$complaint->phone', 'Thank you, your complaint #{$complaint->message_id} was resolved. Feel free to send further complaints if any.', now(), 'Resolved')");
             $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
 
@@ -1023,7 +1089,7 @@ class CLSController extends JController {
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
-        if($user->getParam('role', 'Viewer') != 'Viewer') {
+        if($user->getParam('role', 'Guest') !='Guest') {
             jimport('joomla.mail.mail');
             $mail = new JMail();
             $mail->setSender(array('no_reply@'.$_SERVER['HTTP_HOST'], 'Complaint Logging System'));
@@ -1131,9 +1197,9 @@ class CLSController extends JController {
             // going to insert the picture into db
             $db =& JFactory::getDBO();
             $user =& JFactory::getUser();
-            $user_type = $user->getParam('role', 'Viewer');
+            $user_type = $user->getParam('role', 'Guest');
             $complaint_id = JRequest::getInt('id', 0);
-            if($user_type != 'Viewer') {
+            if($user_type !='Guest') {
                 $picture = new JTable('#__complaint_pictures', 'id', $db);
                 $picture->set('complaint_id', $complaint_id);
                 $picture->set('path', str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath));
