@@ -1416,6 +1416,7 @@ class CLSView {
         <div class="clr"></div>
 
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="c" value="contracts" />
         <input type="hidden" name="option" value="com_cls" />
         <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
         <input type="hidden" name="cid[]" value="<?php echo @$row->id; ?>" />
@@ -1495,6 +1496,7 @@ class CLSView {
         <div class="clr"></div>
 
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="c" value="sections" />
         <input type="hidden" name="option" value="com_cls" />
         <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
         <input type="hidden" name="cid[]" value="<?php echo @$row->id; ?>" />
@@ -1515,7 +1517,7 @@ class CLSView {
         <script language="javascript" type="text/javascript">
         function submitbutton(pressbutton) {
             var form = document.adminForm;
-            if(pressbutton == 'cancelSection') {
+            if(pressbutton == 'cancelSupportGroup') {
                 submitform(pressbutton);
                 return;
             }
@@ -1583,6 +1585,7 @@ class CLSView {
         <div class="clr"></div>
 
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="c" value="SupportGroups" />
         <input type="hidden" name="option" value="com_cls" />
         <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
         <input type="hidden" name="cid[]" value="<?php echo @$row->id; ?>" />
