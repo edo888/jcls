@@ -929,7 +929,26 @@ class CLSController extends JController {
     }
 
     function removeSupportGroup() {
-        echo 'removeSupportGroup';
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
+
+        if($user->getParam('role', 'Guest') == 'System Administrator') {
+            for($i = 0, $n = count($cid); $i < $n; $i++) {
+                $query = "delete from #__complaint_support_groups where id = $cid[$i]";
+                $db->setQuery($query);
+                $db->query();
+
+                $query = "delete from #__complaint_support_groups_users_map where group_id = $cid[$i]";
+                $db->setQuery($query);
+                $db->query();
+                clsLog('Support Group removed', 'The support group with ID=' . $cid[$i] . ' has been removed');
+            }
+
+            $this->setRedirect('index.php?option=com_cls&c=SupportGroups', JText::_('Support Group(s) successfully deleted'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
+        }
     }
 
     function notifySMSProcess() {
