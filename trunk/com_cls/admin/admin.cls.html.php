@@ -1047,6 +1047,23 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
+            <?php if(property_exists($row, 'support_group_id')): ?>
+            <tr>
+                <td class="key">
+                    <label for="path">
+                        <?php echo JText::_( 'Assign to Support Group' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                        echo @$row->support_group;
+                    else
+                        echo $lists['support_group'];
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
             <?php if(property_exists($row, 'contract_id')): ?>
             <tr>
                 <td class="key">

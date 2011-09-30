@@ -453,7 +453,7 @@ class CLSController extends JController {
             $cid = array( 0 );
         }
 
-        $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area, p.name as contract from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id) left join #__complaint_contracts as p on (c.contract_id = p.id) where c.id = ' . $cid[0];
+        $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area, p.name as contract, s.name as support_group from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id) left join #__complaint_contracts as p on (c.contract_id = p.id) left join #__complaint_support_groups as s on (c.support_group_id = s.id) where c.id = ' . $cid[0];
         $db->setQuery($query);
         $row = $db->loadObject();
 
@@ -498,6 +498,15 @@ class CLSController extends JController {
         foreach($resolvers as $r)
             $resolver[] = array('key' => $r->id, 'value' => $r->name);
         $lists['resolver'] = JHTML::_('select.genericlist', $resolver, 'resolver_id', null, 'key', 'value', $row->resolver_id);
+
+        // support groups list
+        $query = 'select * from #__complaint_support_groups';
+        $db->setQuery($query);
+        $support_groups = $db->loadObjectList();
+        $support_group[] = array('key' => '', 'value' => '- Select Support Group -');
+        foreach($support_groups as $g)
+            $support_group[] = array('key' => $g->id, 'value' => $g->name);
+        $lists['support_group'] = JHTML::_('select.genericlist', $support_group, 'support_group_id', null, 'key', 'value', $row->support_group_id);
 
         // source list
         $lists['source'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Source -' ), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Email', 'value' => 'Email'), array('key' => 'Website', 'value' => 'Website'), array('key' => 'Telephone Call', 'value' => 'Telephone Call'), array('key' => 'Personal Visit', 'value' => 'Personal Visit'), array('key' => 'Field Visit by Project Staff', 'value' => 'Field Visit by Project Staff'), array('key' => 'Other', 'value' => 'Other')), 'message_source', null, 'key', 'value', $row->message_source);
@@ -661,6 +670,7 @@ class CLSController extends JController {
             $complaint->set('raw_message', null);
             $complaint->set('processed_message', null);
             $complaint->set('contract_id', null);
+            $complaint->set('support_group_id', null);
             $complaint->set('location', null);
             $complaint->set('complaint_area_id', null);
             $complaint->set('date_received', null);
@@ -697,6 +707,7 @@ class CLSController extends JController {
                 $complaint->set('complaint_area_id', JRequest::getInt('complaint_area_id'));
                 $complaint->set('processed_message', JRequest::getVar('processed_message'));
                 $complaint->set('contract_id', JRequest::getInt('contract_id'));
+                $complaint->set('support_group_id', JRequest::getInt('support_group_id'));
                 if(JRequest::getVar('location') != '')
                     $complaint->set('location', JRequest::getVar('location'));
                 if($complaint->date_processed == '' and $complaint->processed_message != '') {

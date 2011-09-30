@@ -26,6 +26,7 @@ ALTER TABLE `#__complaints` MODIFY `message_source` ENUM('SMS', 'Email', 'Websit
 ALTER TABLE `#__complaints` ADD COLUMN `address` varchar(250) NOT NULL default '' AFTER `phone`;
 ALTER TABLE `#__complaints` ADD COLUMN `location` varchar(250) NOT NULL default '' AFTER `processed_message`;
 ALTER TABLE `#__complaints` ADD COLUMN `contract_id` int(11) NOT NULL default 0 AFTER `processed_message`;
+ALTER TABLE `#__complaints` ADD COLUMN `support_group_id` int(11) NOT NULL default 0 AFTER `contract_id`;
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
   `id` int(11) NOT NULL auto_increment,
