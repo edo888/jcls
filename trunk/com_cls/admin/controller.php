@@ -825,8 +825,7 @@ class CLSController extends JController {
             }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
-                if($user_type == 'Level 1')
-                    $complaint->set('editor_id', $user->id);
+                $complaint->set('editor_id', $user->id);
                 $complaint->set('message_priority', JRequest::getVar('message_priority'));
                 $complaint->set('complaint_area_id', JRequest::getInt('complaint_area_id'));
                 $complaint->set('processed_message', JRequest::getVar('processed_message'));
@@ -876,11 +875,10 @@ class CLSController extends JController {
             }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
-                if($user_type == 'Level 1')
-                    $complaint->set('resolver_id', $user->id);
                 $complaint->set('resolution', JRequest::getVar('resolution'));
                 if($complaint->date_resolved == '' and $complaint->resolution != '') {
                     $complaint->set('date_resolved', date('Y-m-d H:i:s'));
+                    $complaint->set('resolver_id', $user->id);
                     clsLog('Complaint resolved', 'The user resolved the complaint #' . $complaint->message_id);
                 }
             }
