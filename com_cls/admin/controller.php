@@ -84,6 +84,12 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
 
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         // for level 2 users show only complaints assigned to them
         if($user_type == 'Level 2') {
             $query = 'select group_id from #__complaint_support_groups_users_map where user_id = ' . $user->id;
@@ -156,18 +162,54 @@ class CLSController extends JController {
     }
 
     function viewLocation() {
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         CLSView::viewLocation();
     }
 
     function editLocation() {
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         CLSView::editLocation();
     }
 
     function viewSectionMap() {
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         CLSView::viewSectionMap();
     }
 
     function editSectionMap() {
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         CLSView::editSectionMap();
     }
 
@@ -177,6 +219,15 @@ class CLSController extends JController {
 
     function showNotifications() {
         global $mainframe, $option;
+
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         $db     =& JFactory::getDBO();
         $config =& JComponentHelper::getParams('com_cls');
@@ -255,6 +306,15 @@ class CLSController extends JController {
     function showContracts() {
         global $mainframe, $option;
 
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         $db               =& JFactory::getDBO();
         $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
         $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
@@ -315,6 +375,15 @@ class CLSController extends JController {
     function showSections() {
         global $mainframe, $option;
 
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         $db               =& JFactory::getDBO();
         $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
         $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
@@ -361,6 +430,15 @@ class CLSController extends JController {
 
     function showSupportGroups() {
         global $mainframe, $option;
+
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         $db               =& JFactory::getDBO();
         $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
@@ -410,6 +488,14 @@ class CLSController extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $doc  =& JFactory::getDocument();
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         $session =& JFactory::getSession();
         $config =& JComponentHelper::getParams('com_cls');
@@ -461,6 +547,12 @@ class CLSController extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         if($this->_task == 'edit') {
             $cid = JRequest::getVar('cid', array(0), 'method', 'array');
@@ -556,6 +648,12 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
 
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         if($this->_task == 'editContract') {
             $cid = JRequest::getVar('cid', array(0), 'method', 'array');
             $cid = array((int) $cid[0]);
@@ -584,6 +682,12 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
 
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         if($this->_task == 'editSection') {
             $cid = JRequest::getVar('cid', array(0), 'method', 'array');
             $cid = array((int) $cid[0]);
@@ -604,6 +708,12 @@ class CLSController extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         if($this->_task == 'editSupportGroup') {
             $cid = JRequest::getVar('cid', array(0), 'method', 'array');
@@ -636,6 +746,12 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
         $id = JRequest::getInt('id', 0);
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         if($id == 0) { // going to insert new complaint
             // generating message_id
@@ -805,6 +921,12 @@ class CLSController extends JController {
         $user_type = $user->getParam('role', 'Guest');
         $id = JRequest::getInt('id', 0);
 
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         if($id == 0) { // going to insert new contract
             // constructing the contract object
             $contract = new JTable('#__complaint_contracts', 'id', $db);
@@ -850,6 +972,12 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
         $id = JRequest::getInt('id', 0);
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         if($id == 0) { // going to insert new section
             // constructing the section object
@@ -899,6 +1027,12 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
         $id = JRequest::getInt('id', 0);
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         $assigned_users = JRequest::getVar('users', array(), 'default', 'array');
         //echo '<pre>', print_r($assigned_users, true), '</pre>';
@@ -969,6 +1103,14 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaints where id = $cid[$i]";
@@ -987,6 +1129,14 @@ class CLSController extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
@@ -1007,6 +1157,14 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
+        $user =& JFactory::getUser();
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaint_sections where id = $cid[$i]";
@@ -1025,6 +1183,14 @@ class CLSController extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
@@ -1049,6 +1215,14 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
 
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
@@ -1066,6 +1240,14 @@ class CLSController extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
@@ -1093,6 +1275,14 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
 
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
@@ -1112,6 +1302,14 @@ class CLSController extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
 
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
@@ -1135,6 +1333,15 @@ class CLSController extends JController {
     }
 
     function uploadPicture() {
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
         //import joomlas filesystem functions, we will do all the filewriting with joomlas functions,
         //so if the ftp layer is on, joomla will write with that, not the apache user, which might
         //not have the correct permissions
