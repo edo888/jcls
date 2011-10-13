@@ -809,23 +809,23 @@ class CLSController extends JController {
             $complaint->load();
 
             if($user_type == 'System Administrator') {
+                $complaint->set('ip_address', JRequest::getVar('ip_address'));
+                $complaint->set('raw_message', JRequest::getVar('raw_message'));
+                $complaint->set('message_source', JRequest::getVar('message_source'));
             }
 
-            if($user_type == 'System Administrator' or $user_type == 'Administrator') {
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
                 $complaint->set('name', JRequest::getVar('name'));
                 $complaint->set('email', JRequest::getVar('email'));
                 $complaint->set('phone', JRequest::getVar('phone'));
                 $complaint->set('address', JRequest::getVar('address'));
-                $complaint->set('ip_address', JRequest::getVar('ip_address'));
-                $complaint->set('raw_message', JRequest::getVar('raw_message'));
-                $complaint->set('message_source', JRequest::getVar('message_source'));
                 $complaint->set('confirmed_closed', JRequest::getVar('confirmed_closed'));
                 $complaint->set('editor_id', JRequest::getInt('editor_id'));
                 $complaint->set('resolver_id', JRequest::getInt('resolver_id'));
             }
 
-            if($user_type == 'System Administrator' or $user_type == 'Administrator' or $user_type == 'Auditor') {
-                if($user_type == 'Auditor')
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
+                if($user_type == 'Level 1')
                     $complaint->set('editor_id', $user->id);
                 $complaint->set('message_priority', JRequest::getVar('message_priority'));
                 $complaint->set('complaint_area_id', JRequest::getInt('complaint_area_id'));
@@ -875,8 +875,8 @@ class CLSController extends JController {
                 }
             }
 
-            if($user_type == 'System Administrator' or $user_type == 'Administrator' or $user_type == 'Resolver') {
-                if($user_type == 'Resolver')
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
+                if($user_type == 'Level 1')
                     $complaint->set('resolver_id', $user->id);
                 $complaint->set('resolution', JRequest::getVar('resolution'));
                 if($complaint->date_resolved == '' and $complaint->resolution != '') {
@@ -940,7 +940,7 @@ class CLSController extends JController {
             $contract->set('description', null);
             $contract->load();
 
-            if($user_type == 'System Administrator' or $user_type == 'Administrator') {
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
                 $contract->set('name', JRequest::getVar('name'));
                 $contract->set('section_id', JRequest::getInt('section_id'));
                 $contract->set('description', JRequest::getVar('description'));
@@ -994,7 +994,7 @@ class CLSController extends JController {
             $section->set('description', null);
             $section->load();
 
-            if($user_type == 'System Administrator' or $user_type == 'Administrator') {
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
                 $section->set('name', JRequest::getVar('name'));
                 $section->set('description', JRequest::getVar('description'));
                 $section->set('polyline', JRequest::getVar('polyline'));
@@ -1058,7 +1058,7 @@ class CLSController extends JController {
             $support_group->set('description', null);
             $support_group->load();
 
-            if($user_type == 'System Administrator') {
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
                 $support_group->set('name', JRequest::getVar('name'));
                 $support_group->set('description', JRequest::getVar('description'));
 

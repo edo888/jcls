@@ -926,7 +926,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->name;
                     else
                         echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />';
@@ -941,7 +941,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->email;
                     else
                         echo '<input class="inputbox" type="text" name="email" id="email" size="60" value="', @$row->email, '" />';
@@ -956,7 +956,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->phone;
                     else
                         echo '<input class="inputbox" type="text" name="phone" id="phone" size="60" value="', @$row->phone, '" />';
@@ -971,7 +971,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->address;
                     else
                         echo '<input class="inputbox" type="text" name="address" id="address" size="60" value="', @$row->address, '" />';
@@ -1041,7 +1041,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo '<pre>', @$row->processed_message, '</pre>';
                     else
                         echo '<textarea name="processed_message" id="processed_message" cols="80" rows="5">', @$row->processed_message, '</textarea>';
@@ -1058,7 +1058,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->support_group;
                     else
                         echo $lists['support_group'];
@@ -1075,7 +1075,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->contract;
                     else
                         echo $lists['contract'];
@@ -1092,7 +1092,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo '<a href="index.php?option=com_cls&c=view_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
                     else
                         echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&c=edit_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
@@ -1109,7 +1109,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator')
+                    if($user_type != 'System Administrator')
                         echo @$row->editor;
                     else
                         echo $lists['editor'];
@@ -1129,7 +1129,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->complaint_area;
                     else
                         echo $lists['area'];
@@ -1146,7 +1146,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->message_priority;
                     else
                         echo $lists['priority'];
@@ -1175,7 +1175,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->confirmed_closed;
                     else
                         echo $lists['confirmed'];
@@ -1192,7 +1192,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator' and $user_type != 'Auditor')
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
                         echo @$row->resolution;
                     else
                         echo '<textarea name="resolution" id="resolution" cols="80" rows="3">', @$row->resolution, '</textarea>';
@@ -1209,7 +1209,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Administrator')
+                    if($user_type != 'System Administrator')
                         echo @$row->resolver;
                     else
                         echo $lists['resolver'];
@@ -1502,7 +1502,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                        if($user_type != 'System Administrator' and $user_type != 'Administrator')
+                        if($user_type != 'System Administrator' and $user_type != 'Level 1')
                             echo '<a href="index.php?option=com_cls&c=view_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
                         else
                             echo '<input type="hidden" name="polygon" id="polygon" value="', @$row->polygon, '" /><input type="hidden" name="polyline" id="polyline" value="', @$row->polyline, '" /><a href="index.php?option=com_cls&c=edit_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( (empty($row->polygon) and empty($row->polyline)) ? 'Add a tag' : 'Edit the tag' ).'</a>';
