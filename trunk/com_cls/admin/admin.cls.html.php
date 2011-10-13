@@ -1259,7 +1259,7 @@ class CLSView {
         <div class="clr"></div>
         <?php endif; ?>
 
-        <?php if($user_type != 'Guest'): ?>
+        <?php if($user_type != 'Guest' and $user_type != 'Supervisor'): ?>
         <form id="form1" action="index.php" method="post" enctype="multipart/form-data">
         <fieldset class="adminform">
             <legend>Upload Picture</legend>
@@ -1637,7 +1637,11 @@ class CLSView {
         <script type="text/javascript">
         //<![CDATA[
             var map = new GMap2(document.getElementById("map"));
-            var myLatlng = new GLatLng(<?php echo JRequest::getVar('ll'); ?>);
+            <?php if($location != ''): ?>
+            var myLatlng = new GLatLng(<?php echo $location; ?>);
+            <?php else: ?>
+            var myLatlng = new GLatLng(<?php echo $center_map; ?>);
+            <?php endif; ?>
             map.setCenter(myLatlng, <?php echo $zoom_level; ?>);
             map.addControl(new GMapTypeControl(1));
             map.addControl(new GLargeMapControl());

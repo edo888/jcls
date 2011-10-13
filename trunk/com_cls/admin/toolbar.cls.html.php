@@ -17,13 +17,13 @@ class TOOLBAR_CLS {
 
         global $mainframe;
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
 
         if(JRequest::getCmd('task') == 'edit' or JRequest::getCmd('task') == 'add') {
             JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' ]</small></small>');
-            if($user_type != 'Viewer')
+            if($user_type != 'Guest')
                 JToolBarHelper::save();
-            if($text !== JText::_('New') and $user_type != 'Viewer' and $mainframe->isAdmin())
+            if($text !== JText::_('New') and $user_type != 'Guest' and $mainframe->isAdmin())
                 JToolBarHelper::apply();
             if($cid[0])
                 JToolBarHelper::cancel('cancel', 'Close');
@@ -33,9 +33,9 @@ class TOOLBAR_CLS {
             JToolBarHelper::help('screen.cls.new', true);
         } elseif(JRequest::getCmd('task') == 'editContract' or JRequest::getCmd('task') == 'addContract') {
             JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Contract ]</small></small>');
-            if($user_type != 'Viewer')
+            if($user_type != 'Guest' and $user_type != 'Level 2' and $user_type != 'Supervisor')
                 JToolBarHelper::save('saveContract');
-            if($text !== JText::_('New') and $user_type != 'Viewer')
+            if($text !== JText::_('New') and $user_type != 'Guest' and $user_type != 'Level 2' and $user_type != 'Supervisor')
                 JToolBarHelper::apply('applyContract');
             if($cid[0])
                 JToolBarHelper::cancel('cancelContract', 'Close');
@@ -45,9 +45,9 @@ class TOOLBAR_CLS {
             JToolBarHelper::help('screen.cls.contracts', true);
         } elseif(JRequest::getCmd('task') == 'editSection' or JRequest::getCmd('task') == 'addSection') {
             JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Section ]</small></small>');
-            if($user_type != 'Viewer')
+            if($user_type != 'Guest' and $user_type != 'Level 2' and $user_type != 'Supervisor')
                 JToolBarHelper::save('saveSection');
-            if($text !== JText::_('New') and $user_type != 'Viewer')
+            if($text !== JText::_('New') and $user_type != 'Guest' and $user_type != 'Level 2' and $user_type != 'Supervisor')
                 JToolBarHelper::apply('applySection');
             if($cid[0])
                 JToolBarHelper::cancel('cancelSection', 'Close');
@@ -72,7 +72,7 @@ class TOOLBAR_CLS {
     function _DEFAULT() {
         global $mainframe;
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
 
         if(JRequest::getCmd('c', 'complaints') == 'complaints')
             JToolBarHelper::title(JText::_('Complaints'));
@@ -88,22 +88,22 @@ class TOOLBAR_CLS {
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Reports ]</small></small>');
 
         if(JRequest::getCmd('c', 'complaints') == 'complaints' and $mainframe->isAdmin()) {
-            if($user_type == 'Super User' or $user_type == 'Admin')
+            if($user_type == 'System Administrator' or $user_type == 'Level 1')
                 JToolBarHelper::addNewX();
             JToolBarHelper::editListX();
-            if($user_type == 'Super User')
+            if($user_type == 'System Administrator')
                 JToolBarHelper::deleteList();
         } elseif(JRequest::getCmd('c', 'complaints') == 'contracts') {
-            if($user_type == 'Super User' or $user_type == 'Admin')
+            if($user_type == 'System Administrator' or $user_type == 'Level 1')
                 JToolBarHelper::addNewX('addContract');
             JToolBarHelper::editListX('editContract');
-            if($user_type == 'Super User')
+            if($user_type == 'System Administrator')
                 JToolBarHelper::deleteList('', 'removeContract');
         } elseif(JRequest::getCmd('c', 'complaints') == 'sections') {
-            if($user_type == 'Super User' or $user_type == 'Admin')
+            if($user_type == 'System Administrator' or $user_type == 'Level 1')
                 JToolBarHelper::addNewX('addSection');
             JToolBarHelper::editListX('editSection');
-            if($user_type == 'Super User')
+            if($user_type == 'System Administrator')
                 JToolBarHelper::deleteList('', 'removeSection');
         } elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups' and $user_type == 'System Administrator') {
             JToolBarHelper::addNewX('addSupportGroup');
