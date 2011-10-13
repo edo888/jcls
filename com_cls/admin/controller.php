@@ -81,8 +81,7 @@ class CLSController extends JController {
         if($search)
             $where[] = '(message_id LIKE "%'.$search.'%" OR raw_message LIKE "%'.$search.'%" OR processed_message LIKE "%'.$search.'%" OR resolution LIKE "%'.$search.'%")';
 
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -162,8 +161,7 @@ class CLSController extends JController {
     }
 
     function viewLocation() {
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -175,8 +173,7 @@ class CLSController extends JController {
     }
 
     function editLocation() {
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -188,8 +185,7 @@ class CLSController extends JController {
     }
 
     function viewSectionMap() {
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -201,8 +197,7 @@ class CLSController extends JController {
     }
 
     function editSectionMap() {
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -220,8 +215,7 @@ class CLSController extends JController {
     function showNotifications() {
         global $mainframe, $option;
 
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -306,8 +300,7 @@ class CLSController extends JController {
     function showContracts() {
         global $mainframe, $option;
 
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -375,8 +368,7 @@ class CLSController extends JController {
     function showSections() {
         global $mainframe, $option;
 
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -431,8 +423,7 @@ class CLSController extends JController {
     function showSupportGroups() {
         global $mainframe, $option;
 
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -1157,7 +1148,7 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
-        $user =& JFactory::getUser();
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -1333,8 +1324,7 @@ class CLSController extends JController {
     }
 
     function uploadPicture() {
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Guest');
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
