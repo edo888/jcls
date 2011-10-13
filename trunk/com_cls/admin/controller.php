@@ -914,7 +914,7 @@ class CLSController extends JController {
         $id = JRequest::getInt('id', 0);
 
         // guest cannot see this list
-        if($user_type == 'Guest' or $user_type == 'Supervisor') {
+        if($user_type == 'Guest' or $user_type == 'Supervisor' or $user_type == 'Level 2') {
             $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
             return;
         }
@@ -966,7 +966,7 @@ class CLSController extends JController {
         $id = JRequest::getInt('id', 0);
 
         // guest cannot see this list
-        if($user_type == 'Guest' or $user_type == 'Supervisor') {
+        if($user_type == 'Guest' or $user_type == 'Supervisor' or $user_type == 'Level 2') {
             $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
             return;
         }
@@ -1021,7 +1021,7 @@ class CLSController extends JController {
         $id = JRequest::getInt('id', 0);
 
         // guest cannot see this list
-        if($user_type == 'Guest' or $user_type == 'Supervisor') {
+        if($user_type == 'Guest' or $user_type == 'Supervisor' or $user_type == 'Level 2') {
             $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
             return;
         }
@@ -1097,12 +1097,6 @@ class CLSController extends JController {
 
         $user_type = $user->getParam('role', 'Guest');
 
-        // guest cannot see this list
-        if($user_type == 'Guest' or $user_type == 'Supervisor') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
-            return;
-        }
-
         if($user->getParam('role', 'Guest') == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaints where id = $cid[$i]";
@@ -1122,15 +1116,7 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
-        $user_type = $user->getParam('role', 'Guest');
-
-        // guest cannot see this list
-        if($user_type == 'Guest' or $user_type == 'Supervisor') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
-            return;
-        }
-
-        if($user->getParam('role', 'Guest') == 'System Administrator') {
+        if($user->getParam('role', 'Guest') == 'System Administrator' or $user->getParam('role', 'Guest') == 'Level 1') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaint_contracts where id = $cid[$i]";
                 $db->setQuery($query);
@@ -1149,15 +1135,7 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
-        $user_type = JFactory::getUser()->getParam('role', 'Guest');
-
-        // guest cannot see this list
-        if($user_type == 'Guest' or $user_type == 'Supervisor') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
-            return;
-        }
-
-        if($user->getParam('role', 'Guest') == 'System Administrator') {
+        if($user->getParam('role', 'Guest') == 'System Administrator' or $user->getParam('role', 'Guest') == 'Level 1') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaint_sections where id = $cid[$i]";
                 $db->setQuery($query);
@@ -1176,15 +1154,7 @@ class CLSController extends JController {
         $user =& JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
-        $user_type = $user->getParam('role', 'Guest');
-
-        // guest cannot see this list
-        if($user_type == 'Guest' or $user_type == 'Supervisor') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
-            return;
-        }
-
-        if($user->getParam('role', 'Guest') == 'System Administrator') {
+        if($user->getParam('role', 'Guest') == 'System Administrator' or $user->getParam('role', 'Guest') == 'Level 1') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
                 $query = "delete from #__complaint_support_groups where id = $cid[$i]";
                 $db->setQuery($query);
