@@ -105,10 +105,12 @@ class TOOLBAR_CLS {
             JToolBarHelper::editListX('editSection');
             if($user_type == 'System Administrator')
                 JToolBarHelper::deleteList('', 'removeSection');
-        } elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups' and $user_type == 'System Administrator') {
-            JToolBarHelper::addNewX('addSupportGroup');
+        } elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups') {
+            if($user_type == 'System Administrator' or $user_type == 'Level 1')
+                JToolBarHelper::addNewX('addSupportGroup');
             JToolBarHelper::editListX('editSupportGroup');
-            JToolBarHelper::deleteList('', 'removeSupportGroup');
+            if($user_type == 'System Administrator')
+                JToolBarHelper::deleteList('', 'removeSupportGroup');
         }
 
         if($user_type == 'System Administrator' and $mainframe->isAdmin())
