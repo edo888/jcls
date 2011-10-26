@@ -804,6 +804,8 @@ class CLSController extends JController {
                 $complaint->set('ip_address', JRequest::getVar('ip_address'));
                 $complaint->set('raw_message', JRequest::getVar('raw_message'));
                 $complaint->set('message_source', JRequest::getVar('message_source'));
+                $complaint->set('editor_id', JRequest::getInt('editor_id'));
+                $complaint->set('resolver_id', JRequest::getInt('resolver_id'));
             }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
@@ -812,12 +814,6 @@ class CLSController extends JController {
                 $complaint->set('phone', JRequest::getVar('phone'));
                 $complaint->set('address', JRequest::getVar('address'));
                 $complaint->set('confirmed_closed', JRequest::getVar('confirmed_closed'));
-                $complaint->set('editor_id', JRequest::getInt('editor_id'));
-                $complaint->set('resolver_id', JRequest::getInt('resolver_id'));
-            }
-
-            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
-                $complaint->set('editor_id', $user->id);
                 $complaint->set('message_priority', JRequest::getVar('message_priority'));
                 $complaint->set('complaint_area_id', JRequest::getInt('complaint_area_id'));
                 $complaint->set('processed_message', JRequest::getVar('processed_message'));
@@ -830,11 +826,20 @@ class CLSController extends JController {
 
                     clsLog('Complaint processed', 'The user processed the complaint #' . $complaint->message_id);
 
-                    // Send processed complaint notification to members
+                    // TODO: Send processed complaint notification to members
                     $config =& JComponentHelper::getParams('com_cls');
-                    $processed_message_send_count = (int) $config->get('processed_message_send_count', 3);
 
-                    $db->setQuery("(select email, name, params, rand() as r from #__users where params like '%receive_processed_messages=1%' and params not like '%receive_all_processed_messages=1%' order by r limit $processed_message_send_count) union all (select email, name, params, 1 from #__users where params like '%receive_all_processed_messages=1%')");
+                    $support_group_id = JRequest::getInt('support_group_id');
+
+                    $query = array();
+                    // Send notification to Supervisors
+                    $query[] = "(select email, name, params from #__users where params like '%receive_notifications=1%' and params like '%role=Supervisor%')";
+                    if($support_group_id)// Send notification to assagned Level 2 support groups
+                        $query[] = "(select email, name, params from #__users where params like '%receive_notifications=1%' and params like '%role=Level 2%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+
+                    $query = implode(' UNION ALL ', $query);
+
+                    $db->setQuery($query);
                     $res = $db->query();
 
                     jimport('joomla.mail.mail');
@@ -875,10 +880,53 @@ class CLSController extends JController {
                 }
             }
 
-            if($user_type !='Guest') {
+            if($user_type != 'Guest') {
                 if(JRequest::getVar('comments', '') != '') { // append comment
                     $complaint->set('comments', $complaint->comments . 'On ' . date('Y-m-d H:i:s') . ' ' . $user->name . " wrote:\n" . JRequest::getVar('comments') . "\n\n");
                     clsLog('Complaint comment added', 'The user added a follow up comment on the complaint #' . $complaint->message_id);
+
+                    $config =& JComponentHelper::getParams('com_cls');
+                    $support_group_id = JRequest::getInt('support_group_id');
+
+                    // TOOD: send notification
+                    $query = array();
+                    // Send notification to Supervisors
+                    $query[] = "(select email, name, params from #__users where params like '%receive_notifications=1%' and params like '%role=Supervisor%')";
+                    if($support_group_id)// Send notification to assagned Level 2 support groups
+                        //$query[] = "(select email, name, params from #__users where params like '%receive_notifications=1%' and params like '%role=Level 2%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+                        $query[] = "(select email, name, params from #__users where params like '%receive_notifications=1%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+
+                    $query = implode(' UNION ALL ', $query);
+
+                    $db->setQuery($query);
+                    $res = $db->query();
+
+                    jimport('joomla.mail.mail');
+                    $mail = new JMail();
+                    $mail->From = $config->get('complaints_email');
+                    $mail->FromName = 'Complaint Logging System';
+                    $mail->Subject = 'New Comment Posted: #' . $complaint->message_id;
+                    $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+                    $mail->msgHTML('<h3>New comment has been posted:</h3><pre>' . $complaint->comments . '</pre>');
+                    $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+                    while($row = mysql_fetch_array($res, MYSQL_NUM)) {
+                        if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                            $mail->AddAddress($row[0]);
+                            clsLog('New comment notification', 'Complaint #' . $complaint->message_id . ' comment notification sent to ' . $row[1]);
+                        }
+
+                        if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
+                            preg_match('/telephone=(.*)/', $row[2], $matches);
+                            if(isset($matches[1]) and $matches[1] != '') {
+                                $telephone = $matches[1];
+                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id have new comments, please login to the system to take actions.', now(), 'Pending', 'Notification')");
+                                $db->query();
+
+                                clsLog('New comment notification', 'Complaint #' . $complaint->message_id . ' comment notification sent to ' . $telephone);
+                            }
+                        }
+                    }
+                    $mail->Send();
                 }
 
                 // storing updated data
