@@ -18,8 +18,10 @@ class CLSViewComplaints extends JView {
         global $mainframe, $option;
 
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
-        if($user_type != 'Viewer' and $user_type != 'Resolver' and $user_type != 'Auditor' and $user_type != 'System Administrator' and $user_type != 'Administrator') {
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
             JError::raiseWarning(403, 'You are not authorized to view this page.');
             return;
         }
@@ -57,6 +59,19 @@ class CLSViewComplaints extends JView {
 
         if($search)
             $where[] = '(message_id LIKE "%'.$search.'%" OR raw_message LIKE "%'.$search.'%" OR processed_message LIKE "%'.$search.'%" OR resolution LIKE "%'.$search.'%")';
+
+        // for level 2 users show only complaints assigned to them
+        if($user_type == 'Level 2') {
+            $query = 'select group_id from #__complaint_support_groups_users_map where user_id = ' . $user->id;
+            $db->setQuery($query);
+            $support_groups = $db->loadObjectList();
+            $support_group_ids = array();
+            foreach($support_groups as $support_group)
+                $support_group_ids[] = $support_group->group_id;
+            $support_group_ids = implode(',', $support_group_ids);
+
+            $where[] = "m.support_group_id in ($support_group_ids)";
+        }
 
         $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
         $orderby = ' ORDER BY '. $filter_order .' '. $filter_order_Dir;

@@ -20,7 +20,7 @@ class CLSViewNewComplaint extends JView {
 
         $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Viewer');
-        if($user_type != 'Viewer' and $user_type != 'Resolver' and $user_type != 'Auditor' and $user_type != 'Super User' and $user_type != 'Administrator') {
+        if($user_type != 'System Administrator' and $user_type != 'Level 1') {
             JError::raiseWarning(403, 'You are not authorized to view this page.');
             return;
         }
