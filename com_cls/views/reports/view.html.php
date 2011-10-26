@@ -15,20 +15,14 @@ class CLSViewReports extends JView {
     function display($tpl = null) {
         CLSView::showToolbar();
 
-        $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
-        if($user_type != 'Viewer' and $user_type != 'Resolver' and $user_type != 'Auditor' and $user_type != 'Super User' and $user_type != 'Administrator') {
-            JError::raiseWarning(403, 'You are not authorized to view this page.');
-            return;
-        }
-
         $db =& JFactory::getDBO();
+        $user =& JFactory::getUser();
         $session =& JFactory::getSession();
         $config =& JComponentHelper::getParams('com_cls');
         $center_map = $config->get('center_map');
         $map_api_key = $config->get('map_api_key');
         $zoom_level = $config->get('zoom_level');
-        $statistics_period = (int) $config->get('statistics_period', 20);
+        $statistics_period = (int) $session->get('statistics_period', $config->get('statistics_period', 20));
         $statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
         $delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
 
@@ -159,7 +153,7 @@ class CLSViewReports extends JView {
         $delta = $max - $min;
         $size = strlen($simple_table) - 1;
         foreach($values as $k => $v)
-                if($v >= $min && $v <= $max)
+                if($v >= $min and $v <= $max and $delta)
                         $chardata .= $simple_table[round($size * ($v - $min) / $delta)];
                 else
                         $chardata .= '_';

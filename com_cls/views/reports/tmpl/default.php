@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.calendar');
+$user =& JFactory::getUser();
 ?>
 <h3>Statistics Period</h3>
 <form action="<?php JURI::base(true); ?>/index.php" method="post" name="adminForm">
@@ -67,7 +68,8 @@ JHTML::_('behavior.calendar');
         echo 'var point = new GLatLng('.$complaint->location.');';
         echo 'var marker = new GMarker(point, {icon: G_DEFAULT_ICON, draggable: false});';
         echo 'map.addOverlay(marker);';
-        echo 'marker.bindInfoWindowHtml(\'<b>#'.$complaint->message_id.'</b><br/><i>Status:</i> ' . ($complaint->confirmed_closed == 'Y' ? 'Resolved' : 'Open') . '<p>'.addslashes($complaint->processed_message).'</p>\');';
+        if($user->getParam('role', 'Guest') == 'System Administrator' or $user->getParam('role', 'Guest') == 'Level 1' or $user->getParam('role', 'Guest') == 'Supervisor')
+            echo 'marker.bindInfoWindowHtml(\'<b>#'.$complaint->message_id.'</b><br/><i>Status:</i> ' . ($complaint->confirmed_closed == 'Y' ? 'Resolved' : 'Open') . '<p>'.addslashes($complaint->processed_message).'</p>\');';
     }
     ?>
 //]]>
