@@ -1292,6 +1292,7 @@ class CLSView {
         </form>
         <?php endif; ?>
 
+        <?php /* TODO: change notifications, Issue 16 */ ?>
 
         <?php if(isset($row->id)): ?>
         <form action="index.php" method="post" name="notificationForm">
