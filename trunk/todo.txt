@@ -2,3 +2,7 @@
 2. check if the user should get notifications before sending them
 3. test the acknowledgment messages
 4. change the notifications form and include acknowledgment message send date and time
+
+5. Check all issues, fix and close them
+
+#. Update the documentation
