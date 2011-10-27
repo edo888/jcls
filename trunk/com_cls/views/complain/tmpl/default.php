@@ -72,10 +72,20 @@ function validate() {
             </td>
         </tr>
         <tr>
+            <td><?php echo JText::_('CLS_PREFERRED_CONTACT_QUESTION') ?>:</td>
+            <td>
+                <select name="preffered_contact">
+                    <option value="">Select contact method</option>
+                    <option value="Email">Email</option>
+                    <option value="SMS">SMS</option>
+                    <option value="Telephone Call">Telephone Call</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
             <td><?php echo JText::_('CLS_CAPTCHA') ?>:</td>
             <td><input type="text" name="captcha" size="8" maxlength="5" /> <img src="<?php echo JURI::base(true); ?>/components/com_cls/base64.php?image/gif;base64,<?php echo $this->captcha; ?>" alt="captcha" border="0" /></td>
         </tr>
-
         <tr>
             <td>&nbsp;</td>
             <td><input type="submit" value="<?php echo JText::_('CLS_SUBMIT') ?>"></td>

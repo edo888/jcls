@@ -603,6 +603,9 @@ class CLSController extends JController {
         // source list
         $lists['source'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Source -' ), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Email', 'value' => 'Email'), array('key' => 'Website', 'value' => 'Website'), array('key' => 'Telephone Call', 'value' => 'Telephone Call'), array('key' => 'Personal Visit', 'value' => 'Personal Visit'), array('key' => 'Field Visit by Project Staff', 'value' => 'Field Visit by Project Staff'), array('key' => 'Other', 'value' => 'Other')), 'message_source', null, 'key', 'value', $row->message_source);
 
+        // preferred contact list
+        $lists['preferred_contact'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Contact Method -' ), array('key' => 'Email', 'value' => 'Email'), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Telephone Call', 'value' => 'Telephone Call')), 'preferred_contact', null, 'key', 'value', $row->preferred_contact);
+
         // priority list
         //$lists['priority'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Priority -' ), array('key' => 'Low', 'value' => 'Low'), array('key' => 'Medium', 'value' => 'Medium'), array('key' => 'High', 'value' => 'High')), 'message_priority', null, 'key', 'value', $row->message_priority);
 
@@ -782,6 +785,7 @@ class CLSController extends JController {
             $complaint->set('phone', null);
             $complaint->set('address', null);
             $complaint->set('ip_address', null);
+            $complaint->set('preferred_contact', null);
             $complaint->set('editor_id', null);
             $complaint->set('raw_message', null);
             $complaint->set('processed_message', null);
@@ -813,6 +817,7 @@ class CLSController extends JController {
                 $complaint->set('email', JRequest::getVar('email'));
                 $complaint->set('phone', JRequest::getVar('phone'));
                 $complaint->set('address', JRequest::getVar('address'));
+                $complaint->set('preferred_contact', JRequest::getVar('preferred_contact'));
                 $complaint->set('confirmed_closed', JRequest::getVar('confirmed_closed'));
                 $complaint->set('message_priority', JRequest::getVar('message_priority'));
                 $complaint->set('complaint_area_id', JRequest::getInt('complaint_area_id'));
