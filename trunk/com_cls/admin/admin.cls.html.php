@@ -237,14 +237,18 @@ class CLSView {
         </form>
 
         <?php
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
 
-        # -- Complaint Downloads --
-        echo '<h3>Complaint Downloads</h3>';
-        echo '<a href="index.php?option=com_cls&amp;task=download_report&period=period">Download Selected Period</a><br />';
-        echo '<a href="index.php?option=com_cls&amp;task=download_report&period=current_month">Download Current Month</a><br />';
-        echo '<a href="index.php?option=com_cls&amp;task=download_report&period=prev_month">Download Previous Month</a><br />';
-        echo '<a href="index.php?option=com_cls&amp;task=download_report&period=all">Download All</a>';
-        # -- End Complaint Downloads --
+        // guest cannot see this list
+        if($user_type != 'Guest' and $user_type != 'Level 2') {
+            # -- Complaint Downloads --
+            echo '<h3>Complaint Downloads</h3>';
+            echo '<a href="index.php?option=com_cls&amp;task=download_report&period=period">Download Selected Period</a><br />';
+            echo '<a href="index.php?option=com_cls&amp;task=download_report&period=current_month">Download Current Month</a><br />';
+            echo '<a href="index.php?option=com_cls&amp;task=download_report&period=prev_month">Download Previous Month</a><br />';
+            echo '<a href="index.php?option=com_cls&amp;task=download_report&period=all">Download All</a>';
+            # -- End Complaint Downloads --
+        }
 
         # -- Complaint Averages --
         $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day)");

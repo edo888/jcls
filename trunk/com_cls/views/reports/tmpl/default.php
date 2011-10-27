@@ -31,11 +31,13 @@ $user =& JFactory::getUser();
 <?php echo JHTML::_( 'form.token' ); ?>
 </form>
 
+<?php if($user->getParam('role', 'Guest') != 'Guest' and $user->getParam('role', 'Guest') != 'Level 2'): ?>
 <h3>Complaint Downloads</h3>
 <a href="index.php?option=com_cls&amp;task=download_report&period=period">Download Selected Period</a><br />
 <a href="index.php?option=com_cls&amp;task=download_report&period=current_month">Download Current Month</a><br />
 <a href="index.php?option=com_cls&amp;task=download_report&period=prev_month">Download Previous Month</a><br />
 <a href="index.php?option=com_cls&amp;task=download_report&period=all">Download All</a>
+<?php endif; ?>
 
 <h3>Summary of Complaint</h3>
 <i>Complaints Received Per Day:</i> <?php echo $this->complaints_received_per_day ?> <small style="color:#cc0000;"><?php echo $this->complaints_received_growth ?></small><br />
