@@ -57,6 +57,15 @@ class CLSControllerFront extends JController {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $doc  =& JFactory::getDocument();
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest' or $user_type == 'Level 2') {
+            $this->setRedirect('index.php', JText::_("You don't have permission"));
+            return;
+        }
+
         $session =& JFactory::getSession();
         $config =& JComponentHelper::getParams('com_cls');
 
