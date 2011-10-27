@@ -993,6 +993,21 @@ class CLSView {
                     ?>
                 </td>
             </tr>
+            <tr>
+                <td width="200" class="key">
+                    <label for="alias">
+                        <?php echo JText::_( 'Preferred Contact Method' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                        echo @$row->preferred_contact;
+                    else
+                        echo $lists['preferred_contact'];
+                    ?>
+                </td>
+            </tr>
             <?php if(property_exists($row, 'date_received')): ?>
             <tr>
                 <td class="key">
