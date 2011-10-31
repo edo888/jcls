@@ -516,7 +516,16 @@ class CLSView {
                     <th width="20%" class="title">
                         <?php echo JHTML::_('grid.sort', 'Name', 'm.name', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
-                    <th width="77%" class="title">
+                    <th width="20%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Contract ID', 'm.contract_id', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="20%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Start Date', 'm.start_date', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="20%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'End Date', 'm.end_date', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="20%" class="title">
                         <?php echo JHTML::_('grid.sort', 'Section', 's.name', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="1%" nowrap="nowrap">
@@ -543,6 +552,15 @@ class CLSView {
                     <td align="center">
                         <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Contract' ); ?>">
                             <?php echo $row->name; ?></a>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->contract_id; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->start_date; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->end_date; ?>
                     </td>
                     <td align="center">
                         <?php echo $row->section_name; ?>
@@ -1427,6 +1445,46 @@ class CLSView {
                 </td>
                 <td>
                     <?php echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="200" class="key">
+                    <label for="alias">
+                        <?php echo JText::_( 'Contract ID' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="contract_id" id="contract_id" size="60" value="', @$row->contract_id, '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="200" class="key">
+                    <label for="alias">
+                        <?php echo JText::_( 'Start Date' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="start_date" id="start_date" size="60" value="', @$row->start_date, '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="200" class="key">
+                    <label for="alias">
+                        <?php echo JText::_( 'Anticipated End Date' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="end_date" id="end_date" size="60" value="', @$row->end_date, '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="key" valign="top">
+                    <label for="path">
+                        <?php echo JText::_( 'Contractor(s)' ); ?>
+                    </label>
+                </td>
+                <td>
+                        <?php echo '<textarea name="contractors" id="contractors" cols="80" rows="5">', @$row->contractors, '</textarea>'; ?>
                 </td>
             </tr>
             <tr>
