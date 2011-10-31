@@ -968,6 +968,10 @@ class CLSController extends JController {
             // constructing the contract object
             $contract = new JTable('#__complaint_contracts', 'id', $db);
             $contract->set('name', JRequest::getVar('name'));
+            $contract->set('contract_id', JRequest::getVar('contract_id'));
+            $contract->set('start_date', JRequest::getVar('start_date'));
+            $contract->set('end_date', JRequest::getVar('end_date'));
+            $contract->set('contractors', JRequest::getVar('contractors'));
             $contract->set('section_id', JRequest::getInt('section_id'));
             $contract->set('description', JRequest::getVar('description'));
             $contract->store();
@@ -981,12 +985,20 @@ class CLSController extends JController {
             $contract = new JTable('#__complaint_contracts', 'id', $db);
             $contract->set('id', $id);
             $contract->set('name', null);
+            $contract->set('contract_id', null);
+            $contract->set('start_date', null);
+            $contract->set('end_date', null);
+            $contract->set('contractors', null);
             $contract->set('section_id', null);
             $contract->set('description', null);
             $contract->load();
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
                 $contract->set('name', JRequest::getVar('name'));
+                $contract->set('contract_id', JRequest::getVar('contract_id'));
+                $contract->set('start_date', JRequest::getVar('start_date'));
+                $contract->set('end_date', JRequest::getVar('end_date'));
+                $contract->set('contractors', JRequest::getVar('contractors'));
                 $contract->set('section_id', JRequest::getInt('section_id'));
                 $contract->set('description', JRequest::getVar('description'));
 

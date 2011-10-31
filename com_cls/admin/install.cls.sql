@@ -58,6 +58,11 @@ CREATE TABLE IF NOT EXISTS `#__complaint_contracts` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+ALTER TABLE `#__complaint_contracts` ADD COLUMN `contractors` text AFTER `name`;
+ALTER TABLE `#__complaint_contracts` ADD COLUMN `end_date` datetime NOT NULL default '0000-00-00 00:00:00' AFTER `name`;
+ALTER TABLE `#__complaint_contracts` ADD COLUMN `start_date` datetime NOT NULL default '0000-00-00 00:00:00' AFTER `name`;
+ALTER TABLE `#__complaint_contracts` ADD COLUMN `contract_id` varchar(25) NOT NULL default '' AFTER `name`;
+
 CREATE TABLE IF NOT EXISTS `#__complaint_sections` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(100) NOT NULL default '',
