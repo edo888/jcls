@@ -554,6 +554,10 @@ class CLSController extends JController {
         $db->setQuery($query);
         $row->pictures = $db->loadObjectList();
 
+        $query = "SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) where m.description like '%#$row->message_id%' order by m.id desc";
+        $db->setQuery($query);
+        $row->activity_log = $db->loadObjectList();
+
         // area_id list
         $query = 'select * from #__complaint_areas';
         $db->setQuery($query);

@@ -1402,6 +1402,62 @@ class CLSView {
         <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
         </form>
         <?php endif; ?>
+
+        <?php if($user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?>
+        <fieldset class="adminform">
+            <legend><?php echo JText::_('Activity Log'); ?></legend>
+            <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('User'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Action'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Date'); ?>
+                    </th>
+                    <th width="68%" align="left">Description</th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($row->activity_log); $i < $n; $i++) {
+                $row_i = &$row->activity_log[$i];
+                JFilterOutput::objectHTMLSafe($row_i, ENT_QUOTES);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $i+1; ?>
+                    </td>
+                    <td align="center">
+                        <?php if($row_i->user_id == 0) echo 'System'; else echo $row_i->user; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->action; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->date; ?>
+                    </td>
+                    <td align="left">
+                        <?php echo $row_i->description; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
+            </table>
+        </div>
+        </fieldset>
+
+        <div class="clr"></div>
+        <?php endif; ?>
     <?php
     }
 
