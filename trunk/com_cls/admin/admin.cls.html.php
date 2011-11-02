@@ -882,7 +882,8 @@ class CLSView {
         };';
 
         //add the javascript to the head of the html document
-        $document->addScriptDeclaration($swfUploadHeadJs);
+        if(isset($row->id))
+            $document->addScriptDeclaration($swfUploadHeadJs);
 
         JHTML::_('behavior.modal');
 
@@ -1285,7 +1286,7 @@ class CLSView {
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
         </form>
 
-        <?php if(count($row->pictures)): ?>
+        <?php if(isset($row->id) and count($row->pictures)): ?>
         <fieldset class="adminform">
             <legend><?php echo JText::_('Pictures'); ?></legend>
             <?php
@@ -1296,6 +1297,7 @@ class CLSView {
         <div class="clr"></div>
         <?php endif; ?>
 
+        <?php if(isset($row->id)): ?>
         <?php if($user_type != 'Guest' and $user_type != 'Supervisor'): ?>
         <form id="form1" action="index.php" method="post" enctype="multipart/form-data">
         <fieldset class="adminform">
@@ -1308,6 +1310,7 @@ class CLSView {
                 </div>
         </fieldset>
         </form>
+        <?php endif; ?>
         <?php endif; ?>
 
         <?php /* TODO: change notifications, Issue 16 */ ?>
@@ -1458,6 +1461,7 @@ class CLSView {
         </form>
         <?php endif; ?>
 
+        <?php if(isset($row->id)): ?>
         <?php if($user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?>
         <fieldset class="adminform">
             <legend><?php echo JText::_('Activity Log'); ?></legend>
@@ -1513,6 +1517,7 @@ class CLSView {
         </fieldset>
 
         <div class="clr"></div>
+        <?php endif; ?>
         <?php endif; ?>
     <?php
     }
