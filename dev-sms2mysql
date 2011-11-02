@@ -14,6 +14,9 @@ EMAIL=complaints@test.com
 EMAIL_PASS="*****"
 DOMAIN=www.test.com
 
+# Acknowledgment config
+ACKNOWLEDGMENT_SMS="Yes"
+ACKNOWLEDGMENT_TEXT="Thank you, your complaint #%s is received. You will get further details soon."
 
 DATE=`date +"%Y-%m-%d %H:%M:%S"`
 
@@ -63,7 +66,16 @@ elif [ "$1" = "RECEIVED" ]; then
    mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaints (message_id, phone, raw_message, message_source, date_received) value('$MESSAGE_ID', '$FROM', '$TEXT', 'SMS', now());"
 
    # log
-   mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_notifications values(null, 0, 'New SMS complaint', now(), 'New SMS complaint #{$MESSAGE_ID} arrived')";
+   mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_notifications values(null, 0, 'New SMS complaint', now(), 'New SMS complaint #{$MESSAGE_ID} arrived');"
+
+   # acknowledge
+   if [ $ACKNOWLEDGMENT_SMS = "Yes" ]; then
+      ACKNOWLEDGMENT_TEXT=`echo $ACKNOWLEDGMENT_TEXT | sed -e s/\%s/"$MESSAGE_ID"/g`
+      mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_message_queue values(null, '$ID', 'CLS', '$FROM', '$ACKNOWLEDGMENT_TEXT', now(), 'Pending', 'Acknowledgment');"
+
+      # log
+      mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_notifications values(null, 0, 'SMS acknowledgment queued', now(), 'SMS acknowledgment queued to be sent to $FROM for complaint #{$MESSAGE_ID}');"
+   fi
 
    # TODO: send complaint to members
    MEMBERS=`mysql $SQL_ARGS "select email, rand() as r from ${SQL_DB_PREFIX}users where params like '%receive_raw_messages=1%' order by r limit 3;" | awk '{print $1}' | tr '\n' ','`
@@ -76,7 +88,7 @@ elif [ "$1" = "RECEIVED" ]; then
    /usr/sbin/ssmtp -au$EMAIL -ap$EMAIL_PASS -t < msg.txt
 
    # log
-   mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_notifications values(null, 0, 'New SMS complaint notification', now(), 'New SMS complaint #$MESSAGE_ID notification has been sent to $MEMBERS')";
+   mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_notifications values(null, 0, 'New SMS complaint notification', now(), 'New SMS complaint #$MESSAGE_ID notification has been sent to $MEMBERS');"
 elif [ "$1" = "REPORT" ]; then
    # Extract more data from the status report file
    #REPORT=`sed -e '1,/STATUS REPORT/d' $2`
