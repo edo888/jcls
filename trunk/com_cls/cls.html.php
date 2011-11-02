@@ -640,7 +640,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
                         echo @$row->message_source;
                     else
                         echo $lists['source'];
@@ -655,7 +655,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->name;
                     else
                         echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />';
@@ -670,7 +670,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->email;
                     else
                         echo '<input class="inputbox" type="text" name="email" id="email" size="60" value="', @$row->email, '" />';
@@ -685,7 +685,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->phone;
                     else
                         echo '<input class="inputbox" type="text" name="phone" id="phone" size="60" value="', @$row->phone, '" />';
@@ -700,7 +700,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->address;
                     else
                         echo '<input class="inputbox" type="text" name="address" id="address" size="60" value="', @$row->address, '" />';
@@ -715,7 +715,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
                         echo @$row->ip_address;
                     else
                         echo '<input class="inputbox" type="text" name="ip_address" id="ip_address" size="60" value="', @$row->ip_address, '" />';
@@ -730,7 +730,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->preferred_contact;
                     else
                         echo $lists['preferred_contact'];
@@ -757,7 +757,7 @@ class CLSView {
                 </td>
                 <td>
                         <?php
-                        if($user_type != 'System Administrator')
+                        if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
                             echo '<pre>', @$row->raw_message, '</pre>';
                         else
                             echo '<textarea name="raw_message" id="raw_message" cols="80" rows="5">', @$row->raw_message, '</textarea>';
@@ -785,7 +785,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo '<pre>', @$row->processed_message, '</pre>';
                     else
                         echo '<textarea name="processed_message" id="processed_message" cols="80" rows="5">', @$row->processed_message, '</textarea>';
@@ -802,7 +802,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->support_group;
                     else
                         echo $lists['support_group'];
@@ -819,7 +819,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->contract;
                     else
                         echo $lists['contract'];
@@ -836,7 +836,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo '<a href="index.php?option=com_cls&c=view_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
                     else
                         echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&c=edit_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
@@ -853,7 +853,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
                         echo @$row->editor;
                     else
                         echo $lists['editor'];
@@ -873,7 +873,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->complaint_area;
                     else
                         echo $lists['area'];
@@ -890,7 +890,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->message_priority;
                     else
                         echo $lists['priority'];
@@ -919,7 +919,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->confirmed_closed;
                     else
                         echo $lists['confirmed'];
@@ -936,7 +936,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator' and $user_type != 'Level 1')
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
                         echo @$row->resolution;
                     else
                         echo '<textarea name="resolution" id="resolution" cols="80" rows="3">', @$row->resolution, '</textarea>';
@@ -953,7 +953,7 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($user_type != 'System Administrator')
+                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
                         echo @$row->resolver;
                     else
                         echo $lists['resolver'];
@@ -972,7 +972,7 @@ class CLSView {
                     <?php
                         if(isset($row->comments))
                             echo '<pre>', $row->comments, '</pre>';
-                        if($user_type != 'Guest') {
+                        if($row->confirmed_closed != 'Y' and $user_type != 'Guest') {
                             echo JText::_('Add your comment here'), ':<br />';
                             echo '<textarea name="comments" id="comments" cols="80" rows="3"></textarea>';
                         }
@@ -1004,7 +1004,7 @@ class CLSView {
         <?php endif; ?>
 
         <?php if(isset($row->id)): ?>
-        <?php if($user_type != 'Guest' and $user_type != 'Supervisor'): ?>
+        <?php if($row->confirmed_closed != 'Y' and $user_type != 'Guest' and $user_type != 'Supervisor'): ?>
         <form id="form1" action="<?php echo JURI::base(true) ?>/index.php" method="post" enctype="multipart/form-data">
         <fieldset class="adminform">
             <legend>Upload Picture</legend>
