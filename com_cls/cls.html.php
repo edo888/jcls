@@ -1028,26 +1028,26 @@ class CLSView {
             <p><i>Save your changes before sending a notification.</i></p>
 
             <table class="admintable">
-            <?php if($row->phone != '' and $row->date_processed != ''): ?>
+            <?php if($row->phone != ''): ?>
             <tr>
                 <td class="key" style="width:300px;">
                     <label for="title">
-                        <?php echo JText::_( 'Send message proccess SMS notification' ); ?>
+                        <?php echo JText::_( 'Send acknowledgment notification by SMS' ); ?>
                     </label>
                 </td>
                 <td>
                 <?php
                     $db =& JFactory::getDBO();
-                    $db->setQuery("select status from #__complaint_message_queue where complaint_id = $row->id and msg_type = 'Processed'");
+                    $db->setQuery("select status from #__complaint_message_queue where complaint_id = $row->id and msg_type = 'Acknowledgment'");
                     $status = $db->loadResult();
                     if($status == '')
-                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_sms_process\';document.notificationForm.submit();">Click here</a>';
+                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_sms_acknowledge\';document.notificationForm.submit();">Click here</a>';
                     elseif($status == 'Pending' or $status == 'Outgoing')
                         echo JText::_('Message is in the queue');
                     elseif($status == 'Sent')
                         echo JText::_('Message is sent');
                     elseif($status == 'Failed')
-                        echo 'Failed to send. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_sms_process\';document.notificationForm.submit();">Click here</a> to try again.';
+                        echo 'Failed to send. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_sms_acknowledge\';document.notificationForm.submit();">Click here</a> to try again.';
                 ?>
                 </td>
             </tr>
@@ -1056,11 +1056,11 @@ class CLSView {
             <tr>
                 <td class="key" style="width:300px;">
                     <label for="title">
-                        <?php echo JText::_( 'Send message proccess Email notification' ); ?>
+                        <?php echo JText::_( 'Send acknowledgment notification by Email' ); ?>
                     </label>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_email_process';document.notificationForm.submit();">Click here</a>
+                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_email_acknowledge';document.notificationForm.submit();">Click here</a>
                 </td>
             </tr>
             <?php endif; ?>
@@ -1068,7 +1068,7 @@ class CLSView {
             <tr>
                 <td class="key" style="width:300px;">
                     <label for="title">
-                        <?php echo JText::_( 'Send resolution SMS notification' ); ?>
+                        <?php echo JText::_( 'Send resolution notification by SMS' ); ?>
                     </label>
                 </td>
                 <td>
@@ -1088,11 +1088,11 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if($row->email != ''): ?>
+            <?php if($row->email != '' and $row->date_resolved != ''): ?>
             <tr>
                 <td class="key" style="width:300px;">
                     <label for="title">
-                        <?php echo JText::_( 'Send resolution Email notification' ); ?>
+                        <?php echo JText::_( 'Send resolution notification by Email' ); ?>
                     </label>
                 </td>
                 <td>
