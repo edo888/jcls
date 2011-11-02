@@ -841,7 +841,7 @@ class CLSController extends JController {
 
                     clsLog('Complaint processed', 'The user processed the complaint #' . $complaint->message_id);
 
-                    // TODO: Send processed complaint notification to members
+                    // Send processed complaint notification to members
                     $config =& JComponentHelper::getParams('com_cls');
 
                     $support_group_id = JRequest::getInt('support_group_id');
@@ -891,7 +891,15 @@ class CLSController extends JController {
                 if($complaint->date_resolved == '' and $complaint->resolution != '') {
                     $complaint->set('date_resolved', date('Y-m-d H:i:s'));
                     $complaint->set('resolver_id', $user->id);
+
                     clsLog('Complaint resolved', 'The user resolved the complaint #' . $complaint->message_id);
+                }
+
+                // TODO: send notifications
+                if($complaint->confirmed_closed == 'Y') {
+                    // notify supervisors and level 2 group assigned to the complaint
+
+                    // send resolved complaint acknowledgment
                 }
             }
 
