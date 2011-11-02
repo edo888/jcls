@@ -588,7 +588,8 @@ class CLSView {
         };';
 
         //add the javascript to the head of the html document
-        $document->addScriptDeclaration($swfUploadHeadJs);
+        if(isset($row->id))
+            $document->addScriptDeclaration($swfUploadHeadJs);
 
         JHTML::_('behavior.modal');
 
@@ -991,7 +992,7 @@ class CLSView {
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
         </form>
 
-        <?php if(count($row->pictures)): ?>
+        <?php if(isset($row->id) and count($row->pictures)): ?>
         <fieldset class="adminform">
             <legend><?php echo JText::_('Pictures'); ?></legend>
             <?php
@@ -1002,6 +1003,7 @@ class CLSView {
         <div class="clr"></div>
         <?php endif; ?>
 
+        <?php if(isset($row->id)): ?>
         <?php if($user_type != 'Guest' and $user_type != 'Supervisor'): ?>
         <form id="form1" action="<?php echo JURI::base(true) ?>/index.php" method="post" enctype="multipart/form-data">
         <fieldset class="adminform">
@@ -1014,6 +1016,7 @@ class CLSView {
                 </div>
         </fieldset>
         </form>
+        <?php endif; ?>
         <?php endif; ?>
 
 
@@ -1097,7 +1100,68 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
+            </table><br />
+
+            <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Type'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Msg From'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Msg To'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Date'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Status'); ?>
+                    </th>
+                    <th width="49%" align="left">Msg</th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($row->notifications_queue); $i < $n; $i++) {
+                $row_i = &$row->notifications_queue[$i];
+                JFilterOutput::objectHTMLSafe($row_i, ENT_QUOTES);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $i+1; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->msg_type; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->msg_from; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->msg_to; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->date_created; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->status; ?>
+                    </td>
+                    <td align="left">
+                        <?php echo $row_i->msg; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
             </table>
+            </div>
         </fieldset>
 
         <div class="clr"></div>
@@ -1106,6 +1170,65 @@ class CLSView {
         <input type="hidden" name="option" value="com_cls" />
         <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
         </form>
+        <?php endif; ?>
+
+        <?php if(isset($row->id)): ?>
+        <?php if($user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?>
+        <fieldset class="adminform">
+            <legend><?php echo JText::_('Activity Log'); ?></legend>
+            <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('User'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Action'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Date'); ?>
+                    </th>
+                    <th width="68%" align="left">Description</th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($row->activity_log); $i < $n; $i++) {
+                $row_i = &$row->activity_log[$i];
+                JFilterOutput::objectHTMLSafe($row_i, ENT_QUOTES);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $i+1; ?>
+                    </td>
+                    <td align="center">
+                        <?php if($row_i->user_id == 0) echo 'System'; else echo $row_i->user; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->action; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->date; ?>
+                    </td>
+                    <td align="left">
+                        <?php echo $row_i->description; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
+            </table><br />
+            Login into the back-end for the full log
+        </div>
+        </fieldset>
+
+        <div class="clr"></div>
+        <?php endif; ?>
         <?php endif; ?>
     <?php
     }
