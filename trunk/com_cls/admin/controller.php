@@ -37,8 +37,8 @@ class CLSController extends JController {
         $this->registerTask('removeSupportGroup', 'removeSupportGroup');
         $this->registerTask('cancelSupportGroup', 'showSupportGroups');
         $this->registerTask('download_report', 'downloadReport');
-        $this->registerTask('notify_sms_process', 'notifySMSProcess');
-        $this->registerTask('notify_email_process', 'notifyEmailProcess');
+        $this->registerTask('notify_sms_acknowledge', 'notifySMSAcknowledge');
+        $this->registerTask('notify_email_acknowledge', 'notifyEmailAcknowledge');
         $this->registerTask('notify_sms_resolve', 'notifySMSResolve');
         $this->registerTask('notify_email_resolve', 'notifyEmailResolve');
         $this->registerTask('upload_picture', 'uploadPicture');
@@ -1239,7 +1239,7 @@ class CLSController extends JController {
         }
     }
 
-    function notifySMSProcess() {
+    function notifySMSAcknowledge() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
@@ -1255,17 +1255,21 @@ class CLSController extends JController {
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
-        if($user->getParam('role', 'Guest') !='Guest') {
-            $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, '$user->username', '$complaint->phone', 'Thank you, your complaint #{$complaint->message_id} was processed, we will contact you soon.', now(), 'Processed')");
+        $config =& JComponentHelper::getParams('com_cls');
+        $acknowledgment_text = sprintf($config->get('acknowledgment_text'), $complaint->message_id);
+
+        if($user->getParam('role', 'Guest') != 'Guest') {
+            $db->setQuery("insert into #__complaint_message_queue values(null, '$id', '$user->username', '$complaint->phone', '$acknowledgment_text', now(), 'Pending', 'Acknowledgment')");
             $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
-            clsLog('Processed notification SMSed', 'Complaint #' . $complaint->message_id . ' SMS notification has been queued to be sent to ' . $complaint->phone . ' number');
+
+            clsLog('SMS acknowledgment queued', "SMS acknowledgment queued to be sent to $complaint->phone for complaint #$complaint->message_id");
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('SMS notification will be sent shortly'));
         } else {
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('You don\'t have permission to send notifications'));
         }
     }
 
-    function notifyEmailProcess() {
+    function notifyEmailAcknowledge() {
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
@@ -1281,17 +1285,20 @@ class CLSController extends JController {
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
 
-        if($user->getParam('role', 'Guest') !='Guest') {
+        $config =& JComponentHelper::getParams('com_cls');
+        $acknowledgment_text = sprintf($config->get('acknowledgment_text'), $complaint->message_id);
+
+        if($user->getParam('role', 'Guest') != 'Guest') {
             jimport('joomla.mail.mail');
             $mail = new JMail();
             $mail->setSender(array('no_reply@'.$_SERVER['HTTP_HOST'], 'Complaint Logging System'));
-            $mail->setSubject('Complaint Processed: #'.$complaint->message_id);
+            $mail->setSubject('Complaint Received: #'.$complaint->message_id);
             $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-            $mail->MsgHTML('<p>Thank you, your complaint was processed, we will contact you soon.</p>');
+            $mail->MsgHTML("<p>$acknowledgment_text</p>");
             $mail->AddAddress($complaint->email);
             $mail->Send() or JError::raiseWarning(0, 'Unable to send Email notification');
 
-            clsLog('Processed notification emailed', 'Complaint #' . $complaint->message_id . ' email notification has been sent to ' . $complaint->email . ' address');
+            clsLog('Email acknowledgment sent', "Email acknowledgment has been sent to $complaint->email for complaint #$complaint->message_id");
 
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('Email notification successfully sent'));
         } else {

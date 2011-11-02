@@ -41,8 +41,8 @@ class CLSControllerFront extends JController {
         #$this->registerTask('removeSection', 'adminRefferenceTask');
         #$this->registerTask('cancelSection', 'adminRefferenceTask');
         #$this->registerTask('download_report', 'adminRefferenceTask');
-        $this->registerTask('notify_sms_process', 'adminRefferenceTask');
-        $this->registerTask('notify_email_process', 'adminRefferenceTask');
+        $this->registerTask('notify_sms_acknowledge', 'adminRefferenceTask');
+        $this->registerTask('notify_email_acknowledge', 'adminRefferenceTask');
         $this->registerTask('notify_sms_resolve', 'adminRefferenceTask');
         $this->registerTask('notify_email_resolve', 'adminRefferenceTask');
         $this->registerTask('upload_picture', 'adminRefferenceTask');
