@@ -77,8 +77,8 @@ elif [ "$1" = "RECEIVED" ]; then
       mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_notifications values(null, 0, 'SMS acknowledgment queued', now(), 'SMS acknowledgment queued to be sent to $FROM for complaint #{$MESSAGE_ID}');"
    fi
 
-   # TODO: send complaint to members
-   MEMBERS=`mysql $SQL_ARGS "select email, rand() as r from ${SQL_DB_PREFIX}users where params like '%receive_raw_messages=1%' order by r limit 3;" | awk '{print $1}' | tr '\n' ','`
+   # email new complaint notification to members
+   MEMBERS=`mysql $SQL_ARGS "select email from ${SQL_DB_PREFIX}users where params like '%receive_notifications=1%' and (params like '%role=Level 1%' or params like '%System Administrator%')" | tr '\n' ','`
    echo "To: $MEMBERS" > msg.txt
    echo "From: Complaint Logging System <$EMAIL>" >> msg.txt
    echo "Subject: New SMS Complaint: #$MESSAGE_ID" >> msg.txt

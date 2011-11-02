@@ -244,11 +244,10 @@ class CLSControllerFront extends JController {
         }
 
 
-        // Send raw complaint to members
+        // Send new complaint notification to members
         $config =& JComponentHelper::getParams('com_cls');
-        $raw_message_send_count = (int) $config->get('raw_message_send_count', 3);
 
-        $db->setQuery("(select email, name, params, rand() as r from #__users where params like '%receive_raw_messages=1%' and params not like '%receive_all_raw_messages=1%' order by r limit $raw_message_send_count) union all (select email, name, params, 1 from #__users where params like '%receive_all_raw_messages=1%')");
+        $db->setQuery("select email, name, params from #__users where params like '%receive_notifications=1%' and (params like '%role=System Administrator%' or params like '%role=Level 1%')");
         $res = $db->query();
 
         jimport('joomla.mail.mail');
@@ -297,10 +296,10 @@ class CLSControllerFront extends JController {
 
         if($sms_acknowledgment and $tel != '') {
             $acknowledgment_text = mysql_real_escape_string($acknowledgment_text);
-            $db->setQuery("insert into #__complaint_message_queue value(null, $complaint_id, 'CLS', '$tel', '$acknowledgment_text', now(), 'Pending', 'Notification')");
+            $db->setQuery("insert into #__complaint_message_queue value(null, $complaint_id, 'CLS', '$tel', '$acknowledgment_text', now(), 'Pending', 'Acknowledgment')");
             $db->query();
 
-            clsLog('New complaint acknowledgment', "New complaint #{$message_id} acknowledgment has been sent to $tel");
+            clsLog('SMS acknowledgment queued', "SMS acknowledgment queued to be sent to $tel for complaint #{$message_id}");
         }
 
         $this->setRedirect(JRoute::_('index.php?option=com_cls&Itemid='.JRequest::getInt('Itemid')), JText::_('COMPLAINT_FORM_SUBMIT'));
