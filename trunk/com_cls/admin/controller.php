@@ -584,7 +584,7 @@ class CLSController extends JController {
         $lists['contract'] = JHTML::_('select.genericlist', $contract, 'contract_id', null, 'key', 'value', $row->contract_id);
 
         // editor list
-        $query = 'select * from #__users where params like "%role=Auditor%" or params like "%role=Admin%" or params like "%role=Super User%"';
+        $query = 'select * from #__users where params like "%role=Level 1%" or params like "%role=System Administrator%"';
         $db->setQuery($query);
         $editors = $db->loadObjectList();
         $editor[] = array('key' => '', 'value' => '- Select Editor -');
@@ -593,7 +593,7 @@ class CLSController extends JController {
         $lists['editor'] = JHTML::_('select.genericlist', $editor, 'editor_id', null, 'key', 'value', $row->editor_id);
 
         // resolver list
-        $query = 'select * from #__users where params like "%role=Resolver%" or params like "%role=Admin%" or params like "%role=Super User%"';
+        $query = 'select * from #__users where params like "%role=Level 1%" or params like "%role=System Administrator%"';
         $db->setQuery($query);
         $resolvers = $db->loadObjectList();
         $resolver[] = array('key' => '', 'value' => '- Select Resolver -');
@@ -898,8 +898,57 @@ class CLSController extends JController {
                 // TODO: send notifications
                 if($complaint->confirmed_closed == 'Y') {
                     // notify supervisors and level 2 group assigned to the complaint
+                    $config =& JComponentHelper::getParams('com_cls');
+                    $support_group_id = JRequest::getInt('support_group_id');
+
+                    $query = array();
+                    // Send notification to Supervisors
+                    $query[] = "(select email, name, params from #__users where params like '%receive_notifications=1%' and params like '%role=Supervisor%')";
+                    // Send notification to assagned Level 2 support groups
+                    if($support_group_id)
+                        $query[] = "(select email, name, params from #__users where params like '%receive_notifications=1%' and params like '%role=Level 2%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+
+                    $query = implode(' UNION ALL ', $query);
+
+                    $db->setQuery($query);
+                    $res = $db->query();
+
+                    jimport('joomla.mail.mail');
+                    $mail = new JMail();
+                    $mail->From = $config->get('complaints_email');
+                    $mail->FromName = 'Complaint Logging System';
+                    $mail->Subject = 'Complaint resolved and closed: #' . $complaint->message_id;
+                    $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+                    $mail->msgHTML("<p>Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.</p>");
+                    $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+                    while($row = mysql_fetch_array($res, MYSQL_NUM)) {
+                        if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                            $mail->AddAddress($row[0]);
+                            clsLog('Resolved and closed notification', 'Complaint #' . $complaint->message_id . ' resolution notification has been sent to ' . $row[1]);
+                        }
+
+                        if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
+                            preg_match('/telephone=(.*)/', $row[2], $matches);
+                            if(isset($matches[1]) and $matches[1] != '') {
+                                $telephone = $matches[1];
+                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.', now(), 'Pending', 'Notification')");
+                                $db->query();
+
+                                clsLog('Resolved and closed notification', 'Complaint #' . $complaint->message_id . ' resolution notification has been sent to ' . $telephone);
+                            }
+                        }
+                    }
+                    $mail->Send();
 
                     // send resolved complaint acknowledgment
+                    JRequest::setVar('id', $complaint->id);
+                    $sms_acknowledgment = (int) $config->get('sms_acknowledgment', 0);
+                    $email_acknowledgment = (int) $config->get('email_acknowledgment', 0);
+
+                    if($sms_acknowledgment)
+                        $this->notifySMSResolve();
+                    if($email_acknowledgment)
+                        $this->notifyEmailResolve();
                 }
             }
 
@@ -1334,7 +1383,7 @@ class CLSController extends JController {
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, '$user->username', '$complaint->phone', 'Thank you, your complaint #{$complaint->message_id} was resolved. Feel free to send further complaints if any.', now(), 'Resolved')");
             $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
 
-            clsLog('Resolved notification SMSed', 'Complaint #' . $complaint->message_id . ' SMS notification has been queued to be sent to ' . $complaint->phone . ' number');
+            clsLog('SMS resolution acknowledgment queued', 'Complaint #' . $complaint->message_id . ' SMS notification has been queued to be sent to ' . $complaint->phone . ' number');
 
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('SMS notification will be sent shortly'));
         } else {
@@ -1368,7 +1417,7 @@ class CLSController extends JController {
             $mail->AddAddress($complaint->email);
             $mail->Send() or JError::raiseWarning(0, 'Unable to send Email notification');
 
-            clsLog('Resolved notification emailed', 'Complaint #' . $complaint->message_id . ' email notification has been sent to ' . $complaint->email . ' address');
+            clsLog('Email resolution acknowledgment sent', 'Complaint #' . $complaint->message_id . ' email notification has been sent to ' . $complaint->email . ' address');
 
             $this->setRedirect('index.php?option=com_cls&task=edit&cid[]='.$id, JText::_('Email notification successfully sent'));
         } else {
