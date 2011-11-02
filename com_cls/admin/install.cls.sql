@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `#__complaint_message_queue` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-ALTER TABLE `#__complaint_message_queue` MODIFY `msg_type` ENUM('Processed', 'Resolved', 'Notification') default 'Processed';
+ALTER TABLE `#__complaint_message_queue` MODIFY `msg_type` ENUM('Processed', 'Resolved', 'Notification', 'Acknowledgement') default 'Processed';
 
 CREATE TABLE IF NOT EXISTS `#__complaint_areas` (
   `id` int(11) NOT NULL auto_increment,

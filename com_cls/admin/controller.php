@@ -555,7 +555,7 @@ class CLSController extends JController {
         $row->pictures = $db->loadObjectList();
 
         // notifications queue
-        $query = "select * from #__complaint_message_queue where complaint_id = $row->id";
+        $query = "select * from #__complaint_message_queue where complaint_id = $row->id order by id desc";
         $db->setQuery($query);
         $row->notifications_queue = $db->loadObjectList();
 
@@ -936,7 +936,7 @@ class CLSController extends JController {
                             preg_match('/telephone=(.*)/', $row[2], $matches);
                             if(isset($matches[1]) and $matches[1] != '') {
                                 $telephone = $matches[1];
-                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id have new comments, please login to the system to take actions.', now(), 'Pending', 'Notification')");
+                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id got new comments, please login to the system to take actions.', now(), 'Pending', 'Notification')");
                                 $db->query();
 
                                 clsLog('New comment notification', 'Complaint #' . $complaint->message_id . ' comment notification sent to ' . $telephone);
