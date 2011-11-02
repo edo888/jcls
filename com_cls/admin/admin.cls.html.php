@@ -1405,6 +1405,9 @@ class CLSView {
                         <?php echo JText::_('NUM'); ?>
                     </th>
                     <th width="10%" align="center">
+                        <?php echo JText::_('Type'); ?>
+                    </th>
+                    <th width="10%" align="center">
                         <?php echo JText::_('Msg From'); ?>
                     </th>
                     <th width="10%" align="center">
@@ -1416,7 +1419,7 @@ class CLSView {
                     <th width="10%" align="center">
                         <?php echo JText::_('Status'); ?>
                     </th>
-                    <th width="59%" align="left">Msg</th>
+                    <th width="49%" align="left">Msg</th>
                 </tr>
             </thead>
             <?php
@@ -1428,6 +1431,9 @@ class CLSView {
                 <tr class="<?php echo "row$k"; ?>">
                     <td>
                         <?php echo $i+1; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->msg_type; ?>
                     </td>
                     <td align="center">
                         <?php echo $row_i->msg_from; ?>
