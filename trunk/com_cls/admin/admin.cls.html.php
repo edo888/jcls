@@ -1392,7 +1392,62 @@ class CLSView {
                 </td>
             </tr>
             <?php endif; ?>
+            </table><br />
+
+            <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Msg From'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Msg To'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Date'); ?>
+                    </th>
+                    <th width="10%" align="center">
+                        <?php echo JText::_('Status'); ?>
+                    </th>
+                    <th width="59%" align="left">Msg</th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($row->notifications_queue); $i < $n; $i++) {
+                $row_i = &$row->notifications_queue[$i];
+                JFilterOutput::objectHTMLSafe($row_i, ENT_QUOTES);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $i+1; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->msg_from; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->msg_to; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->date_created; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row_i->status; ?>
+                    </td>
+                    <td align="left">
+                        <?php echo $row_i->msg; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
             </table>
+            </div>
         </fieldset>
 
         <div class="clr"></div>
@@ -1452,7 +1507,8 @@ class CLSView {
                 $k = 1 - $k;
             }
             ?>
-            </table>
+            </table><br />
+            <a href="index.php?option=com_cls&c=notifications&search=<?php echo $row->message_id ?>">View full log</a>
         </div>
         </fieldset>
 
