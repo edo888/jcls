@@ -1213,8 +1213,31 @@ class CLSView {
                 </td>
                 <td>
                     <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo @$row->confirmed_closed;
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1')) {
+                        if($row->confirmed_closed == 'Y') {
+                            $difference = strtotime($row->date_closed) - strtotime($row->date_received);
+
+                            $days = floor($difference / 86400);
+                            $difference = $difference - ($days * 86400);
+
+                            $hours = floor($difference / 3600);
+                            $difference = $difference - ($hours * 3600);
+
+                            $minutes = floor($difference / 60);
+                            $difference = $difference - ($minutes * 60);
+
+                            $seconds = $difference;
+
+                            if($days > 0)
+                                $time_to_resolve = sprintf("%d %s %01d:%02d:%02d", $days, ($days == 1) ? "day" :  "days", $hours, $minutes, $seconds);
+                            else
+                                $time_to_resolve = sprintf("%01d:%02d:%02d", $hours, $minutes, $seconds);
+
+                            echo 'On ', @$row->date_closed, ' and took <b>', $time_to_resolve, '</b>';
+                        }
+                        else
+                            echo @$row->confirmed_closed;
+                    }
                     else
                         echo $lists['confirmed'];
                     ?>
