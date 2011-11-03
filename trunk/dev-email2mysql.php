@@ -207,6 +207,8 @@ if($argv[1] == 'install') {
                 unlink(dirname(__FILE__).'/'.$fileName);
             }
 
+            // TODO: send new complaint acknowlegment to complainer
+
             // send new complaint notification to members
             $res = mysql_query("select email, name, params from ".MYSQL_DB_PREFIX."users where params like '%receive_notifications=1%' and (params like '%role=Supervisor%' or params like '%role=Level 1%')");
             $mail = new PHPMailer();

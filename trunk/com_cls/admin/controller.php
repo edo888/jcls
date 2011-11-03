@@ -811,6 +811,7 @@ class CLSController extends JController {
             $complaint->set('message_source', null);
             $complaint->set('message_priority', null);
             $complaint->set('confirmed_closed', null);
+            $complaint->set('date_closed', null);
             $complaint->set('comments', null);
             $complaint->load();
 
@@ -897,6 +898,8 @@ class CLSController extends JController {
 
                 // TODO: send notifications
                 if($complaint->confirmed_closed == 'Y') {
+                    $complaint->set('date_closed', date('Y-m-d H:i:s'));
+
                     // notify supervisors and level 2 group assigned to the complaint
                     $config =& JComponentHelper::getParams('com_cls');
                     $support_group_id = JRequest::getInt('support_group_id');
