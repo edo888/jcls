@@ -15,10 +15,19 @@ class CLSViewNewComplaint extends JView {
     function display($tpl = null) {
         CLSView::showToolbar();
 
+        // authorize
+        $user =& JFactory::getUser();
+        if($user->getParam('role', '') == '') {
+            global $mainframe;
+
+            $return = JURI::base() . 'index.php?option=com_user&view=login';
+            $return .= '&return=' . base64_encode(JURI::base() . 'index.php?' . JURI::getInstance()->getQuery());
+            $mainframe->redirect($return);
+        }
+
         $session =& JFactory::getSession();
         $db      =& JFactory::getDBO();
 
-        $user =& JFactory::getUser();
         $user_type = $user->getParam('role', 'Viewer');
         if($user_type != 'System Administrator' and $user_type != 'Level 1') {
             JError::raiseWarning(403, 'You are not authorized to view this page.');

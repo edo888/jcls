@@ -9,6 +9,7 @@ define('MYSQL_DB_PREFIX', 'jos_');
 define('IMAP_MAILBOX', '{mail.test.com:110/pop3/novalidate-cert}INBOX');
 define('EMAIL_HOST', 'mail.test.com');
 define('COMPLAINTS_EMAIL', 'complaints@test.com');
+define('ACKNOWLEDGMENT_TEXT', 'Thank you, your complaint #%s is received. You will get further details soon.');
 define('EMAIL_PASS', 'password');
 define('NO_REPLY', 'no_reply@test.com');
 define('OUTGOING_PATH', 'C:\cygwin\var\spool\sms\outgoing');
@@ -207,7 +208,26 @@ if($argv[1] == 'install') {
                 unlink(dirname(__FILE__).'/'.$fileName);
             }
 
-            // TODO: send new complaint acknowlegment to complainer
+            // send new complaint acknowlegment to complainer
+            $mail = new PHPMailer();
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->Host = EMAIL_HOST;
+            $mail->Port = 25;
+            $mail->Username = COMPLAINTS_EMAIL;
+            $mail->Password = EMAIL_PASS;
+            $mail->From = COMPLAINTS_EMAIL;
+            $mail->FromName = 'Complaint Logging System';
+            $mail->Subject = 'Complaint Received: #' . $message_id;
+            $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+            $mail->msgHTML('<p>'.sprintf(ACKNOWLEDGMENT_TEXT, $message_id).'</p>');
+            $mail->AddReplyTo(NO_REPLY);
+            $mail->AddAddress($from);
+            $mail->Send();
+
+            // log
+            $query = "insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'Email acknowledgment sent', now(), 'Email acknowledgment has been sent to $from for complaint #$message_id')";
+            mysql_query($query);
 
             // send new complaint notification to members
             $res = mysql_query("select email, name, params from ".MYSQL_DB_PREFIX."users where params like '%receive_notifications=1%' and (params like '%role=Supervisor%' or params like '%role=Level 1%')");

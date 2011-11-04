@@ -812,7 +812,6 @@ class CLSView {
     }
 
     function editComplaint($row, $lists, $user_type) {
-        //TODO: Make sure the user is authorized to view this page
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
@@ -1550,7 +1549,6 @@ class CLSView {
     }
 
     function editContract($row, $lists, $user_type) {
-        //TODO: Make sure the user is authorized to view this page
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
@@ -1667,7 +1665,6 @@ class CLSView {
     }
 
     function editSection($row, $lists, $user_type) {
-        //TODO: Make sure the user is authorized to view this page
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
@@ -1747,7 +1744,6 @@ class CLSView {
     }
 
     function editSupportGroup($row, $lists, $user_type) {
-        //TODO: Make sure the user is authorized to view this page
         jimport('joomla.filter.output');
         JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
