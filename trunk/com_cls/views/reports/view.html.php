@@ -13,10 +13,20 @@ jimport( 'joomla.application.component.view');
 
 class CLSViewReports extends JView {
     function display($tpl = null) {
+
+        // authorize
+        $user =& JFactory::getUser();
+        if($user->getParam('role', '') == '') {
+            global $mainframe;
+
+            $return = JURI::base() . 'index.php?option=com_user&view=login';
+            $return .= '&return=' . base64_encode(JURI::base() . 'index.php?' . JURI::getInstance()->getQuery());
+            $mainframe->redirect($return);
+        }
+
         CLSView::showToolbar();
 
         $db =& JFactory::getDBO();
-        $user =& JFactory::getUser();
         $session =& JFactory::getSession();
         $config =& JComponentHelper::getParams('com_cls');
         $center_map = $config->get('center_map');

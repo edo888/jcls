@@ -896,7 +896,7 @@ class CLSController extends JController {
                     clsLog('Complaint resolved', 'The user resolved the complaint #' . $complaint->message_id);
                 }
 
-                // TODO: send notifications
+                // send notifications
                 if($complaint->confirmed_closed == 'Y') {
                     $complaint->set('date_closed', date('Y-m-d H:i:s'));
 

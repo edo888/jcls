@@ -17,7 +17,16 @@ class CLSViewComplaints extends JView {
 
         global $mainframe, $option;
 
+        // authorize
         $user =& JFactory::getUser();
+        if($user->getParam('role', '') == '') {
+            global $mainframe;
+
+            $return = JURI::base() . 'index.php?option=com_user&view=login';
+            $return .= '&return=' . base64_encode(JURI::base() . 'index.php?' . JURI::getInstance()->getQuery());
+            $mainframe->redirect($return);
+        }
+
         $user_type = $user->getParam('role', 'Guest');
 
         // guest cannot see this list

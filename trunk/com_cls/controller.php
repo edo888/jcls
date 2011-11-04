@@ -14,8 +14,6 @@ jimport('joomla.application.component.controller');
 require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'controller.php');
 require_once(JPATH_COMPONENT.DS.'cls.html.php');
 
-// TODO: authorize
-
 class CLSControllerFront extends JController {
     function __construct($default = array()) {
         parent::__construct($default);
@@ -167,7 +165,7 @@ class CLSControllerFront extends JController {
         // fix the odd indexing of the $_FILES['field']
         fixFilesArray($_FILES['pictures']);
 
-        foreach($_FILES['pictures'] as $file) { // TODO: upload file
+        foreach($_FILES['pictures'] as $file) { // upload file
             $fileError = $file['error'];
             if($fileError > 0)  {
                 switch ($fileError) {
@@ -308,7 +306,7 @@ class CLSControllerFront extends JController {
     function newComplaint() {
         $db =& JFactory::getDBO();
         $user =& JFactory::getUser();
-        $user_type = $user->getParam('role', 'Viewer');
+        $user_type = $user->getParam('role', 'Guest');
 
         // generating message_id
         $date = date('Y-m-d');
