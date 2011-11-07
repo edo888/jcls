@@ -265,7 +265,7 @@ class CLSControllerFront extends JController {
                 preg_match('/telephone=(.*)/', $row[2], $matches);
                 if(isset($matches[1]) and $matches[1] != '') {
                     $telephone = $matches[1];
-                    $db->setQuery("insert into #__complaint_message_queue value(null, $complaint_id, 'CLS', '$telephone', 'New complaint #{$message_id} received, please login to the system to process it.', now(), 'Pending', 'Notification')");
+                    $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($complaint_id, 'CLS', '$telephone', 'New complaint #{$message_id} received, please login to the system to process it.', now(), 'Notification')");
                     $db->query();
 
                     clsLog('New SMS complaint notification', "New complaint #{$message_id} notification has been sent to $telephone");
@@ -294,7 +294,7 @@ class CLSControllerFront extends JController {
 
         if($sms_acknowledgment and $tel != '') {
             $acknowledgment_text = mysql_real_escape_string($acknowledgment_text);
-            $db->setQuery("insert into #__complaint_message_queue value(null, $complaint_id, 'CLS', '$tel', '$acknowledgment_text', now(), 'Pending', 'Acknowledgment')");
+            $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($complaint_id, 'CLS', '$tel', '$acknowledgment_text', now(), 'Acknowledgment')");
             $db->query();
 
             clsLog('SMS acknowledgment queued', "SMS acknowledgment queued to be sent to $tel for complaint #{$message_id}");
