@@ -876,7 +876,7 @@ class CLSController extends JController {
                             preg_match('/telephone=(.*)/', $row[2], $matches);
                             if(isset($matches[1]) and $matches[1] != '') {
                                 $telephone = $matches[1];
-                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id processed, please login to the system to resolve it.', now(), 'Pending', 'Notification')");
+                                $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id processed, please login to the system to resolve it.', now(), 'Notification')");
                                 $db->query();
 
                                 clsLog('Processed notification sent', 'Complaint #' . $complaint->message_id . ' processed notification sent to ' . $telephone);
@@ -934,7 +934,7 @@ class CLSController extends JController {
                             preg_match('/telephone=(.*)/', $row[2], $matches);
                             if(isset($matches[1]) and $matches[1] != '') {
                                 $telephone = $matches[1];
-                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.', now(), 'Pending', 'Notification')");
+                                $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.', now(), 'Notification')");
                                 $db->query();
 
                                 clsLog('Resolved and closed notification', 'Complaint #' . $complaint->message_id . ' resolution notification has been sent to ' . $telephone);
@@ -996,7 +996,7 @@ class CLSController extends JController {
                             preg_match('/telephone=(.*)/', $row[2], $matches);
                             if(isset($matches[1]) and $matches[1] != '') {
                                 $telephone = $matches[1];
-                                $db->setQuery("insert into #__complaint_message_queue value(null, $id, 'CLS', '$telephone', 'Complaint #$complaint->message_id got new comments, please login to the system to take actions.', now(), 'Pending', 'Notification')");
+                                $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id got new comments, please login to the system to take actions.', now(), 'Notification')");
                                 $db->query();
 
                                 clsLog('New comment notification', 'Complaint #' . $complaint->message_id . ' comment notification sent to ' . $telephone);
@@ -1319,7 +1319,7 @@ class CLSController extends JController {
         $acknowledgment_text = sprintf($config->get('acknowledgment_text'), $complaint->message_id);
 
         if($user->getParam('role', 'Guest') != 'Guest') {
-            $db->setQuery("insert into #__complaint_message_queue values(null, '$id', '$user->username', '$complaint->phone', '$acknowledgment_text', now(), 'Pending', 'Acknowledgment')");
+            $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) values($id, '$user->username', '$complaint->phone', '$acknowledgment_text', now(), 'Acknowledgment')");
             $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
 
             clsLog('SMS acknowledgment queued', "SMS acknowledgment queued to be sent to $complaint->phone for complaint #$complaint->message_id");
