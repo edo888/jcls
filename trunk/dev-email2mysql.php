@@ -257,7 +257,7 @@ if($argv[1] == 'install') {
                     preg_match('/telephone=(.*)/', $row[2], $matches);
                     if(isset($matches[1]) and $matches[1] != '') {
                         $telephone = $matches[1];
-                        $query = "insert into ".MYSQL_DB_PREFIX."complaint_message_queue value(null, $complaint_id, 'CLS', '$telephone', 'New complaint received, please login to the system to process it.', now(), 'Pending', 'Notification')";
+                        $query = "insert into ".MYSQL_DB_PREFIX."complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($complaint_id, 'CLS', '$telephone', 'New complaint received, please login to the system to process it.', now(), 'Notification')";
                         mysql_query($query);
 
                         // log

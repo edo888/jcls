@@ -71,7 +71,7 @@ elif [ "$1" = "RECEIVED" ]; then
    # acknowledge
    if [ $ACKNOWLEDGMENT_SMS = "Yes" ]; then
       ACKNOWLEDGMENT_TEXT=`echo $ACKNOWLEDGMENT_TEXT | sed -e s/\%s/"$MESSAGE_ID"/g`
-      mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_message_queue values(null, '$ID', 'CLS', '$FROM', '$ACKNOWLEDGMENT_TEXT', now(), 'Pending', 'Acknowledgment');"
+      mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) values('$ID', 'CLS', '$FROM', '$ACKNOWLEDGMENT_TEXT', now(), 'Acknowledgment');"
 
       # log
       mysql $SQL_ARGS "insert into ${SQL_DB_PREFIX}complaint_notifications values(null, 0, 'SMS acknowledgment queued', now(), 'SMS acknowledgment queued to be sent to $FROM for complaint #{$MESSAGE_ID}');"
