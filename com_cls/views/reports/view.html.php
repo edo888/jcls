@@ -16,6 +16,7 @@ class CLSViewReports extends JView {
 
         // authorize
         $user =& JFactory::getUser();
+        /*
         if($user->getParam('role', '') == '') {
             global $mainframe;
 
@@ -23,6 +24,7 @@ class CLSViewReports extends JView {
             $return .= '&return=' . base64_encode(JURI::base() . 'index.php?' . JURI::getInstance()->getQuery());
             $mainframe->redirect($return);
         }
+        */
 
         CLSView::showToolbar();
 
