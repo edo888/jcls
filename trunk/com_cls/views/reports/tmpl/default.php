@@ -51,10 +51,11 @@ $user =& JFactory::getUser();
 <br /><small><i>The averages are based on <?php echo $this->statistics_period ?> days period data.</i></small>
 
 <h3>Complaint Statistics</h3>
-<img src="<?php echo $this->complaints_per_day_link ?>" alt="complaints statistics :: drawing failed, select shorter period" />
+<?php /*<img src="<?php echo $this->complaints_per_day_link ?>" alt="complaints statistics :: drawing failed, select shorter period" /> */ ?>
+<div id="container" style="width:740px;height:350px;"></div>
 
 <h3>Complaint Map</h3>
-<div id="map" style="width:900px;height:500px;"></div>
+<div id="map" style="width:740px;height:350px;"></div>
 <script type="text/javascript">
 //<![CDATA[
     var map = new GMap2(document.getElementById("map"));
