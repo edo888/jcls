@@ -337,12 +337,14 @@ class CLSView {
         $complaints_per_day_link .= "chd=s:".self::simpleEncode($complaints_received, 0, $max).",".self::simpleEncode($complaints_processed, 0, $max).",".self::simpleEncode($complaints_resolved, 0, $max).",".self::simpleEncode($delayed_resolution, 0, $max);
 
         echo '<h3>Complaint Statistics</h3>';
-        echo '<img src="' . $complaints_per_day_link . '" alt="complaints statistics :: drawing failed, select shorter period" />';
+        //echo '<img src="' . $complaints_per_day_link . '" alt="complaints statistics :: drawing failed, select shorter period" />';
+        $document =& JFactory::getDocument();
+        $document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
+        echo '<div id="container" style="width:800px;height:400px;margin:0 auto;"></div>';
         # -- End Complaint Statistics --
 
         # -- Complaint Map --
         echo '<h3>Complaint Map</h3>';
-        $document =& JFactory::getDocument();
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
         $db->setQuery("select * from #__complaints where location != '' and date_received >= DATE_ADD(now(), interval -$statistics_period day)");
         $complaints = $db->loadObjectList();
