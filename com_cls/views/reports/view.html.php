@@ -89,28 +89,28 @@ class CLSViewReports extends JView {
         $received = $db->loadObjectList();
         $complaints_received = $dates;
         foreach($received as $complaint)
-            $complaints_received[$complaint->date] = $complaint->count;
+            $complaints_received[$complaint->date] = (int) $complaint->count;
         //echo '<pre>', print_r($complaints_received, true), '</pre>';
 
         $db->setQuery("select count(*) as count, date_format(date_processed, '%b %e') as date from #__complaints where date_processed >= DATE_ADD(now(), interval -$statistics_period day) group by date order by date_processed");
         $processed = $db->loadObjectList();
         $complaints_processed = $dates;
         foreach($processed as $complaint)
-            $complaints_processed[$complaint->date] = $complaint->count;
+            $complaints_processed[$complaint->date] = (int) $complaint->count;
         //echo '<pre>', print_r($complaints_processed, true), '</pre>';
 
         $db->setQuery("select count(*) as count, date_format(date_resolved, '%b %e') as date from #__complaints where date_resolved >= DATE_ADD(now(), interval -$statistics_period day) group by date order by date_resolved");
         $resolved = $db->loadObjectList();
         $complaints_resolved = $dates;
         foreach($resolved as $complaint)
-            $complaints_resolved[$complaint->date] = $complaint->count;
+            $complaints_resolved[$complaint->date] = (int) $complaint->count;
         //echo '<pre>', print_r($complaints_resolved, true), '</pre>';
 
         for($i = 0, $time = strtotime("-$statistics_period days"); $time < time() + 86400; $i++, $time = strtotime("-$statistics_period days +$i days")) {
             $date = date('Y-m-d', $time);
             $key = date('M j', $time);
             $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD('$date', interval -" . ($delayed_resolution_period + $statistics_period) . " day)and date_received <= '$date' and ((date_resolved is not null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= date_resolved) or (date_resolved is null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$date'))");
-            $delayed_resolution[$key] = $db->loadResult();
+            $delayed_resolution[$key] = (int) $db->loadResult();
         }
         //echo '<pre>', print_r($delayed_resolution, true), '</pre>';
 
@@ -118,9 +118,18 @@ class CLSViewReports extends JView {
         $max = ceil($max/5)*5;
         //echo 'Max: ', $max;
 
-        $x_axis  = implode('|', array_keys($dates));
-        $y_axis  = implode('|', range(0, $max, $max/5));
+        //$x_axis  = implode('|', array_keys($dates));
+        //$y_axis  = implode('|', range(0, $max, $max/5));
 
+        $x_axis  = json_encode(array_keys($dates));
+        //$y_axis  = json_encode(range(0, $max, $max/5));
+
+        $y_complaints_received = json_encode(array_values($complaints_received));
+        $y_complaints_processed = json_encode(array_values($complaints_processed));
+        $y_complaints_resolved = json_encode(array_values($complaints_resolved));
+        $y_complaints_delayed = json_encode(array_values($delayed_resolution));
+
+        /*
         $complaints_per_day_link  = "http://chart.apis.google.com/chart?chs=900x330&amp;";
         $complaints_per_day_link .= "cht=lc&amp;";
         $complaints_per_day_link .= "chdl=Complaints Received|Complaints Processed|Complaints Resolved|Delayed Resolution&amp;";
@@ -129,10 +138,77 @@ class CLSViewReports extends JView {
         $complaints_per_day_link .= "chxt=x,y&amp;";
         $complaints_per_day_link .= "chxl=0:|".$x_axis."|1:|".$y_axis."&amp;";
         $complaints_per_day_link .= "chd=s:".self::simpleEncode($complaints_received, 0, $max).",".self::simpleEncode($complaints_processed, 0, $max).",".self::simpleEncode($complaints_resolved, 0, $max).",".self::simpleEncode($delayed_resolution, 0, $max);
+        */
+
+        $document =& JFactory::getDocument();
+        $document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
+        $document->addScript('http://jcls.googlecode.com/svn/trunk/assets/js/highcharts.js');
+
+        $complaints_js = <<< EOT
+jQuery.noConflict();
+var chart;
+jQuery(document).ready(function() {
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            type: 'line',
+            marginRight: 130,
+            marginBottom: 25
+        },
+        title: {
+            text: 'Complaint Statistics',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: $x_axis
+        },
+        yAxis: {
+            title: {
+                text: 'Count'
+            },
+            allowDecimals: false,
+            min: 0,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                    this.x +': '+ this.y;
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'top',
+            x: -10,
+            y: 100,
+            borderWidth: 0
+        },
+        series: [{
+            name: 'Received',
+            data: $y_complaints_received
+        }, {
+            name: 'Processed',
+            data: $y_complaints_processed
+        }, {
+            name: 'Resolved',
+            data: $y_complaints_resolved
+        }, {
+            name: 'Delayed',
+            data: $y_complaints_delayed
+        }]
+    });
+});
+EOT;
+
+        $document->addScriptDeclaration($complaints_js);
         # -- End Complaints Statistics --
 
         # -- Complaints Map --
-        $document =& JFactory::getDocument();
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
         $db->setQuery("select * from #__complaints where location != '' and date_received >= DATE_ADD(now(), interval -$statistics_period day)");
         $complaints = $db->loadObjectList();
