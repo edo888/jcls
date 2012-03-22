@@ -1662,7 +1662,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                    <?php echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />'; ?>
+                    <?php echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @JRequest::getVar('name', $row->name), '" />'; ?>
                 </td>
             </tr>
             <tr>
@@ -1672,7 +1672,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                    <?php echo '<input class="inputbox" type="text" name="contract_id" id="contract_id" size="60" value="', @$row->contract_id, '" />'; ?>
+                    <?php echo '<input class="inputbox" type="text" name="contract_id" id="contract_id" size="60" value="', @JRequest::getVar('contract_id', $row->contract_id), '" />'; ?>
                 </td>
             </tr>
             <tr>
@@ -1682,7 +1682,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                    <?php echo '<input class="inputbox" type="text" name="start_date" id="start_date" size="60" value="', @$row->start_date, '" />'; ?>
+                    <?php echo '<input class="inputbox" type="text" name="start_date" id="start_date" size="60" value="', @JRequest::getVar('start_date', $row->start_date), '" />'; ?>
                 </td>
             </tr>
             <tr>
@@ -1692,7 +1692,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                    <?php echo '<input class="inputbox" type="text" name="end_date" id="end_date" size="60" value="', @$row->end_date, '" />'; ?>
+                    <?php echo '<input class="inputbox" type="text" name="end_date" id="end_date" size="60" value="', @JRequest::getVar('end_date', $row->end_date), '" />'; ?>
                 </td>
             </tr>
             <tr>
@@ -1702,7 +1702,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                        <?php echo '<textarea name="contractors" id="contractors" cols="80" rows="5">', @$row->contractors, '</textarea>'; ?>
+                        <?php echo '<textarea name="contractors" id="contractors" cols="80" rows="5">', @JRequest::getVar('contractors', $row->contractors), '</textarea>'; ?>
                 </td>
             </tr>
             <tr>
@@ -1722,7 +1722,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @$row->description, '</textarea>'; ?>
+                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @JRequest::getVar('description', $row->description), '</textarea>'; ?>
                 </td>
             </tr>
             </table>
@@ -1776,7 +1776,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                    <?php echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />'; ?>
+                    <?php echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @JRequest::getVar('name', $row->name), '" />'; ?>
                 </td>
             </tr>
             <tr>
@@ -1786,7 +1786,7 @@ EOT;
                     </label>
                 </td>
                 <td>
-                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @$row->description, '</textarea>'; ?>
+                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @JRequest::getVar('description', $row->description), '</textarea>'; ?>
                 </td>
             </tr>
             <tr>

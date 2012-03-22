@@ -669,7 +669,7 @@ class CLSController extends JController {
         $section[] = array('key' => '', 'value' => '- Select Section -');
         foreach($sections as $a)
             $section[] = array('key' => $a->id, 'value' => $a->name);
-        $lists['section'] = JHTML::_('select.genericlist', $section, 'section_id', null, 'key', 'value', $row->section_id);
+        $lists['section'] = JHTML::_('select.genericlist', $section, 'section_id', null, 'key', 'value', JRequest::getVar('section_id', $row->section_id));
 
         CLSView::editContract($row, $lists, $user_type);
     }
@@ -1044,7 +1044,13 @@ class CLSController extends JController {
             $contract->set('contractors', JRequest::getVar('contractors'));
             $contract->set('section_id', JRequest::getInt('section_id'));
             $contract->set('description', JRequest::getVar('description'));
-            $contract->store();
+            if (!$contract->store()) {
+                global $mainframe;
+                $mainframe->enqueueMessage(JText::_('Cannot save contract information'), 'message');
+                $mainframe->enqueueMessage($contract->getError(), 'error');
+                JRequest::setVar('task', 'editContract');
+                return $this->execute('editContract');
+            }
 
             // adding notification
             clsLog('New contract', 'New contract created #' . $db->insertid());
@@ -1073,7 +1079,14 @@ class CLSController extends JController {
                 $contract->set('description', JRequest::getVar('description'));
 
                 // storing updated data
-                $contract->store();
+                if (!$contract->store()) {
+                    global $mainframe;
+                    $mainframe->enqueueMessage(JText::_('Cannot save contract information'), 'message');
+                    $mainframe->enqueueMessage($contract->getError(), 'error');
+                    JRequest::setVar('task', 'editContract');
+                    return $this->execute('editContract');
+                }
+
                 clsLog('Contract updated', 'The user updated contract #' . $contract->id . ' data');
             }
 
@@ -1105,7 +1118,13 @@ class CLSController extends JController {
             $section->set('description', JRequest::getVar('description'));
             $section->set('polyline', JRequest::getVar('polyline'));
             $section->set('polygon', JRequest::getVar('polygone'));
-            $section->store();
+            if (!$section->store()) {
+                global $mainframe;
+                $mainframe->enqueueMessage(JText::_('Cannot save section information'), 'message');
+                $mainframe->enqueueMessage($section->getError(), 'error');
+                JRequest::setVar('task', 'editSection');
+                return $this->execute('editSection');
+            }
 
             // adding notification
             clsLog('New section', 'New section created #' . $db->insertid());
@@ -1128,7 +1147,14 @@ class CLSController extends JController {
                 $section->set('polygon', JRequest::getVar('polygon'));
 
                 // storing updated data
-                $section->store();
+                if (!$section->store()) {
+                    global $mainframe;
+                    $mainframe->enqueueMessage(JText::_('Cannot save section information'), 'message');
+                    $mainframe->enqueueMessage($section->getError(), 'error');
+                    JRequest::setVar('task', 'editSection');
+                    return $this->execute('editSection');
+                }
+
                 clsLog('Section updated', 'The user updated section #' . $section->id . ' data');
             }
 
