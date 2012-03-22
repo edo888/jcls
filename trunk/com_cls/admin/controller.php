@@ -48,18 +48,19 @@ class CLSController extends JController {
         global $mainframe, $option;
 
         $db                 =& JFactory::getDBO();
-        $filter_order       = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
-        $filter_order_Dir   = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
-        $filter_area_id     = $mainframe->getUserStateFromRequest("$option.filter_area_id",'filter_area_id','');
-        $filter_contract_id = $mainframe->getUserStateFromRequest("$option.filter_contract_id",'filter_contract_id','');
-        $filter_source      = $mainframe->getUserStateFromRequest("$option.filter_source",'filter_source','');
-        $filter_priority    = $mainframe->getUserStateFromRequest("$option.filter_priority",'filter_priority','');
-        $filter_status      = $mainframe->getUserStateFromRequest("$option.filter_status",'filter_status','');
-        $search             = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $context          = 'com_cls.complaints.list.';
+        $filter_order       = $mainframe->getUserStateFromRequest($context.'filter_order','filter_order','m.id');
+        $filter_order_Dir   = $mainframe->getUserStateFromRequest($context.'filter_order_Dir','filter_order_Dir','desc');
+        $filter_area_id     = $mainframe->getUserStateFromRequest($context.'filter_area_id','filter_area_id','');
+        $filter_contract_id = $mainframe->getUserStateFromRequest($context.'filter_contract_id','filter_contract_id','');
+        $filter_source      = $mainframe->getUserStateFromRequest($context.'filter_source','filter_source','');
+        $filter_priority    = $mainframe->getUserStateFromRequest($context.'filter_priority','filter_priority','');
+        $filter_status      = $mainframe->getUserStateFromRequest($context.'filter_status','filter_status','');
+        $search             = $mainframe->getUserStateFromRequest($context.'search','search','');
         $search             = $db->getEscaped(trim(JString::strtolower($search)));
 
         $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
 
         $where = array();
 
@@ -219,15 +220,16 @@ class CLSController extends JController {
         $db     =& JFactory::getDBO();
         $config =& JComponentHelper::getParams('com_cls');
 
-        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
-        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
-        $filter_user_id   = $mainframe->getUserStateFromRequest("$option.filter_user_id",'filter_user_id','');
-        $filter_action    = $mainframe->getUserStateFromRequest("$option.filter_action",'filter_action','');
-        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $context          = 'com_cls.notifications.list.';
+        $filter_order     = $mainframe->getUserStateFromRequest($context.'filter_order','filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest($context.'filter_order_Dir','filter_order_Dir','desc');
+        $filter_user_id   = $mainframe->getUserStateFromRequest($context.'filter_user_id','filter_user_id','');
+        $filter_action    = $mainframe->getUserStateFromRequest($context.'filter_action','filter_action','');
+        $search           = $mainframe->getUserStateFromRequest($context.'search','search','');
         $search           = $db->getEscaped(trim(JString::strtolower($search)));
 
         $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
 
         $where = array();
 
@@ -302,14 +304,15 @@ class CLSController extends JController {
         }
 
         $db               =& JFactory::getDBO();
-        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
-        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
-        $filter_section   = $mainframe->getUserStateFromRequest("$option.filter_section",'filter_section','');
-        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $context          = 'com_cls.contracts.list.';;
+        $filter_order     = $mainframe->getUserStateFromRequest($context.'filter_order','filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest($context.'filter_order_Dir','filter_order_Dir','desc');
+        $filter_section   = $mainframe->getUserStateFromRequest($context.'filter_section','filter_section','');
+        $search           = $mainframe->getUserStateFromRequest($context.'search','search','');
         $search           = $db->getEscaped(trim(JString::strtolower($search)));
 
         $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
 
         $where = array();
 
@@ -370,13 +373,14 @@ class CLSController extends JController {
         }
 
         $db               =& JFactory::getDBO();
-        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
-        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
-        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $context          = 'com_cls.sections.list.';
+        $filter_order     = $mainframe->getUserStateFromRequest($context.'filter_order','filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest($context.'filter_order_Dir','filter_order_Dir','desc');
+        $search           = $mainframe->getUserStateFromRequest($context.'search','search','');
         $search           = $db->getEscaped(trim(JString::strtolower($search)));
 
         $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
 
         $where = array();
 
@@ -425,13 +429,14 @@ class CLSController extends JController {
         }
 
         $db               =& JFactory::getDBO();
-        $filter_order     = $mainframe->getUserStateFromRequest("$option.filter_order",'filter_order','m.id');
-        $filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir",'filter_order_Dir','desc');
-        $search           = $mainframe->getUserStateFromRequest("$option.search",'search','');
+        $context          = 'com_cls.supportgroups.list.';
+        $filter_order     = $mainframe->getUserStateFromRequest($context.'filter_order','filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest($context.'filter_order_Dir','filter_order_Dir','desc');
+        $search           = $mainframe->getUserStateFromRequest($context.'search','search','');
         $search           = $db->getEscaped(trim(JString::strtolower($search)));
 
         $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-        $limitstart = $mainframe->getUserStateFromRequest($option.'limitstart', 'limitstart', 0, 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
 
         $where = array();
 
