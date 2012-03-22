@@ -521,7 +521,7 @@ EOT;
                         <?php echo $row->date; ?>
                     </td>
                     <td align="left">
-                        <?php echo $row->description; ?>
+                        <?php echo preg_replace('/#(20[^\s]+)/', '<a href="?option=com_cls&search=$1">#$1</a>', $row->description); ?>
                     </td>
                     <td align="center">
                         <?php echo $row->id; ?>
