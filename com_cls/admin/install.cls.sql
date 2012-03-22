@@ -63,6 +63,8 @@ ALTER TABLE `#__complaint_contracts` ADD COLUMN `contractors` text AFTER `name`;
 ALTER TABLE `#__complaint_contracts` ADD COLUMN `end_date` datetime NOT NULL default '0000-00-00 00:00:00' AFTER `name`;
 ALTER TABLE `#__complaint_contracts` ADD COLUMN `start_date` datetime NOT NULL default '0000-00-00 00:00:00' AFTER `name`;
 ALTER TABLE `#__complaint_contracts` ADD COLUMN `contract_id` varchar(25) NOT NULL default '' AFTER `name`;
+ALTER TABLE `#__complaint_contracts` ADD UNIQUE KEY `name` (`name`);
+ALTER TABLE `#__complaint_contracts` ADD UNIQUE KEY `contract_id` (`contract_id`);
 
 CREATE TABLE IF NOT EXISTS `#__complaint_sections` (
   `id` int(11) NOT NULL auto_increment,
@@ -72,6 +74,8 @@ CREATE TABLE IF NOT EXISTS `#__complaint_sections` (
   `description` text,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+ALTER TABLE `#__complaint_sections` ADD UNIQUE KEY `name` (`name`);
 
 CREATE TABLE IF NOT EXISTS `#__complaint_support_groups` (
   `id` int(11) NOT NULL auto_increment,
