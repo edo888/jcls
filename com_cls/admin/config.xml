@@ -4,7 +4,7 @@
         <param name="complaints_email" type="text" default="complaints@localhost" label="Complaints Email" description="" size="20" />
         <param name="@spacer" type="spacer" default="" label="" description="" />
         <param name="statistics_period" type="text" default="20" label="Statistics Period" description="Statistics period in days" size="4" />
-        <param name="statistics_period_compare" type="text" default="5" label="Compare Period" description="Statistics compare period in days" size="4" />
+        <!--param name="statistics_period_compare" type="text" default="5" label="Compare Period" description="Statistics compare period in days" size="4" /-->
         <param name="@spacer" type="spacer" default="" label="" description="" />
         <param name="low_priority_description" type="text" default="Issues which are not critical to the successful completion of the project." label="Low Priority Description" description="" size="50" />
         <param name="action_period_low" type="text" default="30" label="Action Period" description="Expected number of days to solve low priority complaints" size="4" />

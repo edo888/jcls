@@ -40,15 +40,15 @@ $user =& JFactory::getUser();
 <?php endif; ?>
 
 <h3>Summary of Complaint</h3>
-<i>Complaints Received Per Day:</i> <?php echo $this->complaints_received_per_day ?> <small style="color:#cc0000;"><?php echo $this->complaints_received_growth ?></small><br />
-<i>Complaints Processed Per Day:</i> <?php echo $this->complaints_processed_per_day ?> <small style="color:#cc0000;"><?php echo $this->complaints_processed_growth ?></small><br />
-<i>Complaints Resolved Per Day:</i> <?php echo $this->complaints_resolved_per_day ?> <small style="color:#cc0000;"><?php echo $this->complaints_resolved_growth ?></small><br />
+<i>Complaints Received Per Day:</i> <?php echo $this->complaints_received_per_day ?> <?php /*<small style="color:#cc0000;"><?php echo $this->complaints_received_growth ?></small>*/ ?><br />
+<i>Complaints Processed Per Day:</i> <?php echo $this->complaints_processed_per_day ?> <?php /*<small style="color:#cc0000;"><?php echo $this->complaints_processed_growth ?></small>*/ ?><br />
+<i>Complaints Resolved Per Day:</i> <?php echo $this->complaints_resolved_per_day ?> <?php /*<small style="color:#cc0000;"><?php echo $this->complaints_resolved_growth ?></small>*/ ?><br />
 <i>Number of Complaints Received:</i> <?php echo $this->complaints_received ?><br />
 <i>Number of Complaints Resolved:</i> <?php echo $this->complaints_resolved ?><br />
 <i>Number of Complaints Outstanding:</i> <?php echo $this->complaints_outstanding ?><br />
 <i>Number of Complaints with Delayed Resolution:</i> <?php echo $this->complaints_delayed ?><br />
 
-<br /><small><i>The averages are based on <?php echo $this->statistics_period ?> days period data.</i></small>
+<?php /*<br /><small><i>The averages are based on <?php echo $this->statistics_period ?> days period data.</i></small>*/ ?>
 
 <h3>Complaint Statistics</h3>
 <?php /*<img src="<?php echo $this->complaints_per_day_link ?>" alt="complaints statistics :: drawing failed, select shorter period" /> */ ?>
