@@ -884,7 +884,7 @@ class CLSView {
             <tr>
                 <td class="key">
                     <label for="path">
-                        <?php echo JText::_( 'Message Priority' ); ?>
+                        <?php echo JText::_( 'Complaint Priority' ); ?>
                     </label>
                 </td>
                 <td>
