@@ -35,7 +35,7 @@ class CLSViewReports extends JView {
         $map_api_key = $config->get('map_api_key');
         $zoom_level = $config->get('zoom_level');
         $statistics_period = (int) $session->get('statistics_period', $config->get('statistics_period', 20));
-        $statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
+        //$statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
         $delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
 
         $startdate = JRequest::getCmd('startdate', $session->get('startdate', date('Y-m-d', strtotime("-$statistics_period days")), 'com_cls'));
@@ -68,6 +68,7 @@ class CLSViewReports extends JView {
         $this->assignRef('complaints_outstanding', $complaints_outstanding);
         $this->assignRef('complaints_delayed', $complaints_delayed);
 
+        /*
         $db->setQuery("select round(count(*)/$statistics_period, 2) from #__complaints where date_received >= DATE_ADD(now(), interval -" . ($statistics_period+$statistics_period_compare) . " day) and date_received <= DATE_ADD(now(), interval -$statistics_period_compare day)");
         $complaints_received_per_day2 = $db->loadResult();
         $db->setQuery("select round(count(*)/$statistics_period, 2) from #__complaints where date_processed >= DATE_ADD(now(), interval -" . ($statistics_period+$statistics_period_compare) . " day) and date_processed <= DATE_ADD(now(), interval -$statistics_period_compare day)");
@@ -78,6 +79,7 @@ class CLSViewReports extends JView {
         @$complaints_received_growth = ($complaints_received_per_day >= $complaints_received_per_day2 ? '+' : '-') . round(abs($complaints_received_per_day - $complaints_received_per_day2)/$complaints_received_per_day*100, 2) . '%';
         @$complaints_processed_growth = ($complaints_processed_per_day >= $complaints_processed_per_day2 ? '+' : '-') . round(abs($complaints_processed_per_day - $complaints_processed_per_day2)/$complaints_processed_per_day*100, 2) . '%';
         @$complaints_resolved_growth = ($complaints_resolved_per_day >= $complaints_resolved_per_day2 ? '+' : '-') . round(abs($complaints_resolved_per_day - $complaints_resolved_per_day2)/$complaints_resolved_per_day*100, 2) . '%';
+        */
         # -- End Complaints Averages --
 
         # -- Complaints Statistics --
@@ -215,11 +217,11 @@ EOT;
         # -- End Complaints Map --
 
         $this->assignRef('complaints_received_per_day', $complaints_received_per_day);
-        $this->assignRef('complaints_received_growth', $complaints_received_growth);
+        //$this->assignRef('complaints_received_growth', $complaints_received_growth);
         $this->assignRef('complaints_processed_per_day', $complaints_received_per_day);
-        $this->assignRef('complaints_processed_growth', $complaints_processed_growth);
+        //$this->assignRef('complaints_processed_growth', $complaints_processed_growth);
         $this->assignRef('complaints_resolved_per_day', $complaints_resolved_per_day);
-        $this->assignRef('complaints_resolved_growth', $complaints_resolved_growth);
+        //$this->assignRef('complaints_resolved_growth', $complaints_resolved_growth);
         $this->assignRef('statistics_period', $statistics_period);
         $this->assignRef('complaints_per_day_link', $complaints_per_day_link);
         $this->assignRef('complaints', $complaints);

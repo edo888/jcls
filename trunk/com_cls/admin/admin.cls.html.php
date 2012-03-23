@@ -206,7 +206,7 @@ class CLSView {
         $map_api_key = $config->get('map_api_key');
         $zoom_level = $config->get('zoom_level');
         $statistics_period = (int) $session->get('statistics_period', $config->get('statistics_period', 20));
-        $statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
+        //$statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
         $delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
 
         $startdate = JRequest::getCmd('startdate', $session->get('startdate', date('Y-m-d', strtotime("-$statistics_period days")), 'com_cls'));
@@ -263,6 +263,7 @@ class CLSView {
         $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and date_processed >= DATE_ADD(now(), interval -$statistics_period day) and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= now()");
         $complaints_delayed = $db->loadResult();
 
+        /*
         $db->setQuery("select round(count(*)/$statistics_period, 2) from #__complaints where date_received >= DATE_ADD(now(), interval -" . ($statistics_period+$statistics_period_compare) . " day) and date_received <= DATE_ADD(now(), interval -$statistics_period_compare day)");
         $complaints_received_per_day2 = $db->loadResult();
         $db->setQuery("select round(count(*)/$statistics_period, 2) from #__complaints where date_processed >= DATE_ADD(now(), interval -" . ($statistics_period+$statistics_period_compare) . " day) and date_processed <= DATE_ADD(now(), interval -$statistics_period_compare day)");
@@ -273,17 +274,18 @@ class CLSView {
         @$complaints_received_growth = ($complaints_received_per_day >= $complaints_received_per_day2 ? '+' : '-') . round(abs($complaints_received_per_day - $complaints_received_per_day2)/$complaints_received_per_day*100, 2) . '%';
         @$complaints_processed_growth = ($complaints_processed_per_day >= $complaints_processed_per_day2 ? '+' : '-') . round(abs($complaints_processed_per_day - $complaints_processed_per_day2)/$complaints_processed_per_day*100, 2) . '%';
         @$complaints_resolved_growth = ($complaints_resolved_per_day >= $complaints_resolved_per_day2 ? '+' : '-') . round(abs($complaints_resolved_per_day - $complaints_resolved_per_day2)/$complaints_resolved_per_day*100, 2) . '%';
+        */
 
         echo '<h3>Summary of Complaint</h3>';
-        echo '<i>Complaints Received Per Day:</i> ' . $complaints_received_per_day . ' <small style="color:#cc0000;">' . $complaints_received_growth . '</small><br />';
-        echo '<i>Complaints Processed Per Day:</i> ' . $complaints_processed_per_day . ' <small style="color:#cc0000;">' . $complaints_processed_growth . '</small><br />';
-        echo '<i>Complaints Resolved Per Day:</i> ' . $complaints_resolved_per_day . ' <small style="color:#cc0000;">' . $complaints_resolved_growth . '</small><br />';
+        echo '<i>Complaints Received Per Day:</i> ' . $complaints_received_per_day . '<br />'; //' <small style="color:#cc0000;">' . $complaints_received_growth . '</small><br />';
+        echo '<i>Complaints Processed Per Day:</i> ' . $complaints_processed_per_day . '<br />'; //' <small style="color:#cc0000;">' . $complaints_processed_growth . '</small><br />';
+        echo '<i>Complaints Resolved Per Day:</i> ' . $complaints_resolved_per_day . '<br />'; //' <small style="color:#cc0000;">' . $complaints_resolved_growth . '</small><br />';
         echo '<i>Number of Complaints Received:</i> ' . $complaints_received . ' <br />';
         echo '<i>Number of Complaints Resolved:</i> ' . $complaints_resolved . ' <br />';
         echo '<i>Number of Complaints Outstanding:</i> ' . ($complaints_received - $complaints_resolved < 0 ? 0 : $complaints_received - $complaints_resolved) . ' <br />';
         echo '<i>Number of Complaints with Delayed Resolution:</i> ' . $complaints_delayed . ' <br />';
 
-        echo '<br /><small><i>The averages are based on ' . $statistics_period . ' days period data.</i></small>';
+        //echo '<br /><small><i>The averages are based on ' . $statistics_period . ' days period data.</i></small>';
         # -- End Complaint Averages --
 
         # -- Complaint Statistics --
