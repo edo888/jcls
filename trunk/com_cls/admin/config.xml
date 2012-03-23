@@ -14,7 +14,7 @@
         <param name="action_period_high" type="text" default="5" label="Action Period" description="Expected number of days to solve high priority complaints" size="4" />
         <param name="@spacer" type="spacer" default="" label="" description="" />
         <param name="raw_complaint_warning_period" type="text" default="2" label="Raw Complaint Warning Period" description="Show a warning message if a raw complaint was not processed after N days" size="4" />
-        <param name="delayed_confirmation_warning_period" type="text" default="2" label="Delayed Confirmation Warning Period" description="Show a warning message if a resolved complaint was not confirmed and closed after N days" size="4" />
+        <!--param name="delayed_confirmation_warning_period" type="text" default="2" label="Delayed Confirmation Warning Period" description="Show a warning message if a resolved complaint was not confirmed and closed after N days" size="4" /-->
         <param name="@spacer" type="spacer" default="" label="" description="" />
         <param name="map_api_key" type="text" default="" label="Map API key" description="Google Maps API key, you can get one from: http://code.google.com/apis/maps/signup.html" size="20" />
         <param name="center_map" type="text" default="40.313043,44.736328" label="Map center point" description="Complaints map center point (lat,lng)" size="20" />
