@@ -13,11 +13,11 @@ class CLSView {
         $user = & JFactory::getUser();
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls', true);
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+        JSubMenuHelper::addEntry(JText::_('Statistics'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
 
         JHTML::_('behavior.tooltip');
 
@@ -190,11 +190,11 @@ class CLSView {
 
     function showReports() {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports', true);
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+        JSubMenuHelper::addEntry(JText::_('Statistics'), 'index.php?option=com_cls&c=reports', true);
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
 
         JHTML::_('behavior.calendar');
 
@@ -454,11 +454,11 @@ EOT;
 
     function showNotifications($rows, $pageNav, $options, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications', true);
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+        JSubMenuHelper::addEntry(JText::_('Statistics'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications', true);
 
         JHTML::_('behavior.tooltip');
 
@@ -553,11 +553,11 @@ EOT;
 
     function showContracts($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts', true);
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+        JSubMenuHelper::addEntry(JText::_('Statistics'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
 
         JHTML::_('behavior.tooltip');
 
@@ -672,11 +672,11 @@ EOT;
 
     function showSections($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections', true);
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+        JSubMenuHelper::addEntry(JText::_('Statistics'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
 
         JHTML::_('behavior.tooltip');
 
@@ -772,11 +772,11 @@ EOT;
 
     function showSupportGroups($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups', true);
+        JSubMenuHelper::addEntry(JText::_('Statistics'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
 
         JHTML::_('behavior.tooltip');
 
