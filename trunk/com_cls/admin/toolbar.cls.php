@@ -12,6 +12,7 @@ require_once(JApplicationHelper::getPath('toolbar_html'));
 
 switch($task) {
     case 'edit':
+    case 'editArea':
     case 'editContract':
     case 'editSection':
     case 'editSupportGroup':
@@ -22,6 +23,7 @@ switch($task) {
         break;
 
     case 'add':
+    case 'addArea':
     case 'addContract':
     case 'addSection':
     case 'addSupportGroup':

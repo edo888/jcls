@@ -39,6 +39,7 @@
         <menu img="components/com_cls/images/cls_icon.png">CLS</menu>
         <submenu>
             <menu link="option=com_cls" img="components/com_cls/images/cls_icon.png">Complaints</menu>
+            <menu link="option=com_cls&amp;c=areas" img="components/com_cls/images/categories.png">Complaint Categories</menu>
             <menu link="option=com_cls&amp;c=contracts" img="components/com_cls/images/contracts.png">Contracts</menu>
             <menu link="option=com_cls&amp;c=sections" img="components/com_cls/images/sections.png">Sections</menu>
             <menu link="option=com_cls&amp;c=SupportGroups" img="components/com_cls/images/support_groups.png">Support Groups</menu>
