@@ -36,14 +36,14 @@
     </languages>
 
     <administration>
-        <menu>CLS</menu>
+        <menu img="components/com_cls/images/cls_icon.png">CLS</menu>
         <submenu>
-            <menu link="option=com_cls">Complaints</menu>
-            <menu link="option=com_cls&amp;c=Contracts">Contracts</menu>
-            <menu link="option=com_cls&amp;c=Sections">Sections</menu>
-            <menu link="option=com_cls&amp;c=SupportGroups">Support Groups</menu>
-            <menu link="option=com_cls&amp;c=reports">Statistics</menu>
-            <menu link="option=com_cls&amp;c=notifications">Activity Log</menu>
+            <menu link="option=com_cls" img="components/com_cls/images/cls_icon.png">Complaints</menu>
+            <menu link="option=com_cls&amp;c=Contracts" img="components/com_cls/images/contracts.png">Contracts</menu>
+            <menu link="option=com_cls&amp;c=Sections" img="components/com_cls/images/sections.png">Sections</menu>
+            <menu link="option=com_cls&amp;c=SupportGroups" img="components/com_cls/images/support_groups.png">Support Groups</menu>
+            <menu link="option=com_cls&amp;c=reports" img="components/com_cls/images/statistics.png">Statistics</menu>
+            <menu link="option=com_cls&amp;c=notifications" img="components/com_cls/images/activity_log.png">Activity Log</menu>
         </submenu>
 
         <files folder="admin">
@@ -58,6 +58,7 @@
             <filename>index.html</filename>
             <folder>help</folder>
             <folder>pictures</folder>
+            <folder>images</folder>
             <folder>swfupload</folder>
         </files>
     </administration>
