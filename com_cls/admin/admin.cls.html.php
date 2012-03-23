@@ -285,7 +285,7 @@ class CLSView {
         echo '<i>Number of Complaints Outstanding:</i> ' . ($complaints_received - $complaints_resolved < 0 ? 0 : $complaints_received - $complaints_resolved) . ' <br />';
         echo '<i>Number of Complaints with Delayed Resolution:</i> ' . $complaints_delayed . ' <br />';
 
-        //echo '<br /><small><i>The averages are based on ' . $statistics_period . ' days period data.</i></small>';
+        echo '<br /><small><i>The averages are based on ' . $statistics_period . ' days period data.</i></small>';
         # -- End Complaint Averages --
 
         # -- Complaint Statistics --
