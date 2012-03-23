@@ -48,7 +48,7 @@ $user =& JFactory::getUser();
 <i>Number of Complaints Outstanding:</i> <?php echo $this->complaints_outstanding ?><br />
 <i>Number of Complaints with Delayed Resolution:</i> <?php echo $this->complaints_delayed ?><br />
 
-<?php /*<br /><small><i>The averages are based on <?php echo $this->statistics_period ?> days period data.</i></small>*/ ?>
+<br /><small><i>The averages are based on <?php echo $this->statistics_period ?> days period data.</i></small>
 
 <h3>Complaint Statistics</h3>
 <?php /*<img src="<?php echo $this->complaints_per_day_link ?>" alt="complaints statistics :: drawing failed, select shorter period" /> */ ?>
