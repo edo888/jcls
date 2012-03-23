@@ -43,6 +43,18 @@ class TOOLBAR_CLS {
                 JToolBarHelper::cancel('cancelContract');
 
             JToolBarHelper::help('screen.cls.contracts', true);
+        } elseif(JRequest::getCmd('task') == 'editArea' or JRequest::getCmd('task') == 'addArea') {
+            JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Category ]</small></small>');
+            if($user_type != 'Guest' and $user_type != 'Level 2' and $user_type != 'Supervisor')
+                JToolBarHelper::save('saveArea');
+            if($text !== JText::_('New') and $user_type != 'Guest' and $user_type != 'Level 2' and $user_type != 'Supervisor')
+                JToolBarHelper::apply('applyArea');
+            if($cid[0])
+                JToolBarHelper::cancel('cancelArea', 'Close');
+            else
+                JToolBarHelper::cancel('cancelArea');
+
+            JToolBarHelper::help('screen.cls.areas', true);
         } elseif(JRequest::getCmd('task') == 'editSection' or JRequest::getCmd('task') == 'addSection') {
             JToolBarHelper::title(JText::_('Complaint').': <small><small>[ ' . $text . ' Section ]</small></small>');
             if($user_type != 'Guest' and $user_type != 'Level 2' and $user_type != 'Supervisor')
@@ -80,6 +92,8 @@ class TOOLBAR_CLS {
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Activity Log ]</small></small>');
         elseif(JRequest::getCmd('c', 'complaints') == 'contracts')
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Contracts ]</small></small>');
+        elseif(JRequest::getCmd('c', 'complaints') == 'areas')
+            JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Categories ]</small></small>');
         elseif(JRequest::getCmd('c', 'complaints') == 'sections')
             JToolBarHelper::title(JText::_('Complaints') . ' <small><small>[ Sections ]</small></small>');
         elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups')
@@ -99,6 +113,12 @@ class TOOLBAR_CLS {
             JToolBarHelper::editListX('editContract');
             if($user_type == 'System Administrator')
                 JToolBarHelper::deleteList('', 'removeContract');
+        } elseif(JRequest::getCmd('c', 'complaints') == 'areas') {
+            if($user_type == 'System Administrator' or $user_type == 'Level 1')
+                JToolBarHelper::addNewX('addArea');
+            JToolBarHelper::editListX('editArea');
+            if($user_type == 'System Administrator')
+                JToolBarHelper::deleteList('', 'removeArea');
         } elseif(JRequest::getCmd('c', 'complaints') == 'sections') {
             if($user_type == 'System Administrator' or $user_type == 'Level 1')
                 JToolBarHelper::addNewX('addSection');
@@ -120,6 +140,8 @@ class TOOLBAR_CLS {
             JToolBarHelper::help('screen.cls', true);
         elseif(JRequest::getCmd('c', 'complaints') == 'contracts')
             JToolBarHelper::help('screen.cls.contracts', true);
+        elseif(JRequest::getCmd('c', 'complaints') == 'areas')
+            JToolBarHelper::help('screen.cls.areas', true);
         elseif(JRequest::getCmd('c', 'complaints') == 'sections')
             JToolBarHelper::help('screen.cls.sections', true);
         elseif(JRequest::getCmd('c', 'complaints') == 'SupportGroups')

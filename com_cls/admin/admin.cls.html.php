@@ -13,6 +13,7 @@ class CLSView {
         $user = & JFactory::getUser();
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls', true);
+        JSubMenuHelper::addEntry(JText::_('Complaint Categories'), 'index.php?option=com_cls&c=areas');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
@@ -190,6 +191,7 @@ class CLSView {
 
     function showReports() {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Complaint Categories'), 'index.php?option=com_cls&c=areas');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
@@ -454,6 +456,7 @@ EOT;
 
     function showNotifications($rows, $pageNav, $options, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Complaint Categories'), 'index.php?option=com_cls&c=areas');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
@@ -553,6 +556,7 @@ EOT;
 
     function showContracts($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Complaint Categories'), 'index.php?option=com_cls&c=areas');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts', true);
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
@@ -670,8 +674,110 @@ EOT;
         <?php
     }
 
+    function showAreas($rows, $pageNav, $option, $lists) {
+        JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Complaint Categories'), 'index.php?option=com_cls&c=areas', true);
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
+        JSubMenuHelper::addEntry(JText::_('Statistics'), 'index.php?option=com_cls&c=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
+
+        JHTML::_('behavior.tooltip');
+
+        $config =& JComponentHelper::getParams('com_cls');
+
+        jimport('joomla.filter.output');
+        ?>
+        <form action="index.php?option=com_cls" method="post" name="adminForm">
+
+        <table>
+            <tr>
+                <td align="left" width="100%">
+                    <?php echo JText::_('Filter'); ?>:
+                    <input type="text" name="search" id="search" value="<?php echo $lists['search'];?>" class="text_area" onchange="document.adminForm.submit();" />
+                    <button onclick="this.form.submit();"><?php echo JText::_('Go'); ?></button>
+                    <button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_('Reset'); ?></button>
+                </td>
+                <td nowrap="nowrap">
+                </td>
+            </tr>
+        </table>
+
+        <div id="tablecell">
+            <table class="adminlist">
+            <thead>
+                <tr>
+                    <th width="1%">
+                        <?php echo JText::_('NUM'); ?>
+                    </th>
+                    <th width="1%" align="center">
+                        <input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $rows ); ?>);" />
+                    </th>
+                    <th width="20%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Category Name', 'm.area', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="77%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Description', 'm.description', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                    <th width="1%" nowrap="nowrap">
+                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$lists['order_Dir'], @$lists['order']); ?>
+                    </th>
+                </tr>
+            </thead>
+            <?php
+            $k = 0;
+            for($i=0, $n=count($rows); $i < $n; $i++) {
+                $row = &$rows[$i];
+                JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+
+                $link        = JRoute::_('index.php?option=com_cls&task=editArea&cid[]='. $row->id);
+                $checked     = JHTML::_('grid.checkedout',$row,$i);
+                ?>
+                <tr class="<?php echo "row$k"; ?>">
+                    <td>
+                        <?php echo $pageNav->getRowOffset( $i ); ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $checked; ?>
+                    </td>
+                    <td align="center">
+                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Complaint Category' ); ?>">
+                            <?php echo $row->area; ?></a>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->description; ?>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->id; ?>
+                    </td>
+                </tr>
+                <?php
+                $k = 1 - $k;
+            }
+            ?>
+            <tfoot>
+                <td colspan="13">
+                    <?php echo $pageNav->getListFooter(); ?>
+                </td>
+            </tfoot>
+            </table>
+        </div>
+
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="c" value="areas" />
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="boxchecked" value="0" />
+        <input type="hidden" name="filter_order" value="<?php echo $lists['order']; ?>" />
+        <input type="hidden" name="filter_order_Dir" value="" />
+        <?php echo JHTML::_( 'form.token' ); ?>
+        </form>
+        <?php
+    }
+
     function showSections($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Complaint Categories'), 'index.php?option=com_cls&c=areas');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections', true);
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups');
@@ -772,6 +878,7 @@ EOT;
 
     function showSupportGroups($rows, $pageNav, $option, $lists) {
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
+        JSubMenuHelper::addEntry(JText::_('Complaint Categories'), 'index.php?option=com_cls&c=areas');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
         JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
         JSubMenuHelper::addEntry(JText::_('Support Groups'), 'index.php?option=com_cls&c=SupportGroups', true);
@@ -1623,6 +1730,70 @@ EOT;
         <div class="clr"></div>
         <?php endif; ?>
         <?php endif; ?>
+    <?php
+    }
+
+    function editArea($row, $lists, $user_type) {
+        jimport('joomla.filter.output');
+        JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+
+        JHTML::_('behavior.modal');
+
+        //echo '<pre>', print_r($row, true), '</pre>';
+    ?>
+        <script language="javascript" type="text/javascript">
+        function submitbutton(pressbutton) {
+            var form = document.adminForm;
+            if(pressbutton == 'cancelArea') {
+                submitform(pressbutton);
+                return;
+            }
+
+            // validation
+            if(form.area && form.area.value == "")
+                alert('Category name is required');
+            else
+                submitform(pressbutton);
+        }
+        </script>
+        <form action="index.php" method="post" name="adminForm">
+
+        <fieldset class="adminform">
+            <legend><?php echo JText::_('Details'); ?></legend>
+
+            <table class="admintable">
+            <tr>
+                <td width="200" class="key">
+                    <label for="alias">
+                        <?php echo JText::_( 'Category Name' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="area" id="area" size="60" value="', @JRequest::getVar('area', $row->area), '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="key" valign="top">
+                    <label for="path">
+                        <?php echo JText::_( 'Description' ); ?>
+                    </label>
+                </td>
+                <td>
+                        <?php echo '<textarea name="description" id="description" cols="80" rows="5">', @JRequest::getVar('description', $row->description), '</textarea>'; ?>
+                </td>
+            </tr>
+            </table>
+        </fieldset>
+
+        <div class="clr"></div>
+
+        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="c" value="areas" />
+        <input type="hidden" name="option" value="com_cls" />
+        <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
+        <input type="hidden" name="cid[]" value="<?php echo @$row->id; ?>" />
+        <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
+        </form>
     <?php
     }
 

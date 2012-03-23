@@ -24,6 +24,7 @@ switch(JRequest::getCmd('c', 'complaints')) {
     case 'notifications': $controller = new CLSController(array('default_task' => 'showNotifications')); break;
     case 'reports': $controller = new CLSController(array('default_task' => 'showReports')); break;
     case 'complaints': $controller = new CLSController(array('default_task' => 'showComplaints')); break;
+    case 'areas': $controller = new CLSController(array('default_task' => 'showAreas')); break;
     case 'view_location': $controller = new CLSController(array('default_task' => 'viewLocation')); break;
     case 'edit_location': $controller = new CLSController(array('default_task' => 'editLocation')); break;
     case 'view_section_map': $controller = new CLSController(array('default_task' => 'viewSectionMap')); break;

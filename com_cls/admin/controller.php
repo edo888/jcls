@@ -18,6 +18,12 @@ class CLSController extends JController {
         $this->registerTask('save', 'saveComplaint');
         $this->registerTask('apply', 'saveComplaint');
         $this->registerTask('remove', 'removeComplaint');
+        $this->registerTask('addArea' , 'editArea');
+        $this->registerTask('editArea', 'editArea');
+        $this->registerTask('saveArea', 'saveArea');
+        $this->registerTask('applyArea', 'saveArea');
+        $this->registerTask('removeArea', 'removeArea');
+        $this->registerTask('cancelArea', 'showAreas');
         $this->registerTask('addContract' , 'editContract');
         $this->registerTask('editContract', 'editContract');
         $this->registerTask('saveContract', 'saveContract');
@@ -361,6 +367,62 @@ class CLSController extends JController {
         CLSView::showContracts($rows, $pageNav, $option, $lists);
     }
 
+    function showAreas() {
+        global $mainframe, $option;
+
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest' or $user_type == 'Level 2') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        $db               =& JFactory::getDBO();
+        $context          = 'com_cls.areas.list.';
+        $filter_order     = $mainframe->getUserStateFromRequest($context.'filter_order','filter_order','m.id');
+        $filter_order_Dir = $mainframe->getUserStateFromRequest($context.'filter_order_Dir','filter_order_Dir','desc');
+        $search           = $mainframe->getUserStateFromRequest($context.'search','search','');
+        $search           = $db->getEscaped(trim(JString::strtolower($search)));
+
+        $limit      = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
+        $limitstart = $mainframe->getUserStateFromRequest($context.'limitstart', 'limitstart', 0, 'int');
+
+        $where = array();
+
+        if($search)
+            $where[] = '(area LIKE "%'.$search.'%" OR description LIKE "%'.$search.'%")';
+
+        $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
+        $orderby = ' ORDER BY '. $filter_order .' '. $filter_order_Dir;
+
+        $query = 'SELECT COUNT(m.id) FROM #__complaint_areas as m '.$where;
+        $db->setQuery($query);
+        $total = $db->loadResult();
+
+        jimport('joomla.html.pagination');
+        $pageNav = new JPagination($total,$limitstart,$limit);
+
+        $query = 'SELECT m.* FROM #__complaint_areas as m '.$where.' '.$orderby;
+        $db->setQuery($query, $pageNav->limitstart, $pageNav->limit);
+        $rows = $db->loadObjectList();
+        //echo $query;
+
+        if($db->getErrorNum()) {
+            echo $db->stderr();
+            return false;
+        }
+
+        // table ordering
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order']     = $filter_order;
+
+        // search filter
+        $lists['search'] = $search;
+
+        CLSView::showAreas($rows, $pageNav, $option, $lists);
+    }
+
     function showSections() {
         global $mainframe, $option;
 
@@ -643,6 +705,33 @@ class CLSController extends JController {
         $lists['confirmed'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Confirmation -' ), array('key' => 'Y', 'value' => 'Yes'), array('key' => 'N', 'value' => 'No')), 'confirmed_closed', null, 'key', 'value', $row->confirmed_closed);
 
         CLSView::editComplaint($row, $lists, $user_type);
+    }
+
+    function editArea() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest' or $user_type == 'Level 2' or $user_type == 'Supervisor') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        if($this->_task == 'editArea') {
+            $cid = JRequest::getVar('cid', array(0), 'method', 'array');
+            $cid = array((int) $cid[0]);
+        } else {
+            $cid = array( 0 );
+        }
+
+        $query = 'select c.* from #__complaint_areas as c where c.id = ' . $cid[0];
+        $db->setQuery($query);
+        $row = $db->loadObject();
+
+        $lists = array();
+
+        CLSView::editArea($row, $lists, $user_type);
     }
 
     function editContract() {
@@ -1104,6 +1193,68 @@ class CLSController extends JController {
         }
     }
 
+    function saveArea() {
+        $db =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+        $id = JRequest::getInt('id', 0);
+
+        // guest cannot see this list
+        if($user_type == 'Guest' or $user_type == 'Level 2' or $user_type == 'Supervisor') {
+            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        if($id == 0) { // going to insert new area
+            // constructing the section object
+            $area = new JTable('#__complaint_areas', 'id', $db);
+            $area->set('area', JRequest::getVar('area'));
+            $area->set('description', JRequest::getVar('description'));
+            if (!$area->store()) {
+                global $mainframe;
+                $mainframe->enqueueMessage(JText::_('Cannot save complaint category information'), 'message');
+                $mainframe->enqueueMessage($area->getError(), 'error');
+                JRequest::setVar('task', 'editArea');
+                return $this->execute('editArea');
+            }
+
+            // adding notification
+            clsLog('New complaint category', 'New complaint category created #' . $db->insertid());
+
+            $this->setRedirect('index.php?option=com_cls&c=areas', JText::_('Complaint category successfully created'));
+        } else { // going to update section
+            // constructing the section object
+            $area = new JTable('#__complaint_areas', 'id', $db);
+            $area->set('id', $id);
+            $area->set('area', null);
+            $area->set('description', null);
+            $area->load();
+
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
+                $area->set('area', JRequest::getVar('area'));
+                $area->set('description', JRequest::getVar('description'));
+
+                // storing updated data
+                if (!$area->store()) {
+                    global $mainframe;
+                    $mainframe->enqueueMessage(JText::_('Cannot save complaint category information'), 'message');
+                    $mainframe->enqueueMessage($area->getError(), 'error');
+                    JRequest::setVar('task', 'editArea');
+                    return $this->execute('editArea');
+                }
+
+                clsLog('Complaint category updated', 'The user updated complaint category #' . $area->id . ' data');
+            }
+
+            if($this->_task == 'saveArea')
+                $this->setRedirect('index.php?option=com_cls&c=areas', JText::_('Complaint category successfully saved'));
+            elseif($this->_task == 'applyArea')
+                $this->setRedirect('index.php?option=com_cls&task=editArea&cid[]='.$id, JText::_('Complaint category successfully saved'));
+            else
+                $this->setRedirect('index.php?option=com_cls', JText::_('Unknown task'));
+        }
+    }
+
     function saveSection() {
         $db =& JFactory::getDBO();
         $user =& JFactory::getUser();
@@ -1283,6 +1434,25 @@ class CLSController extends JController {
             }
 
             $this->setRedirect('index.php?option=com_cls&c=contracts', JText::_('Contract(s) successfully deleted'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
+        }
+    }
+
+    function removeArea() {
+        $db   =& JFactory::getDBO();
+        $user =& JFactory::getUser();
+        $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
+
+        if($user->getParam('role', 'Guest') == 'System Administrator') {
+            for($i = 0, $n = count($cid); $i < $n; $i++) {
+                $query = "delete from #__complaint_areas where id = $cid[$i]";
+                $db->setQuery($query);
+                $db->query();
+                clsLog('Complaint category removed', 'The complaint category with ID=' . $cid[$i] . ' has been removed');
+            }
+
+            $this->setRedirect('index.php?option=com_cls&c=areas', JText::_('Complaint category(s) successfully deleted'));
         } else {
             $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
         }
