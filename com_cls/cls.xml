@@ -36,14 +36,14 @@
     </languages>
 
     <administration>
-        <menu>Complaints</menu>
+        <menu>CLS</menu>
         <submenu>
-            <menu link="option=com_cls">Home</menu>
-            <menu link="option=com_cls&amp;c=reports">Reports</menu>
-            <menu link="option=com_cls&amp;c=notifications">Activity Log</menu>
+            <menu link="option=com_cls">Complaints</menu>
             <menu link="option=com_cls&amp;c=Contracts">Contracts</menu>
             <menu link="option=com_cls&amp;c=Sections">Sections</menu>
             <menu link="option=com_cls&amp;c=SupportGroups">Support Groups</menu>
+            <menu link="option=com_cls&amp;c=reports">Statistics</menu>
+            <menu link="option=com_cls&amp;c=notifications">Activity Log</menu>
         </submenu>
 
         <files folder="admin">

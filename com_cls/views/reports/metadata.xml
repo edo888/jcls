@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-    <view title="Reports">
-        <message>Displays complaints reports.</message>
+    <view title="Statistics">
+        <message>Displays complaints Statistics.</message>
     </view>
 </metadata>
