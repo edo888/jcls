@@ -253,16 +253,16 @@ class CLSView {
         }
 
         # -- Complaint Averages --
-        $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day)");
+        $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD('$enddate', interval -$statistics_period day)");
         $complaints_received = $db->loadResult();
         $complaints_received_per_day = round($complaints_received/$statistics_period, 2);
-        $db->setQuery("select count(*) from #__complaints where date_processed >= DATE_ADD(now(), interval -$statistics_period day)");
+        $db->setQuery("select count(*) from #__complaints where date_processed >= DATE_ADD('$enddate', interval -$statistics_period day)");
         $complaints_processed = $db->loadResult();
         $complaints_processed_per_day = round($complaints_processed/$statistics_period, 2);
-        $db->setQuery("select count(*) from #__complaints where date_resolved >= DATE_ADD(now(), interval -$statistics_period day)");
+        $db->setQuery("select count(*) from #__complaints where date_resolved >= DATE_ADD('$enddate', interval -$statistics_period day)");
         $complaints_resolved = $db->loadResult();
         $complaints_resolved_per_day = round($complaints_resolved/$statistics_period, 2);
-        $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and date_processed >= DATE_ADD(now(), interval -$statistics_period day) and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= now()");
+        $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and date_processed >= DATE_ADD('$enddate', interval -$statistics_period day) and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$enddate 23:59:59'");
         $complaints_delayed = $db->loadResult();
 
         /*
@@ -291,35 +291,35 @@ class CLSView {
         # -- End Complaint Averages --
 
         # -- Complaint Statistics --
-        for($i = 0, $time = strtotime("-$statistics_period days"); $time < time() + 86400; $i++, $time = strtotime("-$statistics_period days +$i days"))
+        for($i = 0, $time = strtotime($startdate); $time < strtotime($enddate) + 86400; $i++, $time = strtotime("$startdate +$i days"))
             $dates[date('M j', $time)] = 0;
         //echo '<pre>', print_r($dates, true), '</pre>';
 
-        $db->setQuery("select count(*) as count, date_format(date_received, '%b %e') as date from #__complaints where date_received >= DATE_ADD(now(), interval -$statistics_period day) group by date order by date_received");
+        $db->setQuery("select count(*) as count, date_format(date_received, '%b %e') as date from #__complaints where date_received >= DATE_ADD('$enddate', interval -$statistics_period day) group by date order by date_received");
         $received = $db->loadObjectList();
         $complaints_received = $dates;
         foreach($received as $complaint)
             $complaints_received[$complaint->date] = (int) $complaint->count;
         //echo '<pre>', print_r($complaints_received, true), '</pre>';
 
-        $db->setQuery("select count(*) as count, date_format(date_processed, '%b %e') as date from #__complaints where date_processed >= DATE_ADD(now(), interval -$statistics_period day) group by date order by date_processed");
+        $db->setQuery("select count(*) as count, date_format(date_processed, '%b %e') as date from #__complaints where date_processed >= DATE_ADD('$enddate', interval -$statistics_period day) group by date order by date_processed");
         $processed = $db->loadObjectList();
         $complaints_processed = $dates;
         foreach($processed as $complaint)
             $complaints_processed[$complaint->date] = (int) $complaint->count;
         //echo '<pre>', print_r($complaints_processed, true), '</pre>';
 
-        $db->setQuery("select count(*) as count, date_format(date_resolved, '%b %e') as date from #__complaints where date_resolved >= DATE_ADD(now(), interval -$statistics_period day) group by date order by date_resolved");
+        $db->setQuery("select count(*) as count, date_format(date_resolved, '%b %e') as date from #__complaints where date_resolved >= DATE_ADD('$enddate', interval -$statistics_period day) group by date order by date_resolved");
         $resolved = $db->loadObjectList();
         $complaints_resolved = $dates;
         foreach($resolved as $complaint)
             $complaints_resolved[$complaint->date] = (int) $complaint->count;
         //echo '<pre>', print_r($complaints_resolved, true), '</pre>';
 
-        for($i = 0, $time = strtotime("-$statistics_period days"); $time < time() + 86400; $i++, $time = strtotime("-$statistics_period days +$i days")) {
+        for($i = 0, $time = strtotime($startdate); $time < strtotime($enddate) + 86400; $i++, $time = strtotime("$startdate +$i days")) {
             $date = date('Y-m-d', $time);
             $key = date('M j', $time);
-            $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD('$date', interval -" . ($delayed_resolution_period + $statistics_period) . " day)and date_received <= '$date' and ((date_resolved is not null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= date_resolved) or (date_resolved is null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$date'))");
+            $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD('$date', interval -" . ($delayed_resolution_period + $statistics_period) . " day) and date_received <= '$date' and ((date_resolved is not null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= date_resolved) or (date_resolved is null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$date'))");
             $delayed_resolution[$key] = (int) $db->loadResult();
         }
         //echo '<pre>', print_r($delayed_resolution, true), '</pre>';
@@ -424,7 +424,7 @@ EOT;
         # -- Complaint Map --
         echo '<h3>Complaint Map</h3>';
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
-        $db->setQuery("select * from #__complaints where location != '' and date_received >= DATE_ADD(now(), interval -$statistics_period day)");
+        $db->setQuery("select * from #__complaints where location != '' and date_received >= DATE_ADD('$enddate', interval -$statistics_period day)");
         $complaints = $db->loadObjectList();
         ?>
         <div id="map" style="width:900px;height:500px;"></div>
