@@ -562,7 +562,7 @@ class CLSController extends JController {
         $query = 'select c.*, e.name as editor, r.name as resolver, a.area as complaint_area from #__complaints as c left join #__complaint_areas as a on (c.complaint_area_id = a.id) left join #__users as e on (c.editor_id = e.id) left join #__users as r on (c.resolver_id = r.id)';
 
         switch($period) {
-            case 'period': $query .= " where date_received >= '$startdate' and date_received <= '$enddate'"; break;
+            case 'period': $query .= " where date_received >= '$startdate 00:00:00' and date_received <= '$enddate 23:59:59'"; break;
             case 'month': $query .= ' where date_received >= DATE_ADD(now(), interval -1 month)'; break;
             case 'current_month': $query .= " where date_received >= '" . date("Y-m-01") . "'"; break;
             case 'prev_month': $query .= " where date_received < '" . date("Y-m-01") . "' and date_received >= DATE_ADD('".date("Y-m-01")."', interval -1 month)"; break;
