@@ -111,6 +111,8 @@ class CLSControllerFront extends JController {
     }
 
     function submitComplaint() {
+        global $mainframe;
+
         // check captcha
         $session =& JFactory::getSession();
 
@@ -277,7 +279,7 @@ class CLSControllerFront extends JController {
         // Send acknowledgment email to the complainer
         $sms_acknowledgment = (int) $config->get('sms_acknowledgment', 0);
         $email_acknowledgment = (int) $config->get('email_acknowledgment', 0);
-        $acknowledgment_text = sprintf($config->get('acknowledgment_text'), $message_id);
+        $acknowledgment_text = str_replace('{sitename}', $mainframe->getCfg('sitename'), sprintf($config->get('acknowledgment_text'), $message_id));
 
         if($email_acknowledgment and $email != '') {
             $mail = new JMail();

@@ -15,8 +15,9 @@ EMAIL_PASS="*****"
 DOMAIN=www.test.com
 
 # Acknowledgment config
+SITENAME="CLS" # define the sitename here
 ACKNOWLEDGMENT_SMS="Yes"
-ACKNOWLEDGMENT_TEXT="Thank you, your complaint #%s is received. You will get further details soon."
+ACKNOWLEDGMENT_TEXT="Thank you, your complaint #%s is received. You will get further details soon. $SITENAME"
 
 DATE=`date +"%Y-%m-%d %H:%M:%S"`
 

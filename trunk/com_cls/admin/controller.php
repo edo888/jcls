@@ -1501,6 +1501,8 @@ class CLSController extends JController {
     }
 
     function notifySMSAcknowledge() {
+        global $mainframe;
+
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
@@ -1517,7 +1519,7 @@ class CLSController extends JController {
         $complaint = $db->loadObject();
 
         $config =& JComponentHelper::getParams('com_cls');
-        $acknowledgment_text = sprintf($config->get('acknowledgment_text'), $complaint->message_id);
+        $acknowledgment_text = str_replace('{sitename}', $mainframe->getCfg('sitename'), sprintf($config->get('acknowledgment_text'), $complaint->message_id));
 
         if($user->getParam('role', 'Guest') != 'Guest') {
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) values($id, '$user->username', '$complaint->phone', '$acknowledgment_text', now(), 'Acknowledgment')");
@@ -1531,6 +1533,8 @@ class CLSController extends JController {
     }
 
     function notifyEmailAcknowledge() {
+        global $mainframe;
+
         $db   =& JFactory::getDBO();
         $user =& JFactory::getUser();
         $id   = JRequest::getInt('id', 0);
@@ -1547,7 +1551,7 @@ class CLSController extends JController {
         $complaint = $db->loadObject();
 
         $config =& JComponentHelper::getParams('com_cls');
-        $acknowledgment_text = sprintf($config->get('acknowledgment_text'), $complaint->message_id);
+        $acknowledgment_text = str_replace('{sitename}', $mainframe->getCfg('sitename'), sprintf($config->get('acknowledgment_text'), $complaint->message_id));
 
         if($user->getParam('role', 'Guest') != 'Guest') {
             jimport('joomla.mail.mail');
