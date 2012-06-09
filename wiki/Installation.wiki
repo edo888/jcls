@@ -24,4 +24,4 @@
 
    Open sms2mysql, configure it and put into /usr/local/bin
 
-   Note that you will need to install Cygwin with cygrunsrv, ssmtp and mysql client during SMSTools installation
+   _Note:_ you will need to install Cygwin with cygrunsrv, ssmtp and mysql client during SMSTools installation
