@@ -36,7 +36,12 @@ class CLSViewReports extends JView {
         $zoom_level = $config->get('zoom_level');
         $statistics_period = (int) $session->get('statistics_period', $config->get('statistics_period', 20));
         //$statistics_period_compare = (int) $config->get('statistics_period_compare', 5);
-        $delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
+        //$delayed_resolution_period = (int) $config->get('delayed_resolution_period', 30);
+
+        // set separate warning periods for low, medium, high priorities
+        $action_period_low = (int) $config->get('action_period_low', 30);
+        $action_period_medium = (int) $config->get('action_period_medium', 10);
+        $action_period_high = (int) $config->get('action_period_high', 5);
 
         $startdate = JRequest::getCmd('startdate', $session->get('startdate', date('Y-m-d', strtotime("-$statistics_period days")), 'com_cls'));
         $session->set('startdate', $startdate, 'com_cls');
@@ -58,8 +63,22 @@ class CLSViewReports extends JView {
         $db->setQuery("select count(*) from #__complaints where date_resolved >= DATE_ADD('$enddate', interval -$statistics_period day)");
         $n_complaints_resolved = $complaints_resolved = $db->loadResult();
         $complaints_resolved_per_day = round($complaints_resolved/$statistics_period, 2);
-        $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and date_processed >= DATE_ADD('$enddate', interval -$statistics_period day) and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$enddate 23:59:59'");
-        $complaints_delayed = $db->loadResult();
+        //$db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and date_processed >= DATE_ADD('$enddate', interval -$statistics_period day) and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$enddate 23:59:59'");
+        //$complaints_delayed = $db->loadResult();
+        $db->setQuery("select * from #__complaints where confirmed_closed = 'N' and date_received <= '$enddate 23:59:59'");
+        $complaints_not_resolved = $db->loadObjectList();
+        $complaints_delayed = 0;
+        foreach($complaints_not_resolved as $complaint) {
+            if($complaint->message_priority == '')
+                $complaint->message_priority = 'Low';
+
+            switch($complaint->message_priority) {
+                case 'Low': if($action_period_low*24*60*60 < strtotime("$enddate 23:59:59") - strtotime($complaint->date_received)) $complaints_delayed++; break;
+                case 'Medium': if($action_period_medium*24*60*60 < strtotime("$enddate 23:59:59") - strtotime($complaint->date_received)) $complaints_delayed++; break;
+                case 'High': if($action_period_high*24*60*60 < strtotime("$enddate 23:59:59") - strtotime($complaint->date_received)) $complaints_delayed++; break;
+                default: break;
+            }
+        }
 
         $complaints_outstanding = $complaints_received - $complaints_resolved < 0 ? 0 : $complaints_received - $complaints_resolved;
 
@@ -111,8 +130,22 @@ class CLSViewReports extends JView {
         for($i = 0, $time = strtotime($startdate); $time < strtotime($enddate) + 86400; $i++, $time = strtotime("$startdate +$i days")) {
             $date = date('Y-m-d', $time);
             $key = date('M j', $time);
-            $db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD('$date', interval -" . ($delayed_resolution_period + $statistics_period) . " day)and date_received <= '$date' and ((date_resolved is not null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= date_resolved) or (date_resolved is null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$date'))");
-            $delayed_resolution[$key] = (int) $db->loadResult();
+            //$db->setQuery("select count(*) from #__complaints where date_received >= DATE_ADD('$date', interval -" . ($delayed_resolution_period + $statistics_period) . " day)and date_received <= '$date' and ((date_resolved is not null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= date_resolved) or (date_resolved is null and DATE_ADD(date_processed, interval +$delayed_resolution_period day) <= '$date'))");
+            //$delayed_resolution[$key] = (int) $db->loadResult();
+            $db->setQuery("select * from #__complaints where confirmed_closed = 'N' and date_received <= '$date 23:59:59'");
+            $complaints_not_resolved = $db->loadObjectList();
+            $delayed_resolution[$key] = 0;
+            foreach($complaints_not_resolved as $complaint) {
+                if($complaint->message_priority == '')
+                    $complaint->message_priority = 'Low';
+
+                switch($complaint->message_priority) {
+                    case 'Low': if($action_period_low*24*60*60 < strtotime("$date 23:59:59") - strtotime($complaint->date_received)) $delayed_resolution[$key]++; break;
+                    case 'Medium': if($action_period_medium*24*60*60 < strtotime("$date 23:59:59") - strtotime($complaint->date_received)) $delayed_resolution[$key]++; break;
+                    case 'High': if($action_period_high*24*60*60 < strtotime("$date 23:59:59") - strtotime($complaint->date_received)) $delayed_resolution[$key]++; break;
+                    default: break;
+                }
+            }
         }
         //echo '<pre>', print_r($delayed_resolution, true), '</pre>';
 

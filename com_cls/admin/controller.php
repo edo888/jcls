@@ -107,7 +107,10 @@ class CLSController extends JController {
                 $support_group_ids[] = $support_group->group_id;
             $support_group_ids = implode(',', $support_group_ids);
 
-            $where[] = "m.support_group_id in ($support_group_ids)";
+            if($support_group_ids != '')
+                $where[] = "m.support_group_id in ($support_group_ids)";
+            else
+                $where[] = "false";
         }
 
         $where   = (count($where) ? ' WHERE ' . implode( ' AND ', $where ) : '' );
