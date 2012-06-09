@@ -28,6 +28,6 @@
             <option value="0">No</option>
             <option value="1">Yes</option>
         </param>
-        <param name="acknowledgment_text" type="text" default="Thank you, your complaint #%s is received. You will get further details soon." label="Acknowledgment text" description="The formatted text to be used" size="50" />
+        <param name="acknowledgment_text" type="text" default="Thank you, your complaint #%s is received. You will get further details soon. {sitename}" label="Acknowledgment text" description="The formatted text to be used. You can use {sitename} variable." size="50" />
     </params>
 </config>

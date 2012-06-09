@@ -9,7 +9,7 @@ define('MYSQL_DB_PREFIX', 'jos_');
 define('IMAP_MAILBOX', '{mail.test.com:110/pop3/novalidate-cert}INBOX');
 define('EMAIL_HOST', 'mail.test.com');
 define('COMPLAINTS_EMAIL', 'complaints@test.com');
-define('ACKNOWLEDGMENT_TEXT', 'Thank you, your complaint #%s is received. You will get further details soon.');
+define('ACKNOWLEDGMENT_TEXT', 'Thank you, your complaint #%s is received. You will get further details soon. CLS'); # replace CLS with your site name
 define('EMAIL_PASS', 'password');
 define('NO_REPLY', 'no_reply@test.com');
 define('OUTGOING_PATH', 'C:\cygwin\var\spool\sms\outgoing');
