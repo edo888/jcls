@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install PUBLIC "-//Joomla! 1.5//DTD template 1.0//EN" "http://www.joomla.org/xml/dtd/1.5/template-install.dtd">
+<install version="1.5" type="template">
+    <name>The World Bank</name>
+    <creationDate>February 2010</creationDate>
+    <author>Edvard Ananyan</author>
+    <authorEmail>edo888@gmail.com</authorEmail>
+    <authorUrl>http://edo.webmaster.am</authorUrl>
+    <copyright>(C) 2010 Edvard Ananyan. All Rights Reserved.</copyright>
+    <license>GNU/GPL</license>
+    <version>1.0.0</version>
+    <description>The World Bank template for Joomla!</description>
+    <files>
+        <filename>index.php</filename>
+        <filename>index.html</filename>
+        <filename>favicon.ico</filename>
+        <filename>component.php</filename>
+        <filename>templateDetails.xml</filename>
+        <filename>template_thumbnail.png</filename>
+        <folder>html</folder>
+        <folder>images</folder>
+        <folder>css</folder>
+    </files>
+    <positions>
+        <position>top</position>
+        <position>top-right</position>
+        <position>top-menu</position>
+        <position>breadcrumb</position>
+        <position>right</position>
+        <position>footer-left</position>
+        <position>footer-right</position>
+        <position>debug</position>
+    </positions>
+</install>
