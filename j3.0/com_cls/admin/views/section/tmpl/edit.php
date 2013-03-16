@@ -18,7 +18,6 @@ $row = $db->loadObject();
 
 $user = JFactory::getUser();
 $user_type = $user->getParam('role', 'Guest');
-$user_type = $user->getParam('role', 'System Administrator');
 
 $lists = array();
 

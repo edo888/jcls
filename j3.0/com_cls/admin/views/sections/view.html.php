@@ -27,7 +27,6 @@ class ClsViewSections extends JViewLegacy {
 
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
          // guest cannot see this list
          if($user_type == 'Guest' or $user_type == 'Level 2') {
@@ -54,7 +53,6 @@ class ClsViewSections extends JViewLegacy {
         $mainframe = JFactory::getApplication();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1')
                 JToolBarHelper::addNew('section.add');

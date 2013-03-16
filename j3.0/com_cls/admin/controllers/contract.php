@@ -52,7 +52,6 @@ class ClsControllerContract extends JControllerForm {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest' or $user_type == 'Level 2' or $user_type == 'Supervisor') {
@@ -72,7 +71,6 @@ class ClsControllerContract extends JControllerForm {
         $db = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
         $id = JRequest::getInt('id', 0);
 
         // guest cannot see this list
@@ -150,7 +148,6 @@ class ClsControllerContract extends JControllerForm {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
         if($user_type == 'System Administrator') {

@@ -74,7 +74,6 @@ function showReports() {
 
     <?php
     $user_type = JFactory::getUser()->getParam('role', 'Guest');
-    $user_type = JFactory::getUser()->getParam('role', 'System Administrator');
 
     // guest cannot see this list
     if($user_type != 'Guest' and $user_type != 'Level 2') {
