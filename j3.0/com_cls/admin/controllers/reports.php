@@ -29,9 +29,9 @@ class ClsControllerReports extends JControllerForm {
     }
 
     function showStatistics() {
-        $startdate = $_REQUEST['stratdate'];
+        $startdate = $_REQUEST['startdate'];
         $enddate = $_REQUEST['enddate'];
-        $link = 'index.php?option=com_cls&view=reports&stratdate='.$startdate.'&enddate='.$enddate;
+        $link = 'index.php?option=com_cls&view=reports&startdate='.$startdate.'&enddate='.$enddate;
         $this->setRedirect($link, $msg);
     }
 
