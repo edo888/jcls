@@ -39,11 +39,10 @@ class ClsModelComplaint extends JModelLegacy {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
 

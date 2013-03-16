@@ -80,7 +80,6 @@ class ClsControllerComplaint extends JControllerForm {
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         if($user_type == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
@@ -116,12 +115,11 @@ class ClsControllerComplaint extends JControllerForm {
         $db = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
         $id = JRequest::getInt('id', 0);
 
         // guest cannot see this list
         if($user_type == 'Guest') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
 

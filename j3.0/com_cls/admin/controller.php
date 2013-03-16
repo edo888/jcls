@@ -63,7 +63,6 @@ class clsController extends JControllerLegacy {
         $id   = JRequest::getInt('id', 0);
 
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -96,7 +95,6 @@ class clsController extends JControllerLegacy {
         $id   = JRequest::getInt('id', 0);
 
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -134,7 +132,6 @@ class clsController extends JControllerLegacy {
         $id   = JRequest::getInt('id', 0);
 
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -163,7 +160,6 @@ class clsController extends JControllerLegacy {
         $id   = JRequest::getInt('id', 0);
 
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -194,11 +190,10 @@ class clsController extends JControllerLegacy {
 
     function uploadPicture() {
         $user_type = JFactory::getUser()->getParam('role', 'Guest');
-        $user_type = JFactory::getUser()->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest' or $user_type == 'Supervisor') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
 
@@ -292,7 +287,6 @@ class clsController extends JControllerLegacy {
             $db = JFactory::getDBO();
             $user = JFactory::getUser();
             $user_type = $user->getParam('role', 'Guest');
-            $user_type = $user->getParam('role', 'System Administrator');
             $complaint_id = JRequest::getInt('id', 0);
             if($user_type !='Guest') {
 
@@ -319,11 +313,10 @@ class clsController extends JControllerLegacy {
         $doc  = JFactory::getDocument();
 
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest' or $user_type == 'Level 2') {
-            $this->setRedirect('index.php?option=com_cls&c=reports', JText::_("You don't have permission"));
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
 
