@@ -745,7 +745,7 @@ swfu = new SWFUpload(settings);
             }
             ?>
             </table><br />
-            <a href="index.php?option=com_cls&c=notifications&search=<?php echo $row->message_id ?>">View full log</a>
+            <a href="index.php?option=com_cls&view=notifications&filter_search=<?php echo $row->message_id ?>">View full log</a>
         </div>
         </fieldset>
 
