@@ -20,7 +20,6 @@ $lists['section'] = JHTML::_('select.genericlist', $section, 'section_id', null,
 
 $user = JFactory::getUser();
 $user_type = $user->getParam('role', 'Guest');
-$user_type = $user->getParam('role', 'System Administrator');
 
 editContract($row, $lists, $user_type);
 

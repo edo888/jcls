@@ -27,7 +27,6 @@ class ClsViewcomplaints extends JViewLegacy {
 
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest') {
@@ -116,7 +115,6 @@ class ClsViewcomplaints extends JViewLegacy {
         $mainframe = JFactory::getApplication();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         if($mainframe->isAdmin()) {
             if($user_type == 'System Administrator' or $user_type == 'Level 1')

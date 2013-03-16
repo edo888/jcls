@@ -25,7 +25,6 @@ class ClsViewViewSectionMap extends JViewLegacy {
         // Initialiase variables.
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
          if($user_type == 'Guest' or $user_type == 'Supervisor' or $user_type == 'Level 2') {

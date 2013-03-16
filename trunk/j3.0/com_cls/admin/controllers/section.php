@@ -52,7 +52,6 @@ class ClsControllerSection extends JControllerForm {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
         if($user_type == 'Guest' or $user_type == 'Level 2' or $user_type == 'Supervisor') {
@@ -72,7 +71,6 @@ class ClsControllerSection extends JControllerForm {
         $db = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
         $id = JRequest::getInt('id', 0);
 
         // guest cannot see this list
@@ -143,7 +141,6 @@ class ClsControllerSection extends JControllerForm {
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         if($user_type == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {

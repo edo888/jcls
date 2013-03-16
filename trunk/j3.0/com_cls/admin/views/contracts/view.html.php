@@ -27,7 +27,6 @@ class ClsViewContracts extends JViewLegacy {
 
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
         // guest cannot see this list
          if($user_type == 'Guest' or $user_type == 'Level 2') {
@@ -65,13 +64,12 @@ class ClsViewContracts extends JViewLegacy {
         $mainframe = JFactory::getApplication();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        $user_type = $user->getParam('role', 'System Administrator');
 
-            if($user_type == 'System Administrator' or $user_type == 'Level 1')
-                JToolBarHelper::addNew('contract.add');
-            JToolBarHelper::editList('contract.edit');
-            if($user_type == 'System Administrator')
-                JToolBarHelper::deleteList('', 'contract.remove');
+        if($user_type == 'System Administrator' or $user_type == 'Level 1')
+            JToolBarHelper::addNew('contract.add');
+        JToolBarHelper::editList('contract.edit');
+        if($user_type == 'System Administrator')
+            JToolBarHelper::deleteList('', 'contract.remove');
 
         if($user_type == 'System Administrator' and $mainframe->isAdmin())
             JToolBarHelper::preferences('com_cls', '550', '570', 'Settings');
