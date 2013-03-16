@@ -22,7 +22,7 @@ function editSectionMap() {
     $zoom_level = $config->get('zoom_level');
 
     $document = JFactory::getDocument();
-    $document->addStyleDeclaration("div#map img{max-width:none !important}");
+    $document->addStyleDeclaration("div#map img, div#map svg {max-width:none !important}");
     $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
     ?>
     <div style="width:100%;height:100%;">

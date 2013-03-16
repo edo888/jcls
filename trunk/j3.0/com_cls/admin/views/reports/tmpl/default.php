@@ -285,7 +285,7 @@ EOT;
 
     # -- Complaint Map --
     echo '<h3>Complaint Map</h3>';
-    $document->addStyleDeclaration("div#map img{max-width:none !important}");
+    $document->addStyleDeclaration("div#map img, div#map svg {max-width:none !important}");
     $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
     $db->setQuery("select * from #__complaints where location != '' and date_received >= DATE_ADD('$enddate', interval -$statistics_period day)");
     $complaints = $db->loadObjectList();
