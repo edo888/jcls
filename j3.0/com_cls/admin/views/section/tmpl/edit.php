@@ -1,4 +1,11 @@
-<?php 
+<?php
+/**
+* @version   $Id$
+* @package   CLS
+* @copyright Copyright (C) 2010 Edvard Ananyan. All rights reserved.
+* @license   GNU/GPL, see LICENSE.php
+*/
+
 // no direct access
 defined('_JEXEC') or die('Restircted access');
 
@@ -13,18 +20,18 @@ $user = JFactory::getUser();
 $user_type = $user->getParam('role', 'Guest');
 $user_type = $user->getParam('role', 'System Administrator');
 
-
 $lists = array();
+
 editSection($row, $lists, $user_type);
 
 function editSection($row, $lists, $user_type) {
-	jimport('joomla.filter.output');
-	JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+    jimport('joomla.filter.output');
+    JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
-	JHTML::_('behavior.modal');
+    JHTML::_('behavior.modal');
 
-	//echo '<pre>', print_r($row, true), '</pre>';
-	?>
+    //echo '<pre>', print_r($row, true), '</pre>';
+    ?>
         <script language="javascript" type="text/javascript">
         Joomla.submitbutton = function(pressbutton) {
             var form = document.adminForm;
@@ -94,6 +101,4 @@ function editSection($row, $lists, $user_type) {
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
          <?php echo JHtml::_('form.token'); ?>
         </form>
-    <?php
-    }
-?>
+<?php } ?>

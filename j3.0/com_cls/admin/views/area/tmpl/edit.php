@@ -1,4 +1,11 @@
-<?php 
+<?php
+/**
+* @version   $Id$
+* @package   CLS
+* @copyright Copyright (C) 2010 Edvard Ananyan. All rights reserved.
+* @license   GNU/GPL, see LICENSE.php
+*/
+
 // no direct access
 defined('_JEXEC') or die('Restircted access');
 
@@ -12,18 +19,17 @@ $row = $db->loadObject();
 $user = JFactory::getUser();
 $user_type = $user->getParam('role', 'Guest');
 
-
 $lists = array();
 editArea($row, $lists, $user_type);
 
 function editArea($row, $lists, $user_type) {
-	jimport('joomla.filter.output');
-	JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+    jimport('joomla.filter.output');
+    JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
-	JHTML::_('behavior.modal');
+    JHTML::_('behavior.modal');
 
-	//echo '<pre>', print_r($row, true), '</pre>';
-	?>
+    //echo '<pre>', print_r($row, true), '</pre>';
+    ?>
         <script language="javascript" type="text/javascript">
         Joomla.submitbutton = function(pressbutton) {
             var form = document.adminForm;
@@ -80,6 +86,4 @@ function editArea($row, $lists, $user_type) {
         </form>
     <?php
     }
-
-
 ?>

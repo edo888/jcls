@@ -1,28 +1,36 @@
-<?php 
+<?php
+/**
+* @version   $Id$
+* @package   CLS
+* @copyright Copyright (C) 2010 Edvard Ananyan. All rights reserved.
+* @license   GNU/GPL, see LICENSE.php
+*/
+
 // no direct access
 defined('_JEXEC') or die('Restircted access');
 
 viewSectionMap();
 
 function viewSectionMap() {
-	JRequest::setVar('tmpl', 'component'); //force the component template
-	$document = JFactory::getDocument();
-	$document->addStyleDeclaration('html, body {margin:0 !important;padding:0 !important;height:100% !important;}');
+    JRequest::setVar('tmpl', 'component'); //force the component template
+    $document = JFactory::getDocument();
+    $document->addStyleDeclaration('html, body {margin:0 !important;padding:0 !important;height:100% !important;}');
 
-	$config = JComponentHelper::getParams('com_cls');
-	$center_map = $config->get('center_map');
-	$map_api_key = $config->get('map_api_key');
-	$zoom_level = $config->get('zoom_level');
+    $config = JComponentHelper::getParams('com_cls');
+    $center_map = $config->get('center_map');
+    $map_api_key = $config->get('map_api_key');
+    $zoom_level = $config->get('zoom_level');
 
-	$document = JFactory::getDocument();
-	$document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+    $document = JFactory::getDocument();
+    $document->addStyleDeclaration("div#map img{max-width:none !important}");
+    $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
 
-	$db = JFactory::getDBO();
-	$db->setQuery('select polyline, polygon from #__complaint_sections where id = ' . JRequest::getInt('id', 0));
-	$row = $db->loadObject();
-	$polyline = empty($row->polyline) ? array() : explode(';', $row->polyline);
-	$polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
-	?>
+    $db = JFactory::getDBO();
+    $db->setQuery('select polyline, polygon from #__complaint_sections where id = ' . JRequest::getInt('id', 0));
+    $row = $db->loadObject();
+    $polyline = empty($row->polyline) ? array() : explode(';', $row->polyline);
+    $polygon  = empty($row->polygon)  ? array() : explode(';', $row->polygon);
+    ?>
         <div id="map" style="width:100%;height:100%;"></div>
         <script type="text/javascript">
         //<![CDATA[
@@ -58,6 +66,4 @@ function viewSectionMap() {
             <?php endif; ?>
         //]]>
         </script>
-        <?php
-    }
-    ?>
+<?php } ?>

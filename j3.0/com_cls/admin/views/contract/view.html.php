@@ -1,60 +1,54 @@
 <?php
 /**
- * Joomla! component sexypolling
- *
- * @version $Id: view.html.php 2012-04-05 14:30:25 svn $
- * @author 2GLux.com
- * @package Sexy Polling
- * @subpackage com_sexypolling
- * @license GNU/GPL
- *
- */
+* @version   $Id$
+* @package   CLS
+* @copyright Copyright (C) 2010 Edvard Ananyan. All rights reserved.
+* @license   GNU/GPL, see LICENSE.php
+*/
 
 // no direct access
 defined('_JEXEC') or die('Restircted access');
 
 // Import Joomla! libraries
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
-class ClsViewContract extends JViewLegacy
-{
-	protected $form;
-	protected $item;
-	protected $state;
+class ClsViewContract extends JViewLegac {
 
-	/**
-	 * Display the view
-	 */
-	public function display($tpl = null)
-	{
-		// Initialiase variables.
+    protected $form;
+    protected $item;
+    protected $state;
 
-		$this->addToolbar();
-		parent::display($tpl);
-	}
-	
-	protected function addToolbar()
-	{
-		JRequest::setVar('hidemainmenu', true);
-		
-		$user		= JFactory::getUser();
-		$userId		= $user->get('id');
-		$isNew		= ((int)$_REQUEST['id'] == 0);
-	
-		$text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
-		JToolBarHelper::title(   JText::_( 'Contract' ).': <small><small>[ ' . $text.' ]</small></small>','manage.png' );
-	
-		// Build the actions for new and existing records.
-		if ($isNew)  {
-			JToolBarHelper::apply('contract.apply');
-			JToolBarHelper::save('contract.save');
-			JToolBarHelper::cancel('contract.cancel');
-		}
-		else {
-			JToolBarHelper::apply('contract.apply');
-			JToolBarHelper::save('contract.save');
-			JToolBarHelper::cancel('contract.cancel','close');
-		}
-	}
+    /**
+     * Display the view
+     */
+    public function display($tpl = null) {
+        // Initialiase variables.
+
+        $this->addToolbar();
+        parent::display($tpl);
+    }
+
+    protected function addToolbar() {
+        JRequest::setVar('hidemainmenu', true);
+
+        $user       = JFactory::getUser();
+        $userId     = $user->get('id');
+        $isNew      = ((int)$_REQUEST['id'] == 0);
+
+        $text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
+        JToolBarHelper::title(   JText::_( 'Contract' ).': <small><small>[ ' . $text.' ]</small></small>','manage.png' );
+
+        // Build the actions for new and existing records.
+        if ($isNew)  {
+            JToolBarHelper::apply('contract.apply');
+            JToolBarHelper::save('contract.save');
+            JToolBarHelper::cancel('contract.cancel');
+        }
+        else {
+            JToolBarHelper::apply('contract.apply');
+            JToolBarHelper::save('contract.save');
+            JToolBarHelper::cancel('contract.cancel','close');
+        }
+    }
 
 }

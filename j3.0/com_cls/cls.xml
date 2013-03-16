@@ -3,11 +3,11 @@
     <name>CLS</name>
     <author>Edvard Ananyan</author>
     <creationDate>March 2010</creationDate>
-    <copyright>Copyright (c) 2010 - 2012 Edvard Ananyan. All rights reserved.</copyright>
+    <copyright>Copyright (c) 2010 - 2013 Edvard Ananyan. All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>edo888@gmail.com</authorEmail>
     <authorUrl>http://edo.webmaster.am/</authorUrl>
-    <version>0.9.8</version>
+    <version>3.0.0</version>
     <description>Complaint Logging System</description>
 
     <files>
@@ -38,12 +38,12 @@
         <menu img="components/com_cls/images/cls_icon.png">CLS</menu>
         <submenu>
             <menu link="option=com_cls" img="components/com_cls/images/cls_icon.png">Complaints</menu>
-            <menu link="option=com_cls&amp;c=areas" img="components/com_cls/images/categories.png">Complaint Categories</menu>
-            <menu link="option=com_cls&amp;c=contracts" img="components/com_cls/images/contracts.png">Contracts</menu>
-            <menu link="option=com_cls&amp;c=sections" img="components/com_cls/images/sections.png">Sections</menu>
-            <menu link="option=com_cls&amp;c=SupportGroups" img="components/com_cls/images/support_groups.png">Support Groups</menu>
-            <menu link="option=com_cls&amp;c=reports" img="components/com_cls/images/statistics.png">Statistics</menu>
-            <menu link="option=com_cls&amp;c=notifications" img="components/com_cls/images/activity_log.png">Activity Log</menu>
+            <menu link="option=com_cls&amp;view=areas" img="components/com_cls/images/categories.png">Complaint Categories</menu>
+            <menu link="option=com_cls&amp;view=contracts" img="components/com_cls/images/contracts.png">Contracts</menu>
+            <menu link="option=com_cls&amp;view=sections" img="components/com_cls/images/sections.png">Sections</menu>
+            <menu link="option=com_cls&amp;view=SupportGroups" img="components/com_cls/images/support_groups.png">Support Groups</menu>
+            <menu link="option=com_cls&amp;view=reports" img="components/com_cls/images/statistics.png">Statistics</menu>
+            <menu link="option=com_cls&amp;view=notifications" img="components/com_cls/images/activity_log.png">Activity Log</menu>
         </submenu>
 
         <files folder="admin">

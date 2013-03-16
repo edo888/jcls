@@ -1,4 +1,4 @@
-<?php 
+<?php
 // no direct access
 defined('_JEXEC') or die('Restircted access');
 
@@ -15,7 +15,7 @@ $db->setQuery($query);
 $sections = $db->loadObjectList();
 $section[] = array('key' => '', 'value' => '- Select Section -');
 foreach($sections as $a)
-	$section[] = array('key' => $a->id, 'value' => $a->name);
+    $section[] = array('key' => $a->id, 'value' => $a->name);
 $lists['section'] = JHTML::_('select.genericlist', $section, 'section_id', null, 'key', 'value', JRequest::getVar('section_id', $row->section_id));
 
 $user = JFactory::getUser();
@@ -25,13 +25,13 @@ $user_type = $user->getParam('role', 'System Administrator');
 editContract($row, $lists, $user_type);
 
 function editContract($row, $lists, $user_type) {
-	jimport('joomla.filter.output');
-	JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+    jimport('joomla.filter.output');
+    JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
-	JHTML::_('behavior.modal');
+    JHTML::_('behavior.modal');
 
-	//echo '<pre>', print_r($row, true), '</pre>';
-	?>
+    //echo '<pre>', print_r($row, true), '</pre>';
+    ?>
         <script language="javascript" type="text/javascript">
         Joomla.submitbutton = function(pressbutton) {
             var form = document.adminForm;
@@ -138,6 +138,4 @@ function editContract($row, $lists, $user_type) {
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
          <?php echo JHtml::_('form.token'); ?>
         </form>
-    <?php
-    }
-?>
+<?php } ?>
