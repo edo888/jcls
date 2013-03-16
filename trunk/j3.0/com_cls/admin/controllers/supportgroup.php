@@ -1,80 +1,73 @@
 <?php
 /**
- * Joomla! component sexypolling
- *
- * @version $Id: sexypoll.php 2012-04-05 14:30:25 svn $
- * @author 2GLux.com
- * @package Sexy Polling
- * @subpackage com_sexypolling
- * @license GNU/GPL
- *
- */
+* @version   $Id$
+* @package   CLS
+* @copyright Copyright (C) 2010 Edvard Ananyan. All rights reserved.
+* @license   GNU/GPL, see LICENSE.php
+*/
 
 // no direct access
 defined('_JEXEC') or die('Restircted access');
 
 jimport('joomla.application.component.controllerform');
-
 jimport('joomla.database.table');
 
-class SupportGroupTableSupportGroup extends JTable
-{
-	/**
-	 * Constructor
-	 *
-	 * @param object Database connector object
-	 */
-	function __construct()
-	{
-		$db   = JFactory::getDBO();
-		parent::__construct('#__complaint_support_groups', 'id', $db);
-	}
+class SupportGroupTableSupportGroup extends JTable {
+
+    /**
+     * Constructor
+     *
+     * @param object Database connector object
+     */
+    function __construct()
+    {
+        $db   = JFactory::getDBO();
+        parent::__construct('#__complaint_support_groups', 'id', $db);
+    }
 }
 
 
-class ClsControllerSupportGroup extends JControllerForm
-{
-	
-	function __construct($default = array()) {
-		parent::__construct($default);
-		
-		$task = $_REQUEST['task'];
-		$this->registerTask('add' , 'editsupportgroup');
-		$this->registerTask('edit', 'editsupportgroup');
-		$this->registerTask('save', 'savesupportgroup');
-		$this->registerTask('apply', 'savesupportgroup');
-		$this->registerTask('remove', 'removesupportgroup');
-		$this->registerTask('cancel', 'close');
-		
-	}
-	
-	function close() {
-		$link = 'index.php?option=com_cls&view=supportgroups';
-		$this->setRedirect($link, $msg);
-	}
-	
-	function editsupportgroup() {
-		$db   = JFactory::getDBO();
-		$user = JFactory::getUser();
-		$user_type = $user->getParam('role', 'Guest');
-		$user_type = $user->getParam('role', 'System Administrator');
-	
-		// guest cannot see this list
-		if($user_type == 'Guest' or $user_type == 'Level 2' or $user_type == 'Supervisor') {
-			$this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
-			return;
-		}
-	
-		$id = (int)$_REQUEST['id'];
+class ClsControllerSupportGroup extends JControllerForm {
 
-		$link = 'index.php?option=com_cls&view=supportgroup&layout=edit';
-		if($id != 0)
-			$link .= '&id='.$id;
-		$this->setRedirect($link, $msg);
-	}
-	
-	
-function saveSupportGroup() {
+    function __construct($default = array()) {
+        parent::__construct($default);
+
+        $task = $_REQUEST['task'];
+        $this->registerTask('add' , 'editsupportgroup');
+        $this->registerTask('edit', 'editsupportgroup');
+        $this->registerTask('save', 'savesupportgroup');
+        $this->registerTask('apply', 'savesupportgroup');
+        $this->registerTask('remove', 'removesupportgroup');
+        $this->registerTask('cancel', 'close');
+
+    }
+
+    function close() {
+        $link = 'index.php?option=com_cls&view=supportgroups';
+        $this->setRedirect($link, $msg);
+    }
+
+    function editsupportgroup() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+        $user_type = $user->getParam('role', 'System Administrator');
+
+        // guest cannot see this list
+        if($user_type == 'Guest' or $user_type == 'Level 2' or $user_type == 'Supervisor') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        $id = (int)$_REQUEST['id'];
+
+        $link = 'index.php?option=com_cls&view=supportgroup&layout=edit';
+        if($id != 0)
+            $link .= '&id='.$id;
+        $this->setRedirect($link, $msg);
+    }
+
+    function saveSupportGroup() {
         $db = JFactory::getDBO();
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
@@ -150,32 +143,30 @@ function saveSupportGroup() {
                 $this->setRedirect('index.php?option=com_cls', JText::_('Unknown task'));
         }
     }
-	
-    
+
     function removeSupportGroup() {
-    	$db   = JFactory::getDBO();
-    	$user = JFactory::getUser();
-    	$user_type = $user->getParam('role', 'Guest');
-    	$user_type = $user->getParam('role', 'System Administrator');
-    	$cid  = JRequest::getVar( 'cid', array(), '', 'array' );
-    
-    	if($user_type == 'System Administrator') {
-    		for($i = 0, $n = count($cid); $i < $n; $i++) {
-    			$query = "delete from #__complaint_support_groups where id = $cid[$i]";
-    			$db->setQuery($query);
-    			$db->query();
-    
-    			$query = "delete from #__complaint_support_groups_users_map where group_id = $cid[$i]";
-    			$db->setQuery($query);
-    			$db->query();
-    			clsLog('Support Group removed', 'The support group with ID=' . $cid[$i] . ' has been removed');
-    		}
-    
-    		$this->setRedirect('index.php?option=com_cls&view=supportgroups', JText::_('Support Group(s) successfully deleted'));
-    	} else {
-    		$this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
-    	}
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $user_type = $user->getParam('role', 'Guest');
+        $user_type = $user->getParam('role', 'System Administrator');
+        $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
+
+        if($user_type == 'System Administrator') {
+            for($i = 0, $n = count($cid); $i < $n; $i++) {
+                $query = "delete from #__complaint_support_groups where id = $cid[$i]";
+                $db->setQuery($query);
+                $db->query();
+
+                $query = "delete from #__complaint_support_groups_users_map where group_id = $cid[$i]";
+                $db->setQuery($query);
+                $db->query();
+                clsLog('Support Group removed', 'The support group with ID=' . $cid[$i] . ' has been removed');
+            }
+
+            $this->setRedirect('index.php?option=com_cls&view=supportgroups', JText::_('Support Group(s) successfully deleted'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to deleted"));
+        }
     }
-	
-	
+
 }

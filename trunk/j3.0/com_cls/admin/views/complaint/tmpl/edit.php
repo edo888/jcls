@@ -1,9 +1,13 @@
-<?php 
+<?php
+/**
+* @version   $Id$
+* @package   CLS
+* @copyright Copyright (C) 2010 Edvard Ananyan. All rights reserved.
+* @license   GNU/GPL, see LICENSE.php
+*/
+
 // no direct access
 defined('_JEXEC') or die('Restircted access');
-
-
-
 
 $row = $_SESSION['row'];
 $lists = $_SESSION['lists'];
@@ -12,36 +16,36 @@ $user_type = $_SESSION['user_type'];
 editComplaint($row, $lists, $user_type);
 
 function editComplaint($row, $lists, $user_type) {
-	jimport('joomla.filter.output');
-	JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
+    jimport('joomla.filter.output');
+    JFilterOutput::objectHTMLSafe($row, ENT_QUOTES);
 
-	//add the links to the external files into the head of the webpage (note the 'administrator' in the path, which is not nescessary if you are in the frontend)
-	$document =JFactory::getDocument();
-	$document->addScript(JURI::base(true).'/components/com_cls/swfupload/swfupload.js');
-	$document->addScript(JURI::base(true).'/components/com_cls/swfupload/swfupload.queue.js');
-	$document->addScript(JURI::base(true).'/components/com_cls/swfupload/fileprogress.js');
-	$document->addScript(JURI::base(true).'/components/com_cls/swfupload/handlers.js');
-	$document->addStyleSheet(JURI::base(true).'/components/com_cls/swfupload/default.css');
+    //add the links to the external files into the head of the webpage (note the 'administrator' in the path, which is not nescessary if you are in the frontend)
+    $document =JFactory::getDocument();
+    $document->addScript(JURI::base(true).'/components/com_cls/swfupload/swfupload.js');
+    $document->addScript(JURI::base(true).'/components/com_cls/swfupload/swfupload.queue.js');
+    $document->addScript(JURI::base(true).'/components/com_cls/swfupload/fileprogress.js');
+    $document->addScript(JURI::base(true).'/components/com_cls/swfupload/handlers.js');
+    $document->addStyleSheet(JURI::base(true).'/components/com_cls/swfupload/default.css');
 
-	//when we send the files for upload, we have to tell Joomla our session, or we will get logged out
-	$session = JFactory::getSession();
+    //when we send the files for upload, we have to tell Joomla our session, or we will get logged out
+    $session = JFactory::getSession();
 
-	$swfUploadHeadJs ='
-	var swfu;
+    $swfUploadHeadJs ='
+    var swfu;
 
-	window.onload = function() {
-	var settings = {
-	//this is the path to the flash file, you need to put your components name into it
-	flash_url : "'.JURI::base(true).'/components/com_cls/swfupload/swfupload.swf",
+    window.onload = function() {
+    var settings = {
+    //this is the path to the flash file, you need to put your components name into it
+    flash_url : "'.JURI::base(true).'/components/com_cls/swfupload/swfupload.swf",
 
-	//we can not put any vars into the url for complicated reasons, but we can put them into the post...
-	upload_url: "index.php",
-	post_params: {
-	"option" : "com_cls",
-	"task" : "upload_picture",
-	"id" : "'.$row->id.'",
-	"'.$session->getName().'" : "'.$session->getId().'",
-	"format" : "raw"
+    //we can not put any vars into the url for complicated reasons, but we can put them into the post...
+    upload_url: "index.php",
+    post_params: {
+    "option" : "com_cls",
+    "task" : "upload_picture",
+    "id" : "'.$row->id.'",
+    "'.$session->getName().'" : "'.$session->getId().'",
+    "format" : "raw"
 },
 //you need to put the session and the "format raw" in there, the other ones are what you would normally put in the url
 file_size_limit : "8 MB",
@@ -80,14 +84,14 @@ queue_complete_handler : queueComplete     // Queue plugin event
 swfu = new SWFUpload(settings);
 };';
 
-	//add the javascript to the head of the html document
-	if((int)$row->id != 0)
-		$document->addScriptDeclaration($swfUploadHeadJs);
+    //add the javascript to the head of the html document
+    if((int)$row->id != 0)
+        $document->addScriptDeclaration($swfUploadHeadJs);
 
-	JHTML::_('behavior.modal');
+    JHTML::_('behavior.modal');
 
-	//echo '<pre>', print_r($row, true), '</pre>';
-	?>
+    //echo '<pre>', print_r($row, true), '</pre>';
+    ?>
         <script language="javascript" type="text/javascript">
         Joomla.submitbutton = function(pressbutton) {
             var form = document.adminForm;
@@ -108,8 +112,8 @@ swfu = new SWFUpload(settings);
         }
         </script>
         <form action="index.php" method="post" name="adminForm">
-        
-	
+
+
         <fieldset class="adminform">
             <legend><?php echo JText::_('Details'); ?></legend>
 

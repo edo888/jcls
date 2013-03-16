@@ -1,44 +1,38 @@
 <?php
 /**
- * Joomla! component sexypolling
- *
- * @version $Id: view.html.php 2012-04-05 14:30:25 svn $
- * @author 2GLux.com
- * @package Sexy Polling
- * @subpackage com_sexypolling
- * @license GNU/GPL
- *
- */
+* @version   $Id$
+* @package   CLS
+* @copyright Copyright (C) 2010 Edvard Ananyan. All rights reserved.
+* @license   GNU/GPL, see LICENSE.php
+*/
 
 // no direct access
 defined('_JEXEC') or die('Restircted access');
 
 // Import Joomla! libraries
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
-class ClsViewReports extends JViewLegacy
-{
-	protected $form;
-	protected $item;
-	protected $state;
+class ClsViewReports extends JViewLegacy {
 
-	/**
-	 * Display the view
-	 */
-	public function display($tpl = null)
-	{
-		// Initialiase variables.
+    protected $form;
+    protected $item;
+    protected $state;
 
-		$this->addToolbar();
-		$this->sidebar = JHtmlSidebar::render();
-		parent::display($tpl);
-	}
-	
-	protected function addToolbar()
-	{
-		JRequest::setVar('hidemainmenu', true);
+    /**
+     * Display the view
+     */
+    public function display($tpl = null) {
+        // Initialiase variables.
 
-		JToolBarHelper::cancel('reports.cancel','close');
-	}
+        $this->addToolbar();
+        $this->sidebar = JHtmlSidebar::render();
+        parent::display($tpl);
+    }
+
+    protected function addToolbar() {
+        JRequest::setVar('hidemainmenu', true);
+
+        JToolBarHelper::cancel('reports.cancel','close');
+    }
 
 }
