@@ -236,7 +236,8 @@ class ClsControllerComplaint extends JControllerForm {
                     $query = implode(' UNION ALL ', $query);
 
                     $db->setQuery($query);
-                    $res = $db->query();
+                    $rows = $db->loadRowList();
+
 
                     jimport('joomla.mail.mail');
                     $mail = new JMail();
@@ -246,16 +247,16 @@ class ClsControllerComplaint extends JControllerForm {
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
                     $mail->msgHTML('<p>A complaint was processed. Login to http://'.$_SERVER['HTTP_HOST'].'/administrator/index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
                     $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
-                    while($row = mysql_fetch_array($res, MYSQL_NUM)) {
-                        if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                    foreach($rows as $row) {
+                        $params = json_decode($row[2]);
+                        if($params->receive_by_email == "1") { // send email notification
                             $mail->AddAddress($row[0]);
                             clsLog('Processed notification sent', 'Complaint #' . $complaint->message_id . ' processed notification sent to ' . $row[1]);
                         }
 
-                        if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
-                            preg_match('/telephone=(.*)/', $row[2], $matches);
-                            if(isset($matches[1]) and $matches[1] != '') {
-                                $telephone = $matches[1];
+                        if($params->receive_by_sms == "1") { // send sms notification
+                            $telephone = $params->telephone;
+                            if(!empty($telephone)) {
                                 $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id processed, please login to the system to resolve it.', now(), 'Notification')");
                                 $db->query();
 
@@ -294,7 +295,7 @@ class ClsControllerComplaint extends JControllerForm {
                     $query = implode(' UNION ALL ', $query);
 
                     $db->setQuery($query);
-                    $res = $db->query();
+                    $rows = $db->loadRowList();
 
                     jimport('joomla.mail.mail');
                     $mail = new JMail();
@@ -304,16 +305,16 @@ class ClsControllerComplaint extends JControllerForm {
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
                     $mail->msgHTML("<p>Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.</p>");
                     $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
-                    while($row = mysql_fetch_array($res, MYSQL_NUM)) {
-                        if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                    foreach($rows as $row) {
+                        $params = json_decode($row[2]);
+                        if($params->receive_by_email == "1") { // send email notification
                             $mail->AddAddress($row[0]);
                             clsLog('Resolved and closed notification', 'Complaint #' . $complaint->message_id . ' resolution notification has been sent to ' . $row[1]);
                         }
 
-                        if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
-                            preg_match('/telephone=(.*)/', $row[2], $matches);
-                            if(isset($matches[1]) and $matches[1] != '') {
-                                $telephone = $matches[1];
+                        if($params->receive_by_sms == "1") { // send sms notification
+                            $telephone = $params->telephone;
+                            if(!empty($telephone)) {
                                 $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.', now(), 'Notification')");
                                 $db->query();
 
@@ -356,7 +357,7 @@ class ClsControllerComplaint extends JControllerForm {
                     $query = implode(' UNION ALL ', $query);
 
                     $db->setQuery($query);
-                    $res = $db->query();
+                    $rows = $db->loadRowList();
 
                     jimport('joomla.mail.mail');
                     $mail = new JMail();
@@ -366,16 +367,16 @@ class ClsControllerComplaint extends JControllerForm {
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
                     $mail->msgHTML('<h3>New comment has been posted:</h3><pre>' . $complaint->comments . '</pre>');
                     $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
-                    while($row = mysql_fetch_array($res, MYSQL_NUM)) {
-                        if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                    foreach($rows as $row) {
+                        $params = json_decode($row[2]);
+                        if($params->receive_by_email == "1") { // send email notification
                             $mail->AddAddress($row[0]);
                             clsLog('New comment notification', 'Complaint #' . $complaint->message_id . ' comment notification sent to ' . $row[1]);
                         }
 
-                        if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
-                            preg_match('/telephone=(.*)/', $row[2], $matches);
-                            if(isset($matches[1]) and $matches[1] != '') {
-                                $telephone = $matches[1];
+                        if($params->receive_by_sms == "1") { // send sms notification
+                            $telephone = $params->telephone;
+                            if(!empty($telephone)) {
                                 $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id got new comments, please login to the system to take actions.', now(), 'Notification')");
                                 $db->query();
 

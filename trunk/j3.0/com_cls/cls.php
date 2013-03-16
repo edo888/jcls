@@ -9,11 +9,15 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-require_once(JPATH_ADMINISTRATOR.DS.'includes'.DS.'toolbar.php');
-require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'toolbar.cls.php');
-require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'controller.php');
-require_once(JPATH_COMPONENT.DS.'cls.html.php');
-require_once(JPATH_COMPONENT.DS.'controller.php');
+// Initialize the controller
+$controller = JControllerLegacy::getInstance('clsFront');
+$controller->execute(JFactory::getApplication()->input->get('task'));
+$controller->redirect();
+
+/*
+require_once(JPATH_COMPONENT_ADMINISTRATOR.'/controller.php');
+require_once(JPATH_COMPONENT.'/cls.html.php');
+require_once(JPATH_COMPONENT.'/controller.php');
 
 // Component Helper
 jimport('joomla.application.component.helper');
@@ -28,3 +32,4 @@ switch(JRequest::getCmd('c', 'complaints')) {
 // Perform the Request task
 $controller->execute(JRequest::getVar('task'));
 $controller->redirect();
+*/

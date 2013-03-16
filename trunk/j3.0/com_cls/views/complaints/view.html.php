@@ -9,31 +9,34 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
-class CLSViewComplaints extends JView {
+class CLSFrontViewComplaints extends JViewLegacy {
     function display($tpl = null) {
         CLSView::showToolbar();
 
-        global $mainframe, $option;
+        global $option;
+        $mainframe = JFactory::getApplication();
 
         // authorize
         $user =& JFactory::getUser();
+        /* todo
         if($user->getParam('role', '') == '') {
-            global $mainframe;
-
             $return = JURI::base() . 'index.php?option=com_user&view=login';
             $return .= '&return=' . base64_encode(JURI::base() . 'index.php?' . JURI::getInstance()->getQuery());
             $mainframe->redirect($return);
         }
+        */
 
         $user_type = $user->getParam('role', 'Guest');
 
         // guest cannot see this list
+        /* todo
         if($user_type == 'Guest') {
             JError::raiseWarning(403, 'You are not authorized to view this page.');
             return;
         }
+        */
 
         $document =& JFactory::getDocument();
         $document->addScript(JURI::base().'includes/js/joomla.javascript.js');

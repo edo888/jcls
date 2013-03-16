@@ -13,15 +13,15 @@ JHTML::_('behavior.calendar');
 $user =& JFactory::getUser();
 ?>
 <h3>Statistics Period</h3>
-<form action="<?php JURI::base(true); ?>/index.php" method="post" name="adminForm">
+<form action="" method="post" name="adminForm">
 <table>
     <tr>
         <td><?php echo JText::_('Start Date'); ?></td>
-        <td><input class="inputbox" type="text" name="startdate" id="startdate" size="25" maxlength="25" value="<?php echo $this->startdate; ?>" /> <input type="reset" class="button" value="..." onclick="return showCalendar('startdate','%Y-%m-%d');" /></td>
+        <td><?php echo JHTML::_('calendar', $this->startdate, "startdate" , "startdate", '%Y-%m-%d');?></td>
     </tr>
     <tr>
         <td><?php echo JText::_('End Date'); ?></td>
-        <td><input class="inputbox" type="text" name="enddate" id="enddate" size="25" maxlength="25" value="<?php echo $this->enddate; ?>" /> <input type="reset" class="button" value="..." onclick="return showCalendar('enddate','%Y-%m-%d');" /></td>
+        <td><?php echo JHTML::_('calendar', $this->enddate, "enddate" , "enddate", '%Y-%m-%d');?></td>
     </tr>
 </table>
 <br />
