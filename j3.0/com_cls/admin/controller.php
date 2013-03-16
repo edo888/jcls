@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restircted access');
 
 jimport('joomla.application.component.controller');
-require_once( JPATH_COMPONENT.'/helpers/helper.php' );
+require_once(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/helper.php');
 
 class clsController extends JControllerLegacy {
     /**

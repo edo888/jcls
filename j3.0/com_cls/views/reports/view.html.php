@@ -9,9 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
-class CLSViewReports extends JView {
+class CLSFrontViewReports extends JViewLegacy {
     function display($tpl = null) {
 
         // authorize

@@ -20,7 +20,7 @@ $controller->redirect();
 function clsLog($action, $description) {
     $db   = JFactory::getDBO();
     $user = JFactory::getUser();
-    $description = mysql_real_escape_string($description);
+    $description = $db->escape($description);
     $db->setQuery("insert into #__complaint_notifications values(null, {$user->id}, '$action', now(), '$description')");
     $db->query();
 }

@@ -8,11 +8,10 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+jimport('joomla.application.component.view');
+require_once(JPATH_ADMINISTRATOR.'/includes/toolbar.php');
+
 $document =& JFactory::getDocument();
-$document->addScript(JURI::base().'includes/js/joomla.javascript.js');
-$document->addStyleSheet(JURI::base().'administrator/templates/khepri/css/general.css');
-$document->addStyleSheet(JURI::base().'administrator/templates/khepri/css/rounded.css');
-$document->addStyleSheet(JURI::base().'administrator/templates/khepri/css/icon.css');
 
 class CLSView {
     function showComplaints($rows, $pageNav, $options, $lists) {
@@ -1797,12 +1796,15 @@ class CLSView {
     }
 
     function showToolbar() {
+        /*
         echo '<div id="toolbar-box"><div class="t"><div class="t"><div class="t"></div></div></div><div class="m">';
         jimport('joomla.html.toolbar');
         $bar = & JToolBar::getInstance('toolbar');
         echo $bar->render('toolbar');
-        global $mainframe;
+
+        $mainframe = JFactory::getApplication();
         echo $mainframe->get('JComponentTitle');
         echo '<div class="clr"></div></div><div class="b"><div class="b"><div class="b"></div></div></div></div>';
+        */
     }
 }

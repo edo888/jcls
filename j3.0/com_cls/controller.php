@@ -11,10 +11,10 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'controller.php');
-require_once(JPATH_COMPONENT.DS.'cls.html.php');
+require_once(JPATH_COMPONENT_ADMINISTRATOR.'/controller.php');
+require_once(JPATH_COMPONENT.'/cls.html.php');
 
-class CLSControllerFront extends JController {
+class clsFrontController extends JControllerLegacy {
     function __construct($default = array()) {
         parent::__construct($default);
         $this->registerTask('download_report', 'downloadReport');
@@ -111,16 +111,18 @@ class CLSControllerFront extends JController {
     }
 
     function submitComplaint() {
-        global $mainframe;
+        $mainframe = JFactory::getApplication();
 
         // check captcha
         $session =& JFactory::getSession();
 
+        // remember input data
+        $session->set('cls_name', JRequest::getVar('name'));
+        $session->set('cls_email', JRequest::getVar('email'));
+        $session->set('cls_tel', JRequest::getVar('tel'));
+        $session->set('cls_address', JRequest::getVar('address'));
+
         if($session->get('cls_captcha') != strtoupper(JRequest::getVar('captcha'))) {
-            $session->set('cls_name', JRequest::getVar('name'));
-            $session->set('cls_email', JRequest::getVar('email'));
-            $session->set('cls_tel', JRequest::getVar('tel'));
-            $session->set('cls_address', JRequest::getVar('address'));
             $session->set('cls_msg', JRequest::getVar('msg'));
             $this->setRedirect(JRoute::_('index.php?option=com_cls&Itemid='.JRequest::getInt('Itemid')), JText::_('COMPLAINT_FORM_INVALID_CAPTCHA'));
             return;
@@ -130,11 +132,11 @@ class CLSControllerFront extends JController {
 
         $db =& JFactory::getDBO();
 
-        $name    = mysql_real_escape_string(JRequest::getVar('name', 'Anonymous', 'post', 'string'));
-        $email   = mysql_real_escape_string(JRequest::getVar('email', '', 'post', 'string'));
-        $tel     = mysql_real_escape_string(JRequest::getVar('tel', '', 'post', 'string'));
-        $address = mysql_real_escape_string(JRequest::getVar('address', '', 'post', 'string'));
-        $msg     = mysql_real_escape_string(JRequest::getVar('msg', '', 'post', 'string'));
+        $name    = $db->escape(JRequest::getVar('name', 'Anonymous', 'post', 'string'));
+        $email   = $db->escape(JRequest::getVar('email', '', 'post', 'string'));
+        $tel     = $db->escape(JRequest::getVar('tel', '', 'post', 'string'));
+        $address = $db->escape(JRequest::getVar('address', '', 'post', 'string'));
+        $msg     = $db->escape(JRequest::getVar('msg', '', 'post', 'string'));
 
         // generating message_id
         $date = date('Y-m-d');
@@ -247,8 +249,8 @@ class CLSControllerFront extends JController {
         // Send new complaint notification to members
         $config =& JComponentHelper::getParams('com_cls');
 
-        $db->setQuery("select email, name, params from #__users where params like '%receive_notifications=1%' and (params like '%role=System Administrator%' or params like '%role=Level 1%')");
-        $res = $db->query();
+        $db->setQuery("select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%')");
+        $rows = $db->loadRowList();
 
         jimport('joomla.mail.mail');
         $mail = new JMail();
@@ -257,16 +259,16 @@ class CLSControllerFront extends JController {
         $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
         $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Login to http://'.$_SERVER['HTTP_HOST'].'/administrator/index.php?option=com_cls to process it.</p>' . $msg);
         $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
-        while($row = mysql_fetch_array($res, MYSQL_NUM)) {
-            if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+        foreach($rows as $row) {
+            $params = json_decode($row[2]);
+            if($params->receive_by_email == "1") { // send email notification
                 $mail->AddAddress($row[0]);
                 clsLog('New email complaint notification', "New complaint #{$message_id} notification has been sent to $row[1]");
             }
 
-            if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
-                preg_match('/telephone=(.*)/', $row[2], $matches);
-                if(isset($matches[1]) and $matches[1] != '') {
-                    $telephone = $matches[1];
+            if($params->receive_by_sms == "1") { // send sms notification
+                $telephone = $params->telephone;
+                if(!empty($telephone)) {
                     $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($complaint_id, 'CLS', '$telephone', 'New complaint #{$message_id} received, please login to the system to process it.', now(), 'Notification')");
                     $db->query();
 
@@ -295,7 +297,7 @@ class CLSControllerFront extends JController {
         }
 
         if($sms_acknowledgment and $tel != '') {
-            $acknowledgment_text = mysql_real_escape_string($acknowledgment_text);
+            $acknowledgment_text = $db->escape($acknowledgment_text);
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($complaint_id, 'CLS', '$tel', '$acknowledgment_text', now(), 'Acknowledgment')");
             $db->query();
 
@@ -354,7 +356,7 @@ class CLSControllerFront extends JController {
 function clsLog($action, $description) {
     $db   =& JFactory::getDBO();
     $user =& JFactory::getUser();
-    $description = mysql_real_escape_string($description);
+    $description = $db->escape($description);
     $db->setQuery("insert into #__complaint_notifications values(null, {$user->id}, '$action', now(), '$description')");
     $db->query();
 }

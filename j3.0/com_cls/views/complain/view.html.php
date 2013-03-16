@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport( 'joomla.application.component.view');
 
-class CLSViewComplain extends JView {
+class CLSFrontViewComplain extends JViewLegacy {
     function display($tpl = null) {
         //CLSView::showToolbar();
 
