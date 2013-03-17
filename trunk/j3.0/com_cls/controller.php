@@ -10,40 +10,28 @@
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
-
-require_once(JPATH_COMPONENT_ADMINISTRATOR.'/controller.php');
-require_once(JPATH_COMPONENT.'/cls.html.php');
+require_once(JPATH_COMPONENT.'/helpers/helper.php');
 
 class clsFrontController extends JControllerLegacy {
+    /**
+     * @var     string  The default view.
+     * @since   1.6
+     */
+    protected $default_view = 'reports';
+
     function __construct($default = array()) {
         parent::__construct($default);
+
         $this->registerTask('download_report', 'downloadReport');
+        $this->registerTask('notify_sms_acknowledge', 'notifySMSAcknowledge');
+        $this->registerTask('notify_email_acknowledge', 'notifyEmailAcknowledge');
+        $this->registerTask('notify_sms_resolve', 'notifySMSResolve');
+        $this->registerTask('notify_email_resolve', 'notifyEmailResolve');
+        $this->registerTask('upload_picture' , 'uploadPicture');
+
         $this->registerTask('submit', 'submitComplaint');
         $this->registerTask('newcomplaint', 'newComplaint');
 
-        // backend tasks referencing
-        $this->registerTask('edit', 'adminRefferenceTask');
-        $this->registerTask('save', 'adminRefferenceTask');
-        $this->registerTask('apply', 'adminRefferenceTask');
-        $this->registerTask('remove', 'adminRefferenceTask');
-        #$this->registerTask('addContract', 'adminRefferenceTask');
-        #$this->registerTask('editContract', 'adminRefferenceTask');
-        #$this->registerTask('saveContract', 'adminRefferenceTask');
-        #$this->registerTask('applyContract', 'adminRefferenceTask');
-        #$this->registerTask('removeContract', 'adminRefferenceTask');
-        #$this->registerTask('cancelContract', 'adminRefferenceTask');
-        #$this->registerTask('addSection', 'adminRefferenceTask');
-        #$this->registerTask('editSection', 'adminRefferenceTask');
-        #$this->registerTask('saveSection', 'adminRefferenceTask');
-        #$this->registerTask('applySection', 'adminRefferenceTask');
-        #$this->registerTask('removeSection', 'adminRefferenceTask');
-        #$this->registerTask('cancelSection', 'adminRefferenceTask');
-        #$this->registerTask('download_report', 'adminRefferenceTask');
-        $this->registerTask('notify_sms_acknowledge', 'adminRefferenceTask');
-        $this->registerTask('notify_email_acknowledge', 'adminRefferenceTask');
-        $this->registerTask('notify_sms_resolve', 'adminRefferenceTask');
-        $this->registerTask('notify_email_resolve', 'adminRefferenceTask');
-        $this->registerTask('upload_picture', 'adminRefferenceTask');
     }
 
     function display() {
@@ -108,6 +96,258 @@ class clsFrontController extends JControllerLegacy {
 
         clsLog('Report downloaded', 'User have downloaded a report for the ' . $period . ' period');
         exit;
+    }
+
+    function notifySMSAcknowledge() {
+        $mainframe = JFactory::getApplication();
+
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+
+        $config = JComponentHelper::getParams('com_cls');
+        $acknowledgment_text = str_replace('{sitename}', $mainframe->getCfg('sitename'), sprintf($config->get('acknowledgment_text'), $complaint->message_id));
+
+        if($user_type != 'Guest') {
+            $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) values($id, '$user->username', '$complaint->phone', '$acknowledgment_text', now(), 'Acknowledgment')");
+            $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
+
+            clsLog('SMS acknowledgment queued', "SMS acknowledgment queued to be sent to $complaint->phone for complaint #$complaint->message_id");
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('SMS notification will be sent shortly'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
+        }
+    }
+
+    function notifyEmailAcknowledge() {
+        $mainframe = JFactory::getApplication();
+
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+
+        $config = JComponentHelper::getParams('com_cls');
+        $acknowledgment_text = str_replace('{sitename}', $mainframe->getCfg('sitename'), sprintf($config->get('acknowledgment_text'), $complaint->message_id));
+
+        if($user_type != 'Guest') {
+            jimport('joomla.mail.mail');
+            $mail = new JMail();
+            $mail->setSender(array('no_reply@'.$_SERVER['HTTP_HOST'], 'Complaint Logging System'));
+            $mail->setSubject('Complaint Received: #'.$complaint->message_id);
+            $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+            $mail->MsgHTML("<p>$acknowledgment_text</p>");
+            $mail->AddAddress($complaint->email);
+            $mail->Send() or JError::raiseWarning(0, 'Unable to send Email notification');
+
+            clsLog('Email acknowledgment sent', "Email acknowledgment has been sent to $complaint->email for complaint #$complaint->message_id");
+
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('Email notification successfully sent'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
+        }
+    }
+
+    function notifySMSResolve() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+
+        if($user_type !='Guest') {
+            $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, '$user->username', '$complaint->phone', 'Thank you, your complaint #{$complaint->message_id} was resolved. Feel free to send further complaints if any.', now(), 'Resolved')");
+            $db->query() or JError::raiseWarning(0, 'Unable to insert msg into queue');
+
+            clsLog('SMS resolution acknowledgment queued', 'Complaint #' . $complaint->message_id . ' SMS notification has been queued to be sent to ' . $complaint->phone . ' number');
+
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('SMS notification will be sent shortly'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
+        }
+    }
+
+    function notifyEmailResolve() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+
+        if($user_type !='Guest') {
+            jimport('joomla.mail.mail');
+            $mail = new JMail();
+            $mail->setSender(array('no_reply@'.$_SERVER['HTTP_HOST'], 'Complaint Logging System'));
+            $mail->setSubject('Complaint Resolved: #'.$complaint->message_id);
+            $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+            $mail->MsgHTML('<p>Thank you, your complaint was resolved. Feel free to send further complaints if any.</p>');
+            $mail->AddAddress($complaint->email);
+            $mail->Send() or JError::raiseWarning(0, 'Unable to send Email notification');
+
+            clsLog('Email resolution acknowledgment sent', 'Complaint #' . $complaint->message_id . ' email notification has been sent to ' . $complaint->email . ' address');
+
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('Email notification successfully sent'));
+        } else {
+            $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
+        }
+    }
+
+    function uploadPicture() {
+        $user_type = JFactory::getUser()->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest' or $user_type == 'Supervisor') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        //import joomlas filesystem functions, we will do all the filewriting with joomlas functions,
+        //so if the ftp layer is on, joomla will write with that, not the apache user, which might
+        //not have the correct permissions
+        jimport('joomla.filesystem.file');
+        jimport('joomla.filesystem.folder');
+
+        //this is the name of the field in the html form, filedata is the default name for swfupload
+        //so we will leave it as that
+        $fieldName = 'Filedata';
+
+        //any errors the server registered on uploading
+        $fileError = $_FILES[$fieldName]['error'];
+        if($fileError > 0)  {
+            switch ($fileError) {
+                case 1:
+                    echo JText::_('FILE TO LARGE THAN PHP INI ALLOWS');
+                    return;
+                case 2:
+                    echo JText::_('FILE TO LARGE THAN HTML FORM ALLOWS');
+                    return;
+                case 3:
+                    echo JText::_('ERROR PARTIAL UPLOAD');
+                    return;
+                case 4:
+                    echo JText::_('ERROR NO FILE');
+                    return;
+            }
+        }
+
+        //check for filesize
+        $fileSize = $_FILES[$fieldName]['size'];
+        if($fileSize > 2000000)
+            echo JText::_( 'FILE BIGGER THAN 2MB' );
+
+        //check the file extension is ok
+        $fileName = $_FILES[$fieldName]['name'];
+        $uploadedFileNameParts = explode('.',$fileName);
+        $uploadedFileExtension = array_pop($uploadedFileNameParts);
+
+        $validFileExts = explode(',', 'jpeg,jpg,png,gif');
+
+        //assume the extension is false until we know its ok
+        $extOk = false;
+
+        //go through every ok extension, if the ok extension matches the file extension (case insensitive)
+        //then the file extension is ok
+        foreach($validFileExts as $key => $value)
+            if(preg_match("/$value/i", $uploadedFileExtension))
+            $extOk = true;
+
+        if($extOk == false) {
+            echo JText::_('INVALID EXTENSION');
+            return;
+        }
+
+        //the name of the file in PHP's temp directory that we are going to move to our folder
+        $fileTemp = $_FILES[$fieldName]['tmp_name'];
+
+        //for security purposes, we will also do a getimagesize on the temp file (before we have moved it
+        //to the folder) to check the MIME type of the file, and whether it has a width and height
+        $imageinfo = getimagesize($fileTemp);
+
+        //we are going to define what file extensions/MIMEs are ok, and only let these ones in (whitelisting), rather than try to scan for bad
+        //types, where we might miss one (whitelisting is always better than blacklisting)
+        $okMIMETypes = 'image/jpeg,image/pjpeg,image/png,image/x-png,image/gif';
+        $validFileTypes = explode(",", $okMIMETypes);
+
+        //if the temp file does not have a width or a height, or it has a non ok MIME, return
+        if(!is_int($imageinfo[0]) or !is_int($imageinfo[1]) or  !in_array($imageinfo['mime'], $validFileTypes)) {
+            echo JText::_('INVALID FILETYPE');
+            return;
+        }
+
+        //lose any special characters in the filename
+        $fileName = preg_replace("/[^A-Za-z0-9.]/", "-", $fileName);
+
+        // generate random filename
+        $fileName = uniqid(JRequest::getInt('id').'_') . '-' . $fileName;
+
+        //always use constants when making file paths, to avoid the possibilty of remote file inclusion
+        $uploadPath = JPATH_ADMINISTRATOR.'/components/com_cls/pictures/'.$fileName;
+
+        if(!JFile::upload($fileTemp, $uploadPath)) {
+            echo JText::_('ERROR MOVING FILE');
+            return;
+        } else {
+            // going to insert the picture into db
+            $db = JFactory::getDBO();
+            $user = JFactory::getUser();
+            $user_type = $user->getParam('role', 'Guest');
+            $complaint_id = JRequest::getInt('id', 0);
+            if($user_type !='Guest') {
+
+                $pic = new JObject();
+                $pic->id = NULL;
+                $pic->complaint_id = $complaint_id;
+                $pic->path = str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath);
+
+                $db->insertObject('#__complaint_pictures', $pic, 'id');
+            }
+
+            $db->setQuery('select message_id from #__complaints where id = ' . $complaint_id);
+            $complaint = $db->loadObject();
+            clsLog('Image uploaded', 'User uploaded an image for Complaint #' . $complaint->message_id);
+
+            // success, exit with code 0 for Mac users, otherwise they receive an IO Error
+            exit(0);
+        }
     }
 
     function submitComplaint() {
@@ -329,7 +569,8 @@ class clsFrontController extends JControllerLegacy {
         $message_id = $date.'-'.str_pad($message_id, 4, '0', STR_PAD_LEFT);
 
         // constructing the complaint object
-        $complaint = new JTable('#__complaints', 'id', $db);
+        //$complaint = new JTable('#__complaints', 'id', $db);
+        $complaint = new ComplaintTableComplaint;
         $complaint->set('message_id', $message_id);
         $complaint->set('name', JRequest::getVar('name'));
         $complaint->set('email', JRequest::getVar('email'));
@@ -346,19 +587,6 @@ class clsFrontController extends JControllerLegacy {
         $this->setRedirect('index.php?option=com_cls&view=complaints', JText::_('Complaint successfully created'));
     }
 
-    function adminRefferenceTask() {
-        $controller = new CLSController();
-        $controller->execute(JRequest::getVar('task'));
-    }
-
-}
-
-function clsLog($action, $description) {
-    $db   =& JFactory::getDBO();
-    $user =& JFactory::getUser();
-    $description = $db->escape($description);
-    $db->setQuery("insert into #__complaint_notifications values(null, {$user->id}, '$action', now(), '$description')");
-    $db->query();
 }
 
 /**

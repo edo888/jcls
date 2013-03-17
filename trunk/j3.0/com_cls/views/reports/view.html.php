@@ -8,10 +8,36 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+require_once(JPATH_ADMINISTRATOR.'/includes/toolbar.php');
 
 jimport('joomla.application.component.view');
 
-class CLSFrontViewReports extends JViewLegacy {
+class ClsFrontViewReports extends JViewLegacy {
+
+    protected $form;
+    protected $item;
+    protected $state;
+
+    /**
+     * Display the view
+     */
+    public function display($tpl = null) {
+        // Initialiase variables.
+
+        $this->addToolbar();
+        $this->sidebar = JHtmlSidebar::render();
+        parent::display($tpl);
+    }
+
+    protected function addToolbar() {
+        JRequest::setVar('hidemainmenu', true);
+
+        JToolBarHelper::cancel('reports.cancel','close');
+    }
+
+}
+
+class CLSFrontViewReports2 extends JViewLegacy {
     function display($tpl = null) {
 
         // authorize

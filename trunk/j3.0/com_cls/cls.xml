@@ -12,6 +12,9 @@
 
     <files>
         <folder>views</folder>
+        <folder>models</folder>
+        <folder>controllers</folder>
+        <folder>helpers</folder>
         <filename>cls.php</filename>
         <filename>cls.html.php</filename>
         <filename>controller.php</filename>

@@ -31,7 +31,7 @@ class ClsViewComplaint extends JViewLegacy {
     protected function addToolbar() {
         JRequest::setVar('hidemainmenu', true);
 
-        $model = $this->getModel();
+        $model = $this->getModel('ClsModel', 'Complaint');
         $model->editComplaint($_REQUEST);
 
         $user       = JFactory::getUser();
