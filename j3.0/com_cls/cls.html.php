@@ -20,10 +20,10 @@ class CLSView {
         $user = & JFactory::getUser();
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls', true);
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
-        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections');
 
         JHTML::_('behavior.tooltip');
 
@@ -198,10 +198,10 @@ class CLSView {
         self::showToolbar();
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications', true);
-        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications', true);
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections');
 
         JHTML::_('behavior.tooltip');
 
@@ -298,10 +298,10 @@ class CLSView {
         self::showToolbar();
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
-        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts', true);
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections');
+        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts', true);
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections');
         JHTML::_('behavior.tooltip');
 
         $config =& JComponentHelper::getParams('com_cls');
@@ -399,10 +399,10 @@ class CLSView {
         self::showToolbar();
 
         JSubMenuHelper::addEntry(JText::_('Complaints'), 'index.php?option=com_cls');
-        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&c=reports');
-        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&c=notifications');
-        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&c=contracts');
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&c=sections', true);
+        JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
+        JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications');
+        JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts');
+        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections', true);
         JHTML::_('behavior.tooltip');
 
         $config =& JComponentHelper::getParams('com_cls');
@@ -835,9 +835,9 @@ class CLSView {
                 <td>
                     <?php
                     if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo '<a href="index.php?option=com_cls&c=view_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
+                        echo '<a href="index.php?option=com_cls&view=view_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
                     else
-                        echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&c=edit_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
+                        echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&view=edit_location&cid=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
                     ?>
                 </td>
             </tr>
@@ -1391,9 +1391,9 @@ class CLSView {
                 <td>
                     <?php
                         if($user_type != 'System Administrator' and $user_type != 'Administrator')
-                            echo '<a href="index.php?option=com_cls&c=view_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
+                            echo '<a href="index.php?option=com_cls&view=view_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
                         else
-                            echo '<input type="hidden" name="polygon" id="polygon" value="', @$row->polygon, '" /><input type="hidden" name="polyline" id="polyline" value="', @$row->polyline, '" /><a href="index.php?option=com_cls&c=edit_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( (empty($row->polygon) and empty($row->polyline)) ? 'Add a tag' : 'Edit the tag' ).'</a>';
+                            echo '<input type="hidden" name="polygon" id="polygon" value="', @$row->polygon, '" /><input type="hidden" name="polyline" id="polyline" value="', @$row->polyline, '" /><a href="index.php?option=com_cls&view=edit_section_map&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( (empty($row->polygon) and empty($row->polyline)) ? 'Add a tag' : 'Edit the tag' ).'</a>';
                     ?>
                 </td>
             </tr>
