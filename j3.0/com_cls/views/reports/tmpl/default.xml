@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+   <layout title="Complaints Statistics">
+      <message>
+         <![CDATA[Complaints Statistics]]>
+      </message>
+   </layout>
+   <state>
+      <name>Complaints Statistics</name>
+      <description>Complaints Statistics</description>
+      <params>
+      </params>
+   </state>
+
+    <fields name="request">
+    </fields>
+</metadata>
