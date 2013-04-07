@@ -245,7 +245,8 @@ if($argv[1] == 'install') {
             $mail->msgHTML('<p>New complaint received from ' . htmlspecialchars($header->fromaddress) . '. Login to http://www.test.com/administrator/index.php?option=com_cls to process it.</p>' . $body);
             $mail->AddReplyTo(NO_REPLY);
             while($row = mysql_fetch_array($res, MYSQL_NUM)) {
-                if(preg_match('/receive_by_email=1/', $row[2])) { // send email notification
+                $params = json_decode($row[2]);
+                if($params->receive_by_email == "1") { // send email notification
                     $mail->AddAddress($row[0]);
 
                     // log
@@ -253,10 +254,9 @@ if($argv[1] == 'install') {
                     mysql_query($query);
                 }
 
-                if(preg_match('/receive_by_sms=1/', $row[2])) { // send sms notification
-                    preg_match('/telephone=(.*)/', $row[2], $matches);
-                    if(isset($matches[1]) and $matches[1] != '') {
-                        $telephone = $matches[1];
+                if($params->receive_by_sms == "1") { // send sms notification
+                    $telephone = $params->telephone;
+                    if(!empty($telephone)) {
                         $query = "insert into ".MYSQL_DB_PREFIX."complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($complaint_id, 'CLS', '$telephone', 'New complaint received, please login to the system to process it.', now(), 'Notification')";
                         mysql_query($query);
 
