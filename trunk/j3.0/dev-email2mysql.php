@@ -21,10 +21,17 @@ define('FTP_ROOT', '/httpdocs/administrator/components/com_cls/pictures');
 define('NOTIFY_USER_COUNT', '3');
 define('SLEEP_TIME', 10); // seconds
 
+define('SITENAME', 'CLS');
+define('ACKNOWLEDGMENT_SMS', 'Yes');
+define('ACKNOWLEDGMENT_TEXT', 'Thank you, your complaint #%s is received. You will get further details soon. ' . SITENAME);
+
+define('INCOMING_DIR', 'C:\cygwin\var\spool\sms\incoming');
+define('CONFIRMED_DIR', 'C:\cygwin\var\spool\sms\confirmed');
+
 if($argv[1] == 'install') {
     $a = win32_create_service(array(
         'service' => 'COMPLAINTS',                 # the name of your service
-        'display' => 'Receive email complaints and direct them to the website', # description
+        'display' => 'Receive email and sms complaints and direct them to the website', # description
         'params' => '"' . __FILE__ . '"' . ' run', # path to the script and parameters
     ));
     echo $a,': ', system('net helpmsg ' . $a);
@@ -269,6 +276,79 @@ if($argv[1] == 'install') {
             $mail->Send();
 
             imap_delete($mbox, $i);
+        }
+
+        // check new sms
+        $ds = scandir(INCOMING_DIR);
+        foreach($ds as $file) {
+            if(!is_file(INCOMING_DIR.'/'.$file))
+                continue;
+
+            $contents = file_get_contents(INCOMING_DIR.'/'.$file);
+            preg_match('/FROM: (.*?)\n/i', $contents, $matches);
+            $from = mysql_real_escape_string(trim($matches[1]));
+            unset($matches);
+
+            preg_match('/\n\n(.*)/i', $contents, $matches);
+            $msg = mysql_real_escape_string(trim($matches[1]));
+            unset($matches);
+
+            if(empty($from) or empty($msg))
+                continue;
+
+            // generating message_id
+            $date = date('Y-m-d');
+            $query = "select count(*) from ".MYSQL_DB_PREFIX."complaints where date_received >= '$date 00:00:00' and date_received <= '$date 23:59:59'";
+            $res = mysql_query($query);
+            $count = mysql_result($res, 0, 0);
+            if($count == 0) { // reset the counter for current day
+                mysql_query('delete from '.MYSQL_DB_PREFIX.'complaint_message_ids');
+                mysql_query('alter table '.MYSQL_DB_PREFIX.'complaint_message_ids auto_increment = 0');
+            }
+            mysql_query('insert into '.MYSQL_DB_PREFIX.'complaint_message_ids value(null)');
+            $id = mysql_insert_id();
+            $message_id = $date.'-'.str_pad($id, 4, '0', STR_PAD_LEFT);
+
+            mysql_query("insert into ".MYSQL_DB_PREFIX."complaints (message_id, phone, raw_message, message_source, date_received) value('$message_id', '$from', '$msg', 'SMS', now())");
+            // log
+            mysql_query("insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'New SMS complaint', now(), 'New SMS complaint #{$message_id} arrived')");
+
+            // acknowledge
+            if(ACKNOWLEDGMENT_SMS == 'Yes') {
+                $acknowledgment_text = sprintf(ACKNOWLEDGMENT_TEXT, $message_id);
+                mysql_query("insert into ".MYSQL_DB_PREFIX."complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) values('$id', '".SITENAME."', '$from', '$acknowledgment_text', now(), 'Acknowledgment')");
+                // log
+                mysql_query("insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'SMS acknowledgment queued', now(), 'SMS acknowledgment queued to be sent to $from for complaint #{$message_id}')");
+            }
+
+            // email new complaint notification to members
+            $mail = new PHPMailer();
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->Host = EMAIL_HOST;
+            $mail->Port = 25;
+            $mail->Username = COMPLAINTS_EMAIL;
+            $mail->Password = EMAIL_PASS;
+            $mail->From = COMPLAINTS_EMAIL;
+            $mail->FromName = 'Complaint Logging System';
+            $mail->Subject = 'New SMS Complaint: #' . $message_id;
+            $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+            $mail->msgHTML('<p>New complaint received from ' . $from . '. Login to http://www.test.com/administrator/index.php?option=com_cls to process it.</p>' . $msg);
+            $mail->AddReplyTo(NO_REPLY);
+            $res = mysql_query("select email from ".MYSQL_DB_PREFIX."users where params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"Level 1\"%' or params like '%System Administrator%')");
+            $members = array();
+            while($row = mysql_fetch_object($res)) {
+                $mail->AddAddress($row->email);
+                $members[] = $row->email;
+            }
+            $mail->Send();
+            $members = implode(', ', $members);
+
+            // log
+            mysql_query("insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'New SMS complaint notification', now(), 'New SMS complaint #{$message_id} notification has been sent to $members')");
+
+            // moving file to confirmed directory
+            rename(INCOMING_DIR.'/'.$file, CONFIRMED_DIR.'/'.$file);
         }
 
         // check sms queue
