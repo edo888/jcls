@@ -310,6 +310,7 @@ if($argv[1] == 'install') {
             $message_id = $date.'-'.str_pad($id, 4, '0', STR_PAD_LEFT);
 
             mysql_query("insert into ".MYSQL_DB_PREFIX."complaints (message_id, phone, raw_message, message_source, date_received) value('$message_id', '$from', '$msg', 'SMS', now())");
+            $id = mysql_insert_id();
             // log
             mysql_query("insert into ".MYSQL_DB_PREFIX."complaint_notifications values(null, 0, 'New SMS complaint', now(), 'New SMS complaint #{$message_id} arrived')");
 
