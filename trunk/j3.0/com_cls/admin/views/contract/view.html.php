@@ -12,7 +12,7 @@ defined('_JEXEC') or die('Restircted access');
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
 
-class ClsViewContract extends JViewLegac {
+class ClsViewContract extends JViewLegacy {
 
     protected $form;
     protected $item;
