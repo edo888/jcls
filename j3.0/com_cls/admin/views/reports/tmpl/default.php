@@ -285,29 +285,31 @@ EOT;
     # -- Complaint Map --
     echo '<h3>Complaint Map</h3>';
     $document->addStyleDeclaration("div#map img, div#map svg {max-width:none !important}");
-    $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+    $document->addScript('//maps.googleapis.com/maps/api/js?key='.$map_api_key.'&sensor=false');
     $db->setQuery("select * from #__complaints where location != '' and date_received >= DATE_ADD('$enddate', interval -$statistics_period day)");
     $complaints = $db->loadObjectList();
     ?>
     <div id="map" style="width:900px;height:500px;"></div>
     <script type="text/javascript">
     //<![CDATA[
-        var map = new GMap2(document.getElementById("map"));
-        var myLatlng = new GLatLng(<?php echo $center_map; ?>);
-        map.setCenter(myLatlng, <?php echo $zoom_level; ?>);
-        map.addControl(new GMapTypeControl(1));
-        map.addControl(new GLargeMapControl());
-        map.enableContinuousZoom();
-        map.enableScrollWheelZoom();
-        map.enableDoubleClickZoom();
+        var map = new google.maps.Map(
+            document.getElementById("map"), {
+                center: new google.maps.LatLng(<?php echo $center_map; ?>),
+                zoom: <?php echo $zoom_level; ?>,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: true
+            }
+        );
 
         <?php
-        foreach($complaints as $complaint) {
-            echo 'var point = new GLatLng('.$complaint->location.');';
-            echo 'var marker = new GMarker(point, {icon: G_DEFAULT_ICON, draggable: false});';
-            echo 'map.addOverlay(marker);';
-            if($user->getParam('role', 'Guest') == 'System Administrator' or $user->getParam('role', 'Guest') == 'Level 1' or $user->getParam('role', 'Guest') == 'Supervisor')
-                echo 'marker.bindInfoWindowHtml(\'<b>#'.$complaint->message_id.'</b><br/><i>Status:</i> ' . ($complaint->confirmed_closed == 'Y' ? 'Resolved' : 'Open') . '<p>'.addslashes($complaint->processed_message).'</p>\');';
+        foreach($complaints as $cid => $complaint) {
+            echo 'var point'.$cid.' = new google.maps.LatLng('.$complaint->location.');';
+            echo 'var marker'.$cid.' = new google.maps.Marker({position: point'.$cid.', map: map});';
+            if($user->getParam('role', 'Guest') == 'System Administrator' or $user->getParam('role', 'Guest') == 'Level 1' or $user->getParam('role', 'Guest') == 'Supervisor') {
+                echo 'var contentString = \'<b>#'.$complaint->message_id.'</b><br/><i>Status:</i> ' . ($complaint->confirmed_closed == 'Y' ? 'Resolved' : 'Open') . '<p>'.addslashes($complaint->processed_message).'</p>\';';
+                echo 'var infowindow'.$cid.' = new google.maps.InfoWindow({content: contentString});';
+                echo 'google.maps.event.addListener(marker'.$cid.', \'click\', function() {infowindow'.$cid.'.open(map,marker'.$cid.');});';
+            }
         }
         ?>
     //]]>

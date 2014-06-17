@@ -23,7 +23,7 @@ function editSectionMap() {
 
     $document = JFactory::getDocument();
     $document->addStyleDeclaration("div#map img, div#map svg {max-width:none !important}");
-    $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+    $document->addScript('//maps.googleapis.com/maps/api/js?key='.$map_api_key.'&sensor=false');
     ?>
     <div style="width:100%;height:100%;">
         <div id="controls" style="height:5%;">Mode: <input type="radio" id="drawPolyline" name="type" style="vertical-align:bottom;" checked /> Polyline <input type="radio" id="drawPolygon" name="type" style="vertical-align:bottom;" /> Polygon <input type="button" onclick="editline()" value="Edit Poly Shape" /> <input type="button" onclick="finishedit()" value="Done Editing" /> <input type="button" onclick="closepolyshape()" value="Close Polyshape" /> <input type="button" onclick="removelastpoint()" value="Remove last point" /></div>
@@ -31,14 +31,15 @@ function editSectionMap() {
     </div>
     <script type="text/javascript">
     //<![CDATA[
-        var map = new GMap2(document.getElementById("map"));
-        var myLatlng = new GLatLng(<?php echo $center_map; ?>);
-        map.setCenter(myLatlng, <?php echo $zoom_level; ?>);
-        map.addControl(new GMapTypeControl(1));
-        map.addControl(new GLargeMapControl());
-        map.enableContinuousZoom();
-        map.enableScrollWheelZoom();
-        map.enableDoubleClickZoom();
+        var map = new google.maps.Map(
+            document.getElementById("map"), {
+                center: new google.maps.LatLng(<?php echo $center_map; ?>),
+                zoom: <?php echo $zoom_level; ?>,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: true
+            }
+        );
+
         var mapListener;
         var editListener;
         var dropPolypointListener;
@@ -50,49 +51,54 @@ function editSectionMap() {
         parentpoints = window.parent.document.getElementById("polyline").value.split(';');
         if(parentpoints.length > 1)
             for(var i = 0; i < parentpoints.length; i++)
-                polylinepoints.push(eval('new GLatLng('+parentpoints[i]+')'));
+                polylinepoints.push(eval('new google.maps.LatLng('+parentpoints[i]+')'));
 
         parentpoints = window.parent.document.getElementById("polygon").value.split(';');
         if(parentpoints.length > 1)
             for(var i = 0; i < parentpoints.length; i++)
-                polygonpoints.push(eval('new GLatLng('+parentpoints[i]+')'));
+                polygonpoints.push(eval('new google.maps.LatLng('+parentpoints[i]+')'));
 
         if(polylinepoints.length) {
-            polyline = new GPolyline(polylinepoints, "#885555", 5);
-            map.addOverlay(polyline);
+            polyline = new google.maps.Polyline({path: polylinepoints, strokeColor: "#885555", strokeWeight: 5});
+            polyline.setMap(map);
         }
         if(polygonpoints.length) {
-            var polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
-            map.addOverlay(polygon);
+            var polygon = new google.maps.Polygon({paths: polygonpoints, strokeColor: "#f33f00", strokeWeight: 5, strokeOpacity: 1, fillColor: "#ff0000", fillOpacity: 0.2});
+            polygon.setMap(map);
         }
-        var mapListener = GEvent.addListener(map, "click", mapClick);
+        var mapListener = google.maps.event.addListener(map, "click", mapClick);
 
-        function mapClick(section, point) {
-            if(section == null) {
+        function mapClick(event) {
+            var point = event.latLng;
+            //if(section == null) {
                 if(document.getElementById('drawPolyline').checked) {
                     if(polyline == null) {
                         polylinepoints.push(point);
-                        polyline = new GPolyline(polylinepoints, "#885555", 5);
-                        map.addOverlay(polyline);
+                        polyline = new google.maps.Polyline({path: polylinepoints, strokeColor: "#885555", strokeWeight: 5});
+                        polyline.setMap(map);
                     } else {
-                        map.removeOverlay(polyline);
+                        // remove overlay
+                        polyline.setMap(null);
+
                         polylinepoints.push(point);
-                        polyline = new GPolyline(polylinepoints, "#885555", 5);
-                        map.addOverlay(polyline);
+                        polyline = new google.maps.Polyline({path: polylinepoints, strokeColor: "#885555", strokeWeight: 5});
+                        polyline.setMap(map);
                     }
                 } else if(document.getElementById('drawPolygon').checked) {
                     if(polygon == null) {
                         polygonpoints.push(point);
-                        polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
-                        map.addOverlay(polygon);
+                        polygon = new google.maps.Polygon({paths: polygonpoints, strokeColor: "#f33f00", strokeWeight: 5, strokeOpacity: 1, fillColor: "#ff0000", fillOpacity: 0.2});
+                        polygon.setMap(map);
                     } else {
-                        map.removeOverlay(polygon);
+                        // remove overlay
+                        polygon.setMap(null);
+
                         polygonpoints.push(point);
-                        polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
-                        map.addOverlay(polygon);
+                        polygon = new google.maps.Polygon({paths: polygonpoints, strokeColor: "#f33f00", strokeWeight: 5, strokeOpacity: 1, fillColor: "#ff0000", fillOpacity: 0.2});
+                        polygon.setMap(map);
                     }
                 }
-            }
+            //}
             updateParentCoordinates();
         }
 
@@ -100,58 +106,46 @@ function editSectionMap() {
             if(polyline == null && polygon == null)
                 return;
 
-            GEvent.removeListener(mapListener);
+            google.maps.event.removeListener(mapListener);
             if(document.getElementById('drawPolyline').checked) {
                 if(polyline !== null) {
-                    polyline.enableEditing();
-                    editListener = GEvent.addListener(polyline, 'lineupdated', updateCoordinates);
-                    dropPolypointListener = GEvent.addListener(polyline, 'click', function(latlng, index) {
-                        if(typeof index == 'number') {
-                            polyline.deleteVertex(index);
-                            updateCoordinates();
-                        }
-                    });
+                    polyline.setEditable(true);
                 }
             } else if(document.getElementById('drawPolygon').checked) {
                 if(polygon !== null) {
-                    polygon.enableEditing();
-                    editListener = GEvent.addListener(polygon, 'lineupdated', updateCoordinates);
-                    dropPolypointListener = GEvent.addListener(polygon, 'click', function(latlng, index) {
-                        if(typeof index == 'number') {
-                            polygon.deleteVertex(index);
-                            updateCoordinates();
-                        }
-                    });
+                    polygon.setEditable(true);
                 }
             }
         }
 
         function finishedit() {
-            mapListener = GEvent.addListener(map, "click", mapClick);
-            GEvent.removeListener(editListener);
-            GEvent.removeListener(dropPolypointListener);
+            mapListener = google.maps.event.addListener(map, "click", mapClick);
             if(polyline !== null)
-                polyline.disableEditing();
+                polyline.setEditable(false);
             if(polygon !== null)
-                polygon.disableEditing();
+                polygon.setEditable(false);
 
-            updateParentCoordinates();
+            updateCoordinates();
         }
 
         function closepolyshape() {
             if(document.getElementById('drawPolyline').checked) {
                 if(polyline !== null) {
-                    map.removeOverlay(polyline);
+                    // remove overlay
+                    polyline.setMap(null);
+
                     polylinepoints.push(polylinepoints[0]);
-                    polyline = new GPolyline(polylinepoints, "#885555", 5);
-                    map.addOverlay(polyline);
+                    polyline = new google.maps.Polyline({path: polylinepoints, strokeColor: "#885555", strokeWeight: 5});
+                    polyline.setMap(map);
                 }
             } else if(document.getElementById('drawPolygon').checked) {
                 if(polygon !== null) {
-                    map.removeOverlay(polygon);
+                    // remove overlay
+                    polygon.setMap(null);
+
                     polygonpoints.push(polygonpoints[0]);
-                    polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
-                    map.addOverlay(polygon);
+                    polygon = new google.maps.Polygon({paths: polygonpoints, strokeColor: "#f33f00", strokeWeight: 5, strokeOpacity: 1, fillColor: "#ff0000", fillOpacity: 0.2});
+                    polygon.setMap(map);
                 }
             }
 
@@ -161,17 +155,21 @@ function editSectionMap() {
         function removelastpoint() {
             if(document.getElementById('drawPolyline').checked) {
                 if(polyline !== null) {
-                    map.removeOverlay(polyline);
+                    // remove overlay
+                    polyline.setMap(null);
+
                     polylinepoints.pop();
-                    polyline = new GPolyline(polylinepoints, "#885555", 5);
-                    map.addOverlay(polyline);
+                    polyline = new google.maps.Polyline({path: polylinepoints, strokeColor: "#885555", strokeWeight: 5});
+                    polyline.setMap(map);
                 }
             } else if(document.getElementById('drawPolygon').checked) {
                 if(polygon !== null) {
-                    map.removeOverlay(polygon);
+                    // remove overlay
+                    polygon.setMap(null);
+
                     polygonpoints.pop();
-                    polygon = new GPolygon(polygonpoints, "#f33f00", 5, 1, "#ff0000", 0.2);
-                    map.addOverlay(polygon);
+                    polygon = new google.maps.Polygon({paths: polygonpoints, strokeColor: "#f33f00", strokeWeight: 5, strokeOpacity: 1, fillColor: "#ff0000", fillOpacity: 0.2});
+                    polygon.setMap(map);
                 }
             }
 
@@ -181,14 +179,14 @@ function editSectionMap() {
         function updateCoordinates() {
             if(document.getElementById('drawPolyline').checked) {
                 polylinepoints = [];
-                var j = polyline.getVertexCount(); // get the amount of points
+                var j = polyline.getPath().getLength(); // get the amount of points
                 for(var i = 0; i < j; i++)
-                    polylinepoints[i] = polyline.getVertex(i); // update polyPoints array
+                    polylinepoints[i] = polyline.getPath().getAt(i); // update polyPoints array
             } else if(document.getElementById('drawPolygon').checked) {
                 polygonpoints = [];
-                var j = polygon.getVertexCount(); // get the amount of points
+                var j = polygon.getPath().getLength(); // get the amount of points
                 for(var i = 0; i < j; i++)
-                    polygonpoints[i] = polygon.getVertex(i); // update polyPoints array
+                    polygonpoints[i] = polygon.getPath().getAt(i); // update polyPoints array
             }
 
             updateParentCoordinates();
