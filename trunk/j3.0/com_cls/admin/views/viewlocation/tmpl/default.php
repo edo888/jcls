@@ -23,7 +23,7 @@ function viewLocation() {
 
     $document = JFactory::getDocument();
     $document->addStyleDeclaration("div#map img, div#map svg {max-width:none !important}");
-    $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);
+    $document->addScript('//maps.googleapis.com/maps/api/js?key='.$map_api_key.'&sensor=false');
 
     $db = JFactory::getDBO();
     $db->setQuery('select polyline, polygon, location from #__complaint_sections as s right join #__complaint_contracts as c on (c.section_id = s.id) right join #__complaints as m on (m.contract_id = c.id) where m.id = ' . JRequest::getInt('id', 0));
@@ -35,44 +35,46 @@ function viewLocation() {
         <div id="map" style="width:100%;height:100%;"></div>
         <script type="text/javascript">
         //<![CDATA[
-            var map = new GMap2(document.getElementById("map"));
             <?php if($location != ''): ?>
-            var myLatlng = new GLatLng(<?php echo $location; ?>);
+                var myLatlng = new google.maps.LatLng(<?php echo $location; ?>);
             <?php else: ?>
-            var myLatlng = new GLatLng(<?php echo $center_map; ?>);
+                var myLatlng = new google.maps.LatLng(<?php echo $center_map; ?>);
             <?php endif; ?>
-            map.setCenter(myLatlng, <?php echo $zoom_level; ?>);
-            map.addControl(new GMapTypeControl(1));
-            map.addControl(new GLargeMapControl());
-            map.enableContinuousZoom();
-            map.enableScrollWheelZoom();
-            map.enableDoubleClickZoom();
+
+            var map = new google.maps.Map(
+                document.getElementById("map"), {
+                    center: myLatlng,
+                    zoom: <?php echo $zoom_level; ?>,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: true
+                }
+            );
+
             <?php if(count($polyline)): ?>
-            var polyline = new GPolyline([
+            var polyline = new google.maps.Polyline({path: [
                 <?php
                 foreach($polyline as $point)
-                    $points[] = 'new GLatLng(' . $point . ')';
+                    $points[] = 'new google.maps.LatLng(' . $point . ')';
                 echo implode(',', $points);
                 unset($points);
                 ?>
-            ], "#885555", 5);
-            map.addOverlay(polyline);
+            ], strokeColor: "#885555", strokeWeight: 5});
+            polyline.setMap(map);
             <?php endif; ?>
             <?php if(count($polygon)): ?>
-            var polygon = new GPolygon([
+            var polygon = new google.maps.Polygon({paths: [
                 <?php
                 foreach($polygon as $point)
-                    $points[] = 'new GLatLng(' . $point . ')';
+                    $points[] = 'new google.maps.LatLng(' . $point . ')';
                 echo implode(',', $points);
                 unset($points);
                 ?>
-            ], "#f33f00", 5, 1, "#ff0000", 0.2);
-            map.addOverlay(polygon);
+            ], strokeColor: "#f33f00", strokeWeight: 5, strokeOpacity: 1, fillColor: "#ff0000", fillOpacity: 0.2});
+            polygon.setMap(map);
             <?php endif; ?>
             <?php if($location != ''): ?>
-            var point = new GLatLng(<?php echo $location; ?>);
-            var markerD2 = new GMarker(point, {icon:G_DEFAULT_ICON, draggable: false});
-            map.addOverlay(markerD2);
+            var point = new google.maps.LatLng(<?php echo $location; ?>);
+            var markerD2 = new google.maps.Marker({position: point, map: map, title: 'Complaint location'});
             <?php endif; ?>
         //]]>
         </script>
