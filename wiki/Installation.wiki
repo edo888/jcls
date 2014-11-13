@@ -4,7 +4,7 @@
   # Install com_cls.zip extension in joomla
   # Create a new menu item of Complaints type if you want to enable website complaint logging
   # For J < 2.5 version install plg_user_extend.zip plugin and enable it from Plugins Manager
-  # Set your user Role as Super User from the Users Manager
+  # Set your user Role as Super User (System Administrator) from the Users Manager
   # For J < 2.5 version install plg_cls_users.zip plugin and enable it from Plugins Manager - This will redirect Auditors, Resolvers and Viewers directly to Complaints component
   # To enable e-mail complaint logging on a windows computer install a service which will check complaint emails.
     Rename dev-`*` files and remove dev- prefix. Put this 3 files somewhere (class.phpmailer.php, class.smtp.php, email2mysql.php). Edit email2mysql.php and write appropriate configuration in the header, then open Command Line and write:
