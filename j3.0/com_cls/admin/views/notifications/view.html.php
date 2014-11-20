@@ -74,7 +74,7 @@ class ClsViewNotifications extends JViewLegacy {
      * @since   1.6
      */
     protected function addToolbar() {
-        JToolBarHelper::preferences('com_cls', '550', '570', 'Settings');
+        JToolBarHelper::preferences('com_cls', '550', '570', 'JOptions');
         JToolBarHelper::divider();
     }
 

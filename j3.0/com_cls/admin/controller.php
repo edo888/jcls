@@ -41,13 +41,13 @@ class clsController extends JControllerLegacy {
      */
     public function display($cachable = false, $urlparams = false) {
         // Load the submenu.
-        clsHelper::addSubmenu('Complaints', 'complaints');
-        clsHelper::addSubmenu('Complaint Categories', 'areas');
-        clsHelper::addSubmenu('Contracts', 'contracts');
-        clsHelper::addSubmenu('Sections', 'sections');
-        clsHelper::addSubmenu('Support Groups', 'supportgroups');
-        clsHelper::addSubmenu('Statistics', 'reports');
-        clsHelper::addSubmenu('Activity Log', 'notifications');
+        clsHelper::addSubmenu('COM_CLS_SUBMENU_COMPLAINTS', 'complaints');
+        clsHelper::addSubmenu('COM_CLS_SUBMENU_COMPLAINT_CATEGORIES', 'areas');
+        clsHelper::addSubmenu('COM_CLS_SUBMENU_CONTRACTS', 'contracts');
+        clsHelper::addSubmenu('COM_CLS_SUBMENU_SECTIONS', 'sections');
+        clsHelper::addSubmenu('COM_CLS_SUBMENU_SUPPORT_GROUPS', 'supportgroups');
+        clsHelper::addSubmenu('COM_CLS_SUBMENU_STATISTICS', 'reports');
+        clsHelper::addSubmenu('COM_CLS_SUBMENU_ACTIVITY_LOG', 'notifications');
 
         parent::display();
 
