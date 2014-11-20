@@ -20,7 +20,7 @@ function validate() {
     }
 
     // telephone
-    var tel = /^([0-9]{11}){0,1}$/;
+    var tel = /^([0-9]{4,11}){0,1}$/;
     if(tel.test(document.complaint_form.tel.value) == false) {
         alert('Invalid telephone number.');
         return false;
