@@ -32,7 +32,7 @@ class ClsViewReports extends JViewLegacy {
     protected function addToolbar() {
         JRequest::setVar('hidemainmenu', true);
 
-        JToolBarHelper::cancel('reports.cancel','close');
+        JToolBarHelper::cancel('reports.cancel','JTOOLBAR_CLOSE');
     }
 
 }

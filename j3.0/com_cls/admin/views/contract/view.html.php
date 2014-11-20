@@ -47,7 +47,7 @@ class ClsViewContract extends JViewLegacy {
         else {
             JToolBarHelper::apply('contract.apply');
             JToolBarHelper::save('contract.save');
-            JToolBarHelper::cancel('contract.cancel','close');
+            JToolBarHelper::cancel('contract.cancel','JTOOLBAR_CLOSE');
         }
     }
 
