@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `#__complaint_areas` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-REPLACE INTO `#__complaint_areas` VALUES (1, 'Environment'), (2, 'Land Acquisition and Resettlement'), (3, 'Compensation'), (4, 'Engineering'), (5, 'Traffic'), (6, 'Management'), (7, 'Safety'), (8, 'HIV/AIDS'), (9, 'Gender'), (10, 'Employment Law'), (11, 'Other');
+REPLACE INTO `#__complaint_areas` VALUES (1, 'Environment'), (2, 'Land Acquisition and Resettlement'), (3, 'Compensation'), (4, 'Engineering'), (5, 'Traffic'), (6, 'Project Management'), (7, 'Safety'), (8, 'HIV/AIDS'), (9, 'Gender'), (10, 'Employment Law'), (11, 'Other'), (12, 'Beneficiary Classification'), (13, 'Noise'), (14, 'Solid Waste');
 
 ALTER TABLE `#__complaint_areas` ADD COLUMN `description` text AFTER `area`;
 ALTER TABLE `#__complaint_areas` ADD UNIQUE KEY `area` (`area`);

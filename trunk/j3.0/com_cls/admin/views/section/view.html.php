@@ -46,7 +46,7 @@ class ClsViewSection extends JViewLegacy {
         } else {
             JToolBarHelper::apply('section.apply');
             JToolBarHelper::save('section.save');
-            JToolBarHelper::cancel('section.cancel','close');
+            JToolBarHelper::cancel('section.cancel','JTOOLBAR_CLOSE');
         }
     }
 

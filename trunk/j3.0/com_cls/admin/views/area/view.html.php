@@ -46,7 +46,7 @@ class ClsViewArea extends JViewLegacy {
         else {
             JToolBarHelper::apply('area.apply');
             JToolBarHelper::save('area.save');
-            JToolBarHelper::cancel('area.cancel','close');
+            JToolBarHelper::cancel('area.cancel','JTOOLBAR_CLOSE');
         }
     }
 

@@ -47,7 +47,7 @@ class ClsViewsupportgroup extends JViewLegacy {
         else {
             JToolBarHelper::apply('supportgroup.apply');
             JToolBarHelper::save('supportgroup.save');
-            JToolBarHelper::cancel('supportgroup.cancel','close');
+            JToolBarHelper::cancel('supportgroup.cancel','JTOOLBAR_CLOSE');
         }
     }
 

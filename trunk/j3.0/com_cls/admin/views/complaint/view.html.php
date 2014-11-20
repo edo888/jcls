@@ -50,7 +50,7 @@ class ClsViewComplaint extends JViewLegacy {
         else {
             JToolBarHelper::apply('complaint.apply');
             JToolBarHelper::save('complaint.save');
-            JToolBarHelper::cancel('complaint.cancel','close');
+            JToolBarHelper::cancel('complaint.cancel','JTOOLBAR_CLOSE');
         }
     }
 

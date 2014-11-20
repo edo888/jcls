@@ -150,7 +150,7 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->address = JRequest::getVar('address');
             $complaint->ip_address = JRequest::getVar('ip_address');
             $complaint->raw_message = JRequest::getVar('raw_message');
-            $complaint->date_received = date('Y-m-d H:i:s');
+            $complaint->date_received = JRequest::getVar('date_received', date('Y-m-d H:i:s'));
             $complaint->message_source = JRequest::getVar('message_source');
 
             if ($db->insertObject( '#__complaints', $complaint, 'id' ))

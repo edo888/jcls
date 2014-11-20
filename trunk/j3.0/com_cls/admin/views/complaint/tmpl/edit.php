@@ -247,6 +247,21 @@ swfu = new SWFUpload(settings);
                 </td>
             </tr>
             <?php endif; ?>
+            <?php if($row->id == 0): ?>
+            <tr>
+                <td class="key">
+                    <label for="path">
+                        <?php echo JText::_( 'Date Received' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                        JHTML::_('behavior.calendar');
+                        echo JHTML::calendar(date('Y-m-d H:i:s'), 'date_received', 'date_received', '%Y-%m-%d');
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
             <tr>
                 <td class="key" valign="top">
                     <label for="path">
@@ -287,6 +302,26 @@ swfu = new SWFUpload(settings);
                         echo '<pre>', @$row->processed_message, '</pre>';
                     else
                         echo '<textarea name="processed_message" id="processed_message" cols="80" rows="5">', @$row->processed_message, '</textarea>';
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if(property_exists($row, 'complaint_area_id')): ?>
+            <tr>
+                <td class="key">
+                    <label for="path">
+                        <?php
+                        // echo JText::_( 'Complaint Area' );
+                        echo JText::_( 'Complaint Category' );
+                        ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
+                        echo @$row->complaint_area;
+                    else
+                        echo $lists['area'];
                     ?>
                 </td>
             </tr>
@@ -355,26 +390,6 @@ swfu = new SWFUpload(settings);
                         echo @$row->editor;
                     else
                         echo $lists['editor'];
-                    ?>
-                </td>
-            </tr>
-            <?php endif; ?>
-            <?php if(property_exists($row, 'complaint_area_id')): ?>
-            <tr>
-                <td class="key">
-                    <label for="path">
-                        <?php
-                        // echo JText::_( 'Complaint Area' );
-                        echo JText::_( 'Complaint Category' );
-                        ?>
-                    </label>
-                </td>
-                <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo @$row->complaint_area;
-                    else
-                        echo $lists['area'];
                     ?>
                 </td>
             </tr>
