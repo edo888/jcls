@@ -8,7 +8,7 @@
     <authorEmail>edo888@gmail.com</authorEmail>
     <authorUrl>http://edo.webmaster.am/</authorUrl>
     <version>3.0.0</version>
-    <description>Complaint Logging System</description>
+    <description>COM_CLS_DESCRIPTION</description>
 
     <files>
         <folder>views</folder>
@@ -38,15 +38,15 @@
     </languages>
 
     <administration>
-        <menu img="components/com_cls/images/cls_icon.png">CLS</menu>
+        <menu img="components/com_cls/images/cls_icon.png">COM_CLS_MENU</menu>
         <submenu>
-            <menu link="option=com_cls" img="components/com_cls/images/cls_icon.png">Complaints</menu>
-            <menu link="option=com_cls&amp;view=areas" img="components/com_cls/images/categories.png">Complaint Categories</menu>
-            <menu link="option=com_cls&amp;view=contracts" img="components/com_cls/images/contracts.png">Contracts</menu>
-            <menu link="option=com_cls&amp;view=sections" img="components/com_cls/images/sections.png">Sections</menu>
-            <menu link="option=com_cls&amp;view=SupportGroups" img="components/com_cls/images/support_groups.png">Support Groups</menu>
-            <menu link="option=com_cls&amp;view=reports" img="components/com_cls/images/statistics.png">Statistics</menu>
-            <menu link="option=com_cls&amp;view=notifications" img="components/com_cls/images/activity_log.png">Activity Log</menu>
+            <menu link="option=com_cls" img="components/com_cls/images/cls_icon.png">COM_CLS_SUBMENU_COMPLAINTS</menu>
+            <menu link="option=com_cls&amp;view=areas" img="components/com_cls/images/categories.png">COM_CLS_SUBMENU_COMPLAINT_CATEGORIES</menu>
+            <menu link="option=com_cls&amp;view=contracts" img="components/com_cls/images/contracts.png">COM_CLS_SUBMENU_CONTRACTS</menu>
+            <menu link="option=com_cls&amp;view=sections" img="components/com_cls/images/sections.png">COM_CLS_SUBMENU_SECTIONS</menu>
+            <menu link="option=com_cls&amp;view=SupportGroups" img="components/com_cls/images/support_groups.png">COM_CLS_SUBMENU_SUPPORT_GROUPS</menu>
+            <menu link="option=com_cls&amp;view=reports" img="components/com_cls/images/statistics.png">COM_CLS_SUBMENU_STATISTICS</menu>
+            <menu link="option=com_cls&amp;view=notifications" img="components/com_cls/images/activity_log.png">COM_CLS_SUBMENU_ACTIVITY_LOG</menu>
         </submenu>
 
         <files folder="admin">
@@ -65,5 +65,10 @@
             <folder>models</folder>
             <folder>helpers</folder>
         </files>
+        
+        <languages folder="admin/language">
+            <language tag="en-GB">en-GB.com_cls.ini</language>
+            <language tag="en-GB">en-GB.com_cls.sys.ini</language>
+        </languages>
     </administration>
 </extension>

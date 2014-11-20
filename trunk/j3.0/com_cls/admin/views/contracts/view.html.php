@@ -72,7 +72,7 @@ class ClsViewContracts extends JViewLegacy {
             JToolBarHelper::deleteList('', 'contract.remove');
 
         if($user_type == 'System Administrator' and $mainframe->isAdmin())
-            JToolBarHelper::preferences('com_cls', '550', '570', 'Settings');
+            JToolBarHelper::preferences('com_cls', '550', '570', 'JOptions');
 
         JToolBarHelper::help('screen.cls.contracts', true);
         JToolBarHelper::divider();
