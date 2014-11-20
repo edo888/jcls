@@ -478,10 +478,10 @@ class clsFrontController extends JControllerLegacy {
                 continue;
             } else {
                 // going to insert the picture into db
-                $picture = new JTable('#__complaint_pictures', 'id', $db);
+                $picture = new JObject();
                 $picture->set('complaint_id', $complaint_id);
                 $picture->set('path', str_replace(JPATH_ADMINISTRATOR.'/', '', $uploadPath));
-                $picture->store();
+                JFactory::getDbo()->insertObject('#__complaint_pictures', $picture);
             }
         }
 
