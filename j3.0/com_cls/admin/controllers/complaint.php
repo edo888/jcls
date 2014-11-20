@@ -125,7 +125,7 @@ class ClsControllerComplaint extends JControllerForm {
 
         if($id == 0) { // going to insert new complaint
             // generating message_id
-            $date = date('Y-m-d');
+            $date = JRequest::getVar('date_received', date('Y-m-d'));
             $query = "select count(*) from #__complaints where date_received >= '$date 00:00:00' and date_received <= '$date 23:59:59'";
             $db->setQuery($query);
             $count = $db->loadResult();
