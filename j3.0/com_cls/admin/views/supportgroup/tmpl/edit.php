@@ -15,7 +15,7 @@ $query = 'select c.* from #__complaint_support_groups as c where c.id = ' . $id;
 $db->setQuery($query);
 $row = $db->loadObject();
 
-$query = "select u.id as user_id, u.name, c.group_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id and (c.group_id is null or c.group_id = $id)) where u.params like '%role=Level 2%'";
+$query = "select u.id as user_id, u.name, c.group_id from #__users as u left join #__complaint_support_groups_users_map as c on (u.id = c.user_id and (c.group_id is null or c.group_id = $id))";
 $db->setQuery($query);
 if($row == null)
     $row = new JObject;
