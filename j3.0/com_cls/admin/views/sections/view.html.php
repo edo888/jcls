@@ -31,7 +31,7 @@ class ClsViewSections extends JViewLegacy {
          // guest cannot see this list
          if($user_type == 'Guest' or $user_type == 'Level 2') {
             $app = JFactory::getApplication();
-            $app->redirect('index.php?option=com_cls&view=reports');
+            $app->redirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission to view this page"));
             return;
         }
 
