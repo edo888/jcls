@@ -42,8 +42,8 @@ function editContract($row, $lists, $user_type) {
             // validation
             if(form.name && form.name.value == "")
                 alert('Name is required');
-            else if(form.section_id && form.section_id.value == "")
-                alert('Section is required');
+            //else if(form.section_id && form.section_id.value == "")
+                //alert('Section is required');
             else
                 submitform(pressbutton);
         }
