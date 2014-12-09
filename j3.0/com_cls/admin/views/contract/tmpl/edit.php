@@ -13,7 +13,7 @@ $row = $db->loadObject();
 $query = 'select * from #__complaint_sections';
 $db->setQuery($query);
 $sections = $db->loadObjectList();
-$section[] = array('key' => '', 'value' => '- Select Section -');
+$section[] = array('key' => '', 'value' => '- Select Location -');
 foreach($sections as $a)
     $section[] = array('key' => $a->id, 'value' => $a->name);
 $lists['section'] = JHTML::_('select.genericlist', $section, 'section_id', null, 'key', 'value', JRequest::getVar('section_id', $row->section_id));
@@ -107,7 +107,7 @@ function editContract($row, $lists, $user_type) {
             <tr>
                 <td class="key">
                     <label for="path">
-                        <?php echo JText::_( 'Section' ); ?>
+                        <?php echo JText::_( 'Location' ); ?>
                     </label>
                 </td>
                 <td>

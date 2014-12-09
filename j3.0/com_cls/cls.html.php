@@ -23,7 +23,7 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts');
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections');
+        JSubMenuHelper::addEntry(JText::_('Locations'), 'index.php?option=com_cls&view=sections');
 
         JHTML::_('behavior.tooltip');
 
@@ -201,7 +201,7 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications', true);
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts');
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections');
+        JSubMenuHelper::addEntry(JText::_('Locations'), 'index.php?option=com_cls&view=sections');
 
         JHTML::_('behavior.tooltip');
 
@@ -301,7 +301,7 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts', true);
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections');
+        JSubMenuHelper::addEntry(JText::_('Locations'), 'index.php?option=com_cls&view=sections');
         JHTML::_('behavior.tooltip');
 
         $config =& JComponentHelper::getParams('com_cls');
@@ -338,7 +338,7 @@ class CLSView {
                         <?php echo JHTML::_('grid.sort', 'Name', 'm.name', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="77%" class="title">
-                        <?php echo JHTML::_('grid.sort', 'Section', 's.name', @$lists['order_Dir'], @$lists['order']); ?>
+                        <?php echo JHTML::_('grid.sort', 'Location', 's.name', @$lists['order_Dir'], @$lists['order']); ?>
                     </th>
                     <th width="1%" nowrap="nowrap">
                         <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$lists['order_Dir'], @$lists['order']); ?>
@@ -402,7 +402,7 @@ class CLSView {
         JSubMenuHelper::addEntry(JText::_('Reports'), 'index.php?option=com_cls&view=reports');
         JSubMenuHelper::addEntry(JText::_('Activity Log'), 'index.php?option=com_cls&view=notifications');
         JSubMenuHelper::addEntry(JText::_('Contracts'), 'index.php?option=com_cls&view=contracts');
-        JSubMenuHelper::addEntry(JText::_('Sections'), 'index.php?option=com_cls&view=sections', true);
+        JSubMenuHelper::addEntry(JText::_('Locations'), 'index.php?option=com_cls&view=sections', true);
         JHTML::_('behavior.tooltip');
 
         $config =& JComponentHelper::getParams('com_cls');
@@ -462,7 +462,7 @@ class CLSView {
                         <?php echo $checked; ?>
                     </td>
                     <td align="center">
-                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Section' ); ?>">
+                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Location' ); ?>">
                             <?php echo $row->name; ?></a>
                     </td>
                     <td align="center">
@@ -1275,8 +1275,8 @@ class CLSView {
             // validation
             if(form.name && form.name.value == "")
                 alert('Name is required');
-            else if(form.section_id && form.section_id.value == "")
-                alert('Section is required');
+            //else if(form.section_id && form.section_id.value == "")
+                //alert('Location is required');
             else
                 submitform(pressbutton);
         }
@@ -1300,7 +1300,7 @@ class CLSView {
             <tr>
                 <td class="key">
                     <label for="path">
-                        <?php echo JText::_( 'Section' ); ?>
+                        <?php echo JText::_( 'Location' ); ?>
                     </label>
                 </td>
                 <td>
