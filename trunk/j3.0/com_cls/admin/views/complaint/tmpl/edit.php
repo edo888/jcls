@@ -121,7 +121,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'message_id')): ?>
             <tr>
                 <td width="200" class="key">
-                    <label for="title">
+                    <label for="message_id">
                         <?php echo JText::_( 'Message ID' ); ?>
                     </label>
                 </td>
@@ -132,7 +132,7 @@ swfu = new SWFUpload(settings);
             <?php endif; ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="message_source">
                         <?php echo JText::_( 'Message Source' ); ?>
                     </label>
                 </td>
@@ -147,7 +147,7 @@ swfu = new SWFUpload(settings);
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="name">
                         <?php echo JText::_( 'Name' ); ?>
                     </label>
                 </td>
@@ -162,7 +162,7 @@ swfu = new SWFUpload(settings);
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="email">
                         <?php echo JText::_( 'Email' ); ?>
                     </label>
                 </td>
@@ -177,7 +177,7 @@ swfu = new SWFUpload(settings);
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="phone">
                         <?php echo JText::_( 'Phone' ); ?>
                     </label>
                 </td>
@@ -192,7 +192,7 @@ swfu = new SWFUpload(settings);
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="address">
                         <?php echo JText::_( 'Address' ); ?>
                     </label>
                 </td>
@@ -207,7 +207,7 @@ swfu = new SWFUpload(settings);
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="ip_address">
                         <?php echo JText::_( 'Sender IP' ); ?>
                     </label>
                 </td>
@@ -222,7 +222,7 @@ swfu = new SWFUpload(settings);
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="preferred_contact">
                         <?php echo JText::_( 'Preferred Contact Method' ); ?>
                     </label>
                 </td>
@@ -238,7 +238,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'date_received')): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="date_received">
                         <?php echo JText::_( 'Date Received' ); ?>
                     </label>
                 </td>
@@ -250,7 +250,7 @@ swfu = new SWFUpload(settings);
             <?php if($row->id == 0): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="date_received">
                         <?php echo JText::_( 'Date Received' ); ?>
                     </label>
                 </td>
@@ -264,7 +264,7 @@ swfu = new SWFUpload(settings);
             <?php endif; ?>
             <tr>
                 <td class="key" valign="top">
-                    <label for="path">
+                    <label for="raw_message">
                         <?php echo JText::_( 'Raw Message' ); ?>
                     </label>
                 </td>
@@ -277,10 +277,34 @@ swfu = new SWFUpload(settings);
                         ?>
                 </td>
             </tr>
+            <?php if(isset($row->related_to_pb)): ?>
+            <tr>
+                <td class="key">
+                    <label for="related_to_pb">
+                        <?php echo JText::_('Related to Project Benefits'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+	                    $related_to_pb[0] = new stdClass();
+				        $related_to_pb[0]->value = 0;
+				        $related_to_pb[0]->text = JText::_('JNo');
+				        $related_to_pb[1] = new stdClass();
+				        $related_to_pb[1]->value = 1;
+				        $related_to_pb[1]->text = JText::_('JYes');
+	
+				        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+				            echo @$related_to_pb[$row->related_to_pb]->text;
+				        else
+	                        echo JHTML::_('select.radiolist', $related_to_pb, 'related_to_pb', null, 'value', 'text', $row->related_to_pb);
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
             <?php if(isset($row->date_processed)): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="date_processed">
                         <?php echo JText::_( 'Date Processed' ); ?>
                     </label>
                 </td>
@@ -292,7 +316,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'processed_message')): ?>
             <tr>
                 <td class="key" valign="top">
-                    <label for="path">
+                    <label for="processed_message">
                         <?php echo JText::_( 'Processed Message' ); ?>
                     </label>
                 </td>
@@ -309,7 +333,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'complaint_area_id')): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="complaint_area">
                         <?php
                         // echo JText::_( 'Complaint Area' );
                         echo JText::_( 'Complaint Category' );
@@ -329,7 +353,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'support_group_id')): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="support_group">
                         <?php echo JText::_( 'Assign to Support Group' ); ?>
                     </label>
                 </td>
@@ -346,7 +370,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'contract_id')): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="contract">
                         <?php echo JText::_( 'Contract' ); ?>
                     </label>
                 </td>
@@ -363,7 +387,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'location')): ?>
             <tr>
                 <td class="key" valign="top">
-                    <label for="path">
+                    <label for="location">
                         <?php echo JText::_( 'Location where Issue was Identified' ); ?>
                     </label>
                 </td>
@@ -397,7 +421,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'message_priority')): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="priority">
                         <?php echo JText::_( 'Complaint Priority' ); ?>
                     </label>
                 </td>
@@ -414,7 +438,7 @@ swfu = new SWFUpload(settings);
             <?php if(isset($row->date_resolved)): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="date_resolved">
                         <?php echo JText::_( 'Date Resolved' ); ?>
                     </label>
                 </td>
@@ -426,7 +450,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'confirmed_closed') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="confirmed">
                         <?php echo JText::_( 'Resolved and Closed' ); ?>
                     </label>
                 </td>
@@ -466,7 +490,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'resolution') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key" valign="top">
-                    <label for="custom_script">
+                    <label for="resolution">
                         <?php echo JText::_( 'Resolution' ); ?>
                     </label>
                 </td>
@@ -483,7 +507,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'resolver_id') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="resolver">
                         <?php echo JText::_( 'Resolved by' ); ?>
                     </label>
                 </td>
@@ -500,7 +524,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'comments')): ?>
             <tr>
                 <td class="key" valign="top">
-                    <label for="custom_script">
+                    <label for="comments">
                         <?php echo JText::_( 'Comments' ); ?>
                     </label>
                 </td>

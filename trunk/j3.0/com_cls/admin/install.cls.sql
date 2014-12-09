@@ -29,6 +29,7 @@ ALTER TABLE `#__complaints` ADD COLUMN `contract_id` int(11) NOT NULL default 0 
 ALTER TABLE `#__complaints` ADD COLUMN `support_group_id` int(11) NOT NULL default 0 AFTER `contract_id`;
 ALTER TABLE `#__complaints` ADD COLUMN `preferred_contact` ENUM('', 'Email', 'SMS', 'Telephone Call') AFTER `ip_address`;
 ALTER TABLE `#__complaints` ADD COLUMN `date_closed` datetime default NULL AFTER `confirmed_closed`;
+ALTER TABLE `#__complaints` ADD COLUMN `related_to_pb` int(4) NOT NULL default 0 AFTER `processed_message`;
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
   `id` int(11) NOT NULL auto_increment,
