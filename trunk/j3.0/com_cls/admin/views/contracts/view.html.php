@@ -45,7 +45,7 @@ class ClsViewContracts extends JViewLegacy {
             $options[]      = JHtml::_('select.option', $section->id, $section->name);
         }
         JHtmlSidebar::addFilter(
-                JText::_('- Select Section -'),
+                JText::_('- Select Location -'),
                 'filter_section_id',
                 JHtml::_('select.options', $options, 'value', 'text', $this->state->get('filter.section_id'))
         );
@@ -91,7 +91,7 @@ class ClsViewContracts extends JViewLegacy {
                 'm.contract_id' => JText::_('Contract Id'),
                 'm.start_date' => JText::_('Start Date'),
                 'm.end_date' => JText::_('End Date'),
-                's.name' => JText::_('Section'),
+                's.name' => JText::_('Location'),
                 'm.id' => JText::_('id')
         );
     }

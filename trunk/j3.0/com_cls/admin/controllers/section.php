@@ -97,7 +97,7 @@ class ClsControllerSection extends JControllerForm {
             // adding notification
             clsLog('New section', 'New section created #' . $db->insertid());
 
-            $this->setRedirect('index.php?option=com_cls&view=sections', JText::_('Section successfully created'));
+            $this->setRedirect('index.php?option=com_cls&view=sections', JText::_('Location successfully created'));
         } else { // going to update section
             // constructing the section object
             $section = new sectionTableSection;
@@ -123,13 +123,13 @@ class ClsControllerSection extends JControllerForm {
                     return $this->execute('editSection');
                 }
 
-                clsLog('Section updated', 'The user updated section #' . $section->id . ' data');
+                clsLog('Location updated', 'The user updated section #' . $section->id . ' data');
             }
 
             if($_REQUEST['task'] == 'save')
-                $this->setRedirect('index.php?option=com_cls&view=sections', JText::_('Section successfully saved'));
+                $this->setRedirect('index.php?option=com_cls&view=sections', JText::_('Location successfully saved'));
             elseif($_REQUEST['task'] == 'apply')
-            $this->setRedirect('index.php?option=com_cls&task=section.edit&id='.$id, JText::_('Section successfully saved'));
+            $this->setRedirect('index.php?option=com_cls&task=section.edit&id='.$id, JText::_('Location successfully saved'));
             else
                 $this->setRedirect('index.php?option=com_cls', JText::_('Unknown task'));
         }
@@ -147,10 +147,10 @@ class ClsControllerSection extends JControllerForm {
                 $query = "delete from #__complaint_sections where id = $cid[$i]";
                 $db->setQuery($query);
                 $db->query();
-                clsLog('Section removed', 'The section with ID=' . $cid[$i] . ' has been removed');
+                clsLog('Location removed', 'The location with ID=' . $cid[$i] . ' has been removed');
             }
 
-            $this->setRedirect('index.php?option=com_cls&view=sections', JText::_('Section(s) successfully deleted'));
+            $this->setRedirect('index.php?option=com_cls&view=sections', JText::_('Location(s) successfully deleted'));
         } else {
             $this->setRedirect('index.php?option=com_cls', JText::_("You don't have permission to delete"));
         }

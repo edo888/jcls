@@ -36,7 +36,7 @@ class ClsViewSection extends JViewLegacy {
         $isNew      = ((int)$_REQUEST['id'] == 0);
 
         $text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
-        JToolBarHelper::title(   JText::_( 'Section' ).': <small><small>[ ' . $text.' ]</small></small>','manage.png' );
+        JToolBarHelper::title(   JText::_( 'Location' ).': <small><small>[ ' . $text.' ]</small></small>','manage.png' );
 
         // Build the actions for new and existing records.
         if ($isNew)  {

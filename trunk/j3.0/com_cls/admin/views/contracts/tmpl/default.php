@@ -99,7 +99,7 @@ jimport('joomla.filter.output');
                         <?php echo JHTML::_('grid.sort', 'End Date', 'm.end_date', $listDirn, $listOrder); ?>
                     </th>
                     <th width="20%" class="title">
-                        <?php echo JHTML::_('grid.sort', 'Section', 's.name', $listDirn, $listOrder); ?>
+                        <?php echo JHTML::_('grid.sort', 'Location', 's.name', $listDirn, $listOrder); ?>
                     </th>
                     <th width="1%" nowrap="nowrap">
                         <?php echo JHTML::_('grid.sort', 'ID', 'm.id', $listDirn, $listOrder); ?>

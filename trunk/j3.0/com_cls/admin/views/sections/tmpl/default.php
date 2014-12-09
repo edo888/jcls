@@ -113,7 +113,7 @@ jimport('joomla.filter.output');
                         <?php echo $checked; ?>
                     </td>
                     <td align="center">
-                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Section' ); ?>">
+                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Location' ); ?>">
                             <?php echo $row->name; ?></a>
                     </td>
                     <td align="center">
