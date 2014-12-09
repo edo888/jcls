@@ -125,6 +125,36 @@ function showReports() {
     @$complaints_resolved_growth = ($complaints_resolved_per_day >= $complaints_resolved_per_day2 ? '+' : '-') . round(abs($complaints_resolved_per_day - $complaints_resolved_per_day2)/$complaints_resolved_per_day*100, 2) . '%';
     */
 
+    $db->setQuery("select * from #__complaints where confirmed_closed = 'Y' and date_received <= '$enddate 23:59:59'");
+    $complaints_received_till_date = $db->loadObjectList();
+    
+    $res_within_standards = 0;
+    foreach($complaints_till_date as $complaint) {
+        if($complaint->message_priority == '')
+            $complaint->message_priority = 'Low';
+
+        switch($complaint->message_priority) {
+            case 'Low': $action_period = $action_period_low; break;
+            case 'Medium': $action_period = $action_period_medium; break;
+            case 'High': $action_period = $action_period_high; break;
+            default: break;
+        }
+        
+        // todo
+    }
+    
+    $db->setQuery("select count(*) from #__complaints where date_received <= '$enddate 23:59:59'");
+    $complaints_received_till_date = $db->loadResult();
+    
+    $db->setQuery("select count(*) from #__complaints where related_to_pb = 1 and date_received <= '$enddate 23:59:59'");
+    $all_complaints_related_to_pb = $db->loadResult();
+    
+    $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'Y' and related_to_pb = 1 and date_received <= '$enddate 23:59:59'");
+    $complaints_resolved_related_to_pb = $db->loadResult();
+    
+    $res_within_standards = ($complaints_received_till_date > 0 ? round($res_within_standards/$complaints_received_till_date * 100) . ' %' : '0 %');
+    $rel_pb_addressed = ($all_complaints_related_to_pb > 0 ? round($complaints_resolved_related_to_pb/$all_complaints_related_to_pb * 100) . ' %' : '0 %');
+    
     echo '<h3>Summary of Complaints</h3>';
     echo '<i>Complaints Received Per Day:</i> ' . $complaints_received_per_day . '<br />'; //' <small style="color:#cc0000;">' . $complaints_received_growth . '</small><br />';
     echo '<i>Complaints Processed Per Day:</i> ' . $complaints_processed_per_day . '<br />'; //' <small style="color:#cc0000;">' . $complaints_processed_growth . '</small><br />';
@@ -133,6 +163,8 @@ function showReports() {
     echo '<i>Number of Complaints Resolved:</i> ' . $complaints_resolved . ' <br />';
     echo '<i>Number of Complaints Outstanding:</i> ' . ($complaints_received - $complaints_resolved < 0 ? 0 : $complaints_received - $complaints_resolved) . ' <br />';
     echo '<i>Number of Complaints with Delayed Resolution:</i> ' . $complaints_delayed . ' <br />';
+    echo '<i>Grievances responded to and/or resolved within the stipulated service standards:</i> ' . $res_within_standards . '<br />';
+    echo '<i>Grievances related to delivery of project benefits which are addressed:</i> ' . $rel_pb_addressed . '<br />';
 
     echo '<br /><small><i>The averages are based on ' . $statistics_period . ' days period data.</i></small>';
     # -- End Complaint Averages --
