@@ -74,7 +74,7 @@ class ClsModelComplaint extends JModelLegacy {
         $row->activity_log = $db->loadObjectList();
 
         // area_id list
-        $query = 'select * from #__complaint_areas';
+        $query = 'select * from #__complaint_areas order by area';
         $db->setQuery($query);
         $areas = $db->loadObjectList();
         //$area[] = array('key' => '', 'value' => '- Select Area -');
@@ -111,7 +111,7 @@ class ClsModelComplaint extends JModelLegacy {
         $lists['resolver'] = JHTML::_('select.genericlist', $resolver, 'resolver_id', null, 'key', 'value', $row->resolver_id);
 
         // support groups list
-        $query = 'select * from #__complaint_support_groups';
+        $query = 'select * from #__complaint_support_groups order by name asc';
         $db->setQuery($query);
         $support_groups = $db->loadObjectList();
         $support_group[] = array('key' => '', 'value' => '- Select Support Group -');
