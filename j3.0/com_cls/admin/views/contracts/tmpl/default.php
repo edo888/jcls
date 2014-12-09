@@ -129,10 +129,10 @@ jimport('joomla.filter.output');
                         <?php echo $row->contract_id; ?>
                     </td>
                     <td align="center">
-                        <?php echo $row->start_date; ?>
+                        <?php echo JDate::getInstance($row->start_date)->format('Y-m-d'); ?>
                     </td>
                     <td align="center">
-                        <?php echo $row->end_date; ?>
+                        <?php echo JDate::getInstance($row->end_date)->format('Y-m-d'); ?>
                     </td>
                     <td align="center">
                         <?php echo $row->section_name; ?>
