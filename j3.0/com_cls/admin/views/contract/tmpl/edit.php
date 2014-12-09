@@ -81,7 +81,10 @@ function editContract($row, $lists, $user_type) {
                     </label>
                 </td>
                 <td>
-                    <?php echo '<input class="inputbox" type="text" name="start_date" id="start_date" size="60" value="', @JRequest::getVar('start_date', $row->start_date), '" />'; ?>
+                    <?php
+                        JHTML::_('behavior.calendar');
+                        echo JHTML::calendar(@JRequest::getVar('start_date', $row->start_date), 'start_date', 'start_date', '%Y-%m-%d');
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -91,7 +94,10 @@ function editContract($row, $lists, $user_type) {
                     </label>
                 </td>
                 <td>
-                    <?php echo '<input class="inputbox" type="text" name="end_date" id="end_date" size="60" value="', @JRequest::getVar('end_date', $row->end_date), '" />'; ?>
+                    <?php
+                        JHTML::_('behavior.calendar');
+                        echo JHTML::calendar(@JRequest::getVar('end_date', $row->end_date), 'end_date', 'end_date', '%Y-%m-%d');
+                    ?>
                 </td>
             </tr>
             <tr>
