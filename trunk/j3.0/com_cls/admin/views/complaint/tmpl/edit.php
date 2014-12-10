@@ -107,6 +107,8 @@ swfu = new SWFUpload(settings);
                 alert('Sender is required');
             else if(form.raw_message && form.raw_message.value == "")
                 alert('Raw message is required');
+            else if(form.message_priority && form.message_priority.value == "")
+                alert('Complaint priority is required');
             else
                 submitform(pressbutton);
         }
