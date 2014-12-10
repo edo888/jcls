@@ -125,11 +125,11 @@ function showReports() {
     @$complaints_resolved_growth = ($complaints_resolved_per_day >= $complaints_resolved_per_day2 ? '+' : '-') . round(abs($complaints_resolved_per_day - $complaints_resolved_per_day2)/$complaints_resolved_per_day*100, 2) . '%';
     */
 
-    $db->setQuery("select * from #__complaints where confirmed_closed = 'Y' and date_received <= '$enddate 23:59:59'");
-    $complaints_received_till_date = $db->loadObjectList();
+    $db->setQuery("select * from #__complaints where date_received <= '$enddate 23:59:59'");
+    $all_complaints_received_till_date = $db->loadObjectList();
     
     $res_within_standards = 0;
-    foreach($complaints_till_date as $complaint) {
+    foreach($all_complaints_received_till_date as $complaint) {
         if($complaint->message_priority == '')
             $complaint->message_priority = 'Low';
 
@@ -140,7 +140,8 @@ function showReports() {
             default: break;
         }
         
-        // todo
+        if(!empty($complaint->date_processed) and $action_period*24*60*60 >= strtotime($complaint->date_processed) - strtotime($complaint->date_received))
+            $res_within_standards++;
     }
     
     $db->setQuery("select count(*) from #__complaints where date_received <= '$enddate 23:59:59'");
