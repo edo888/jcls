@@ -140,12 +140,12 @@ jimport('joomla.filter.output');
                 $checked     = JHTML::_('grid.checkedout',$row,$i);
 
                 if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received))
-                    JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not processed yet.');
+                    JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not processed yet.');
                 if($row->confirmed_closed == 'N' and $row->date_processed != '') {
                     switch($row->message_priority) {
-                        case 'Low': if($action_period_low*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.'); break;
-                        case 'Medium': if($action_period_medium*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.'); break;
-                        case 'High': if($action_period_high*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'">#' . $row->message_id . '</a> is not resolved yet.'); break;
+                        case 'Low': if($action_period_low*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not resolved yet.'); break;
+                        case 'Medium': if($action_period_medium*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not resolved yet.'); break;
+                        case 'High': if($action_period_high*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not resolved yet.'); break;
                     }
                 }
                 ?>
