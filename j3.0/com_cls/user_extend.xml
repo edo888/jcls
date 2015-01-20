@@ -152,17 +152,17 @@
                         <option value="Supervisor">Supervisor - Can add comments and view all complaints</option>
                         <option value="Guest">Guest - Can view reports and statistics</option>
                     </field>
-                    <field name="receive_notifications" type="radio" default="1" label="Receive Notifications" description="">
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
+                    <field name="receive_notifications" type="radio" class="btn-group btn-group-yesno" default="1" label="Receive Notifications" description="">
+                        <option value="0">JNO</option>
+                        <option value="1">JYES</option>
                     </field>
-                    <field name="receive_by_email" type="radio" default="1" label="Receive Notifications By Email" description="">
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
+                    <field name="receive_by_email" type="radio" class="btn-group btn-group-yesno" default="1" label="Receive Notifications By Email" description="">
+                        <option value="0">JNO</option>
+                        <option value="1">JYES</option>
                     </field>
-                    <field name="receive_by_sms" type="radio" default="0" label="Receive Notifications By SMS" description="">
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
+                    <field name="receive_by_sms" type="radio" class="btn-group btn-group-yesno" default="0" label="Receive Notifications By SMS" description="">
+                        <option value="0">JNO</option>
+                        <option value="1">JYES</option>
                     </field>
                     <field name="organization" type="text" default="" label="Organization" description="" size="40" />
                     <field name="area" type="text" default="" label="Area" description="The area of specialty" size="40" />
