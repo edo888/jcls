@@ -456,7 +456,7 @@ EOT;
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_low = $db->loadResult(); echo $total_count56_low; ?></td>
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_low = $db->loadResult(); echo $total_count84_low; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_low = $db->loadResult(); echo $total_count85_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and message_priority = 'Low'"); echo $db->loadResult(); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'N' and (message_priority = 'Low' or message_priority is null or message_priority = '')"); echo $db->loadResult(); ?></td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
