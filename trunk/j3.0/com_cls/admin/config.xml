@@ -19,7 +19,7 @@
             <field name="@spacer" type="spacer" default="" label="" description="" />
             <field name="map_api_key" type="text" default="" label="Map API key" description="Google Maps API key, you can get one from: http://code.google.com/apis/maps/signup.html" size="20" />
             <field name="center_map" type="text" default="40.313043,44.736328" label="Map center point" description="Complaints map center point (lat,lng)" size="20" />
-            <field name="zoom_level" type="text" default="6" label="Map zoom level" description="Google Maps zoom level" size="4" />
+            <field name="zoom_level" type="text" default="12" label="Map zoom level" description="Google Maps zoom level" size="4" />
             <field name="@spacer" type="spacer" default="" label="" description="" />
             <field name="sms_acknowledgment" type="radio" class="btn-group" default="0" label="SMS Acknowledgment" description="The complainer will receive SMS acknowledgment message after the complaint is received">
                 <option value="0">No</option>
