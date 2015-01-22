@@ -174,7 +174,7 @@ function showReports() {
     echo '<i>Number of Complaints Outstanding:</i> ' . ($complaints_received - $complaints_resolved < 0 ? 0 : $complaints_received - $complaints_resolved) . ' <br />';
     echo '<i>Number of Complaints with Delayed Resolution:</i> ' . $complaints_delayed . ' <br />';
     echo '<i>Grievances responded to and/or resolved within the stipulated service standards:</i> ' . $res_within_standards . '<br />';
-    echo '<i>Grievances related to delivery of project benefits which are addressed:</i> ' . $rel_pb_addressed . '<br />';
+    echo '<i>Grievances registered related to delivery of project benefits that are actually addressed:</i> ' . $rel_pb_addressed . '<br />';
 
     echo '<br /><small><i>The averages are based on ' . $statistics_period . ' days period data.</i></small>';
     # -- End Complaint Averages --
