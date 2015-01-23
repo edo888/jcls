@@ -128,9 +128,6 @@ function showReports() {
     $db->setQuery("select * from #__complaints where date_received <= '$enddate 23:59:59'");
     $all_complaints_received_till_date = $db->loadObjectList();
     
-    $db->setQuery("select * from #__complaints where related_to_pb = 1 and date_received <= '$enddate 23:59:59'");
-    $all_complaints_received_till_date2 = $db->loadObjectList();
-    
     $res_within_standards = $res_within_standards_low = $res_within_standards_medium = $res_within_standards_high = 0;
     foreach($all_complaints_received_till_date as $complaint) {
         if($complaint->message_priority == '')
@@ -146,12 +143,15 @@ function showReports() {
         if(!empty($complaint->date_resolved) and $action_period*24*60*60 >= (strtotime($complaint->date_resolved) - strtotime($complaint->date_received))) {
             if($complaint->message_priority == 'Low')
                 $res_within_standards_low++;
-            elseif($complaints->message_priority == 'Medium')
+            elseif($complaint->message_priority == 'Medium')
                 $res_within_standards_medium++;
-            elseif($complaints->message_priority == 'High')
+            elseif($complaint->message_priority == 'High')
                 $res_within_standards_high++;
         }
     }
+    
+    $db->setQuery("select * from #__complaints where related_to_pb = 1 and date_received <= '$enddate 23:59:59'");
+    $all_complaints_received_till_date2 = $db->loadObjectList();
     
     $res_within_standards2 = $res_within_standards_low2 = $res_within_standards_medium2 = $res_within_standards_high2 = 0;
     foreach($all_complaints_received_till_date2 as $complaint) {
@@ -168,9 +168,9 @@ function showReports() {
         if(!empty($complaint->date_resolved) and $action_period*24*60*60 >= (strtotime($complaint->date_resolved) - strtotime($complaint->date_received))) {
             if($complaint->message_priority == 'Low')
                 $res_within_standards_low2++;
-            elseif($complaints->message_priority == 'Medium')
+            elseif($complaint->message_priority == 'Medium')
                 $res_within_standards_medium2++;
-            elseif($complaints->message_priority == 'High')
+            elseif($complaint->message_priority == 'High')
                 $res_within_standards_high2++;
         }
     }
@@ -188,8 +188,8 @@ function showReports() {
     $complaints_resolved_related_to_pb = $db->loadResult();
     
     $total_res_within_standards = $res_within_standards;
-    $res_within_standards = ($complaints_received_till_date > 0 ? round($res_within_standards/$complaints_received_till_date * 100) . ' %' : '0 %');
-    $rel_pb_addressed = ($all_complaints_related_to_pb > 0 ? round($complaints_resolved_related_to_pb/$all_complaints_related_to_pb * 100) . ' %' : '0 %');
+    $res_within_standards = ($complaints_received_till_date > 0 ? round($res_within_standards/$complaints_received_till_date * 100, 1) . ' %' : '0 %');
+    $rel_pb_addressed = ($all_complaints_related_to_pb > 0 ? round($complaints_resolved_related_to_pb/$all_complaints_related_to_pb * 100, 1) . ' %' : '0 %');
     
     $total_res_within_standards2 = $res_within_standards2;
     
