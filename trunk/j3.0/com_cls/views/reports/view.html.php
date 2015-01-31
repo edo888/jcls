@@ -127,7 +127,7 @@ class CLSFrontViewReports2 extends JViewLegacy {
         */
         # -- End Complaints Averages --
 
-        # -- Complaints Statistics --
+        # -- Complaint Statistics --
         for($i = 0, $time = strtotime($startdate); $time < strtotime($enddate) + 86400; $i++, $time = strtotime("$startdate +$i days"))
             $dates[date('M j', $time)] = 0;
         //echo '<pre>', print_r($dates, true), '</pre>';
@@ -267,7 +267,7 @@ jQuery(document).ready(function() {
 EOT;
 
         $document->addScriptDeclaration($complaints_js);
-        # -- End Complaints Statistics --
+        # -- End Complaint Statistics --
 
         # -- Complaints Map --
         $document->addScript('http://maps.google.com/maps?file=api&v=2&key='.$map_api_key);

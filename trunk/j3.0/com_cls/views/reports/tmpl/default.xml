@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-   <layout title="Complaints Statistics">
+   <layout title="Complaint Statistics">
       <message>
-         <![CDATA[Complaints Statistics]]>
+         <![CDATA[Complaint Statistics]]>
       </message>
    </layout>
    <state>
-      <name>Complaints Statistics</name>
-      <description>Complaints Statistics</description>
+      <name>Complaint Statistics</name>
+      <description>Complaint Statistics</description>
       <params>
       </params>
    </state>
