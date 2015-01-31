@@ -14,4 +14,25 @@
 
     <fields name="request">
     </fields>
+    
+    <fields name="params">
+        <fieldset name="basic" label="Options">
+            <field name="show_summary" type="radio" class="btn-group btn-group-yesno" default="1" label="Show Summary Data" description="">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="show_chart" type="radio" class="btn-group btn-group-yesno" default="1" label="Show Statistics Chart" description="">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="show_map" type="radio" class="btn-group btn-group-yesno" default="1" label="Show Map" description="">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="show_summary_table" type="radio" class="btn-group btn-group-yesno" default="1" label="Show Summary Table" description="">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field> 
+        </fieldset>   
+    </fields>    
 </metadata>
