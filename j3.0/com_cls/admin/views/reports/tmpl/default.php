@@ -285,6 +285,7 @@ function showReports() {
     //echo '<img src="' . $complaints_per_day_link . '" alt="complaints statistics :: drawing failed, select shorter period" />';
     $document = JFactory::getDocument();
     //$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
+    JHtml::_('jquery.framework');
     $document->addScript('http://code.highcharts.com/highcharts.js');
 
     $complaints_js = <<< EOT
