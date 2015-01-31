@@ -293,7 +293,7 @@ var chart;
 jQuery(document).ready(function() {
     chart = new Highcharts.Chart({
         chart: {
-            renderTo: 'container',
+            renderTo: 'chart_container',
             type: 'line',
             marginRight: 130,
             marginBottom: 35
@@ -349,7 +349,7 @@ jQuery(document).ready(function() {
 EOT;
 
     $document->addScriptDeclaration($complaints_js);
-    echo '<div id="container" style="width:900px;height:500px;"></div>';
+    echo '<div id="chart_container" style="width:900px;height:500px;"></div>';
     # -- End Complaint Statistics --
 
     # -- Complaint Map --
