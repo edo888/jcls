@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" version="3.0" method="upgrade">
+    <name>System - CLS Users</name>
+    <author>Edvard Ananyan</author>
+    <creationDate>February 2010</creationDate>
+    <copyright>Copyright (C) 2008 - 2015 Edvard Ananyan. All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+    <authorEmail>edo888@gmail.com</authorEmail>
+    <authorUrl>http://2glux.com</authorUrl>
+    <version>1.0.0</version>
+    <description>This plugin will limit CLS users access rights in joomla backend.</description>
+
+    <files>
+        <filename>index.html</filename>
+        <filename plugin="cls_users">cls_users.php</filename>
+    </files>
+    
+    <config>
+        <fields name="params">
+        </fields>
+    </config>
+</extension>

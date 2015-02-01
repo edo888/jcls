@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="2.5" method="upgrade">
+<extension type="component" version="3.0" method="upgrade">
     <name>CLS</name>
     <author>Edvard Ananyan</author>
     <creationDate>March 2010</creationDate>
-    <copyright>Copyright (c) 2010 - 2014 Edvard Ananyan. All rights reserved.</copyright>
+    <copyright>Copyright (c) 2010 - 2015 Edvard Ananyan. All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>edo888@gmail.com</authorEmail>
-    <authorUrl>http://edo.webmaster.am/</authorUrl>
-    <version>3.0.0</version>
+    <authorUrl>http://2glux.com</authorUrl>
+    <version>3.0.1</version>
     <description>COM_CLS_DESCRIPTION</description>
 
     <files>
