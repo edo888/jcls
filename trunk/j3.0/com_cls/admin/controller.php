@@ -25,8 +25,12 @@ class clsController extends JControllerLegacy {
         $this->registerTask('download_report', 'downloadReport');
         $this->registerTask('notify_sms_acknowledge', 'notifySMSAcknowledge');
         $this->registerTask('notify_email_acknowledge', 'notifyEmailAcknowledge');
+        $this->registerTask('notify_inperson_acknowledge', 'notifyInPersonAcknowledge');
+        $this->registerTask('notify_phone_acknowledge', 'notifyPhoneAcknowledge');
         $this->registerTask('notify_sms_resolve', 'notifySMSResolve');
         $this->registerTask('notify_email_resolve', 'notifyEmailResolve');
+        $this->registerTask('notify_inperson_resolve', 'notifyInPersonResolve');
+        $this->registerTask('notify_phone_resolve', 'notifyPhoneResolve');
         $this->registerTask('upload_picture' , 'uploadPicture');
     }
 
@@ -125,6 +129,48 @@ class clsController extends JControllerLegacy {
             $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
         }
     }
+    
+    function notifyInPersonAcknowledge() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+        
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+        
+        clsLog('Acknowledgment made in person', "Acknowledgment made in person for complaint #$complaint->message_id");
+
+        $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('In person acknowledgement successfully recorded'));
+    }
+    
+    function notifyPhoneAcknowledge() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+        
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+        
+        clsLog('Acknowledgment made by phone', "Acknowledgment made by phone for complaint #$complaint->message_id");
+
+        $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('Phone acknowledgement successfully recorded'));
+    }
 
     function notifySMSResolve() {
         $db   = JFactory::getDBO();
@@ -186,6 +232,48 @@ class clsController extends JControllerLegacy {
         } else {
             $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
         }
+    }
+    
+    function notifyInPersonResolve() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+        
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+        
+        clsLog('Resolution acknowledgment made in person', "Resolution acknowledgment made in person for complaint #$complaint->message_id");
+
+        $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('In person resolution acknowledgement successfully recorded'));
+    }
+    
+    function notifyPhoneResolve() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+
+        // guest cannot see this list
+        if($user_type == 'Guest') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+        
+        $db->setQuery('select * from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+        
+        clsLog('Resolution acknowledgment made by phone', "Resolution acknowledgment made by phone for complaint #$complaint->message_id");
+
+        $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('Phone resolution acknowledgement successfully recorded'));
     }
 
     function uploadPicture() {

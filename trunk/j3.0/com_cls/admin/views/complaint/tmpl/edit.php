@@ -288,17 +288,17 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <?php
-	                    $related_to_pb[0] = new stdClass();
-				        $related_to_pb[0]->value = 0;
-				        $related_to_pb[0]->text = JText::_('JNo');
-				        $related_to_pb[1] = new stdClass();
-				        $related_to_pb[1]->value = 1;
-				        $related_to_pb[1]->text = JText::_('JYes');
-	
-				        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
-				            echo @$related_to_pb[$row->related_to_pb]->text;
-				        else
-	                        echo JHTML::_('select.radiolist', $related_to_pb, 'related_to_pb', null, 'value', 'text', $row->related_to_pb);
+                        $related_to_pb[0] = new stdClass();
+                        $related_to_pb[0]->value = 0;
+                        $related_to_pb[0]->text = JText::_('JNo');
+                        $related_to_pb[1] = new stdClass();
+                        $related_to_pb[1]->value = 1;
+                        $related_to_pb[1]->text = JText::_('JYes');
+    
+                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                            echo @$related_to_pb[$row->related_to_pb]->text;
+                        else
+                            echo JHTML::_('select.radiolist', $related_to_pb, 'related_to_pb', null, 'value', 'text', $row->related_to_pb);
                     ?>
                 </td>
             </tr>
@@ -627,6 +627,26 @@ swfu = new SWFUpload(settings);
                 </td>
             </tr>
             <?php endif; ?>
+            <tr>
+                <td class="key" style="width:300px;">
+                    <label for="title">
+                        <?php echo JText::_( 'Acknowledgment made in person' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_inperson_acknowledge';document.notificationForm.submit();">Click here</a>
+                </td>
+            </tr>
+            <tr>
+                <td class="key" style="width:300px;">
+                    <label for="title">
+                        <?php echo JText::_( 'Acknowledgment made by phone' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_phone_acknowledge';document.notificationForm.submit();">Click here</a>
+                </td>
+            </tr>
             <?php if($row->phone != '' and $row->date_resolved != ''): ?>
             <tr>
                 <td class="key" style="width:300px;">
@@ -660,6 +680,28 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_email_resolve';document.notificationForm.submit();">Click here</a>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if($row->date_resolved != ''): ?>
+            <tr>
+                <td class="key" style="width:300px;">
+                    <label for="title">
+                        <?php echo JText::_( 'Acknowledgment made in person' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_inperson_resolve';document.notificationForm.submit();">Click here</a>
+                </td>
+            </tr>
+            <tr>
+                <td class="key" style="width:300px;">
+                    <label for="title">
+                        <?php echo JText::_( 'Acknowledgment made by phone' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_phone_resolve';document.notificationForm.submit();">Click here</a>
                 </td>
             </tr>
             <?php endif; ?>
