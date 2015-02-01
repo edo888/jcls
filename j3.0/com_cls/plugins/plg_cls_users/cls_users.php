@@ -34,7 +34,7 @@ class  plgSystemCLS_Users extends JPlugin {
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
         
-        if($user_type != 'System Administrator' or !$user->authorise('core.admin') or !$user->guest) {
+        if($user_type != 'System Administrator' and !$user->authorise('core.admin') and !$user->guest) {
             if(JRequest::getVar('option') != 'com_cls') {
                 JRequest::setVar('option', 'com_cls');
                 $app->redirect('index.php?option=com_cls');
