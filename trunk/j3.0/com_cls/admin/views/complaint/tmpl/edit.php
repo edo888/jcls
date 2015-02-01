@@ -623,7 +623,15 @@ swfu = new SWFUpload(settings);
                     </label>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_email_acknowledge';document.notificationForm.submit();">Click here</a>
+                <?php
+                    $db =JFactory::getDBO();
+                    $db->setQuery("SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) where m.action = 'Email acknowledgment sent' and m.description like '%#$row->message_id%' order by m.id desc limit 1");
+                    $status = $db->loadObject();
+                    if(!is_object($status))
+                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_email_acknowledge\';document.notificationForm.submit();">Click here</a> to send';
+                    else
+                        echo 'Sent by ' . $status->user . ' on ' . $status->date . '. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_email_acknowledge\';document.notificationForm.submit();">Click here</a> to send again';
+                ?>
                 </td>
             </tr>
             <?php endif; ?>
@@ -634,7 +642,15 @@ swfu = new SWFUpload(settings);
                     </label>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_inperson_acknowledge';document.notificationForm.submit();">Click here</a>
+                <?php
+                    $db =JFactory::getDBO();
+                    $db->setQuery("SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) where m.action = 'Acknowledgment made in person' and m.description like '%#$row->message_id%' order by m.id desc limit 1");
+                    $status = $db->loadObject();
+                    if(!is_object($status))
+                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_inperson_acknowledge\';document.notificationForm.submit();">Click here</a> to record';
+                    else
+                        echo 'Made by ' . $status->user . ' on ' . $status->date . '. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_inperson_acknowledge\';document.notificationForm.submit();">Click here</a> to record again';
+                ?>
                 </td>
             </tr>
             <tr>
@@ -644,7 +660,15 @@ swfu = new SWFUpload(settings);
                     </label>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_phone_acknowledge';document.notificationForm.submit();">Click here</a>
+                <?php
+                    $db =JFactory::getDBO();
+                    $db->setQuery("SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) where m.action = 'Acknowledgment made by phone' and m.description like '%#$row->message_id%' order by m.id desc limit 1");
+                    $status = $db->loadObject();
+                    if(!is_object($status))
+                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_phone_acknowledge\';document.notificationForm.submit();">Click here</a> to record';
+                    else
+                        echo 'Made by ' . $status->user . ' on ' . $status->date . '. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_phone_acknowledge\';document.notificationForm.submit();">Click here</a> to record again';
+                ?>
                 </td>
             </tr>
             <?php if($row->phone != '' and $row->date_resolved != ''): ?>
@@ -679,7 +703,15 @@ swfu = new SWFUpload(settings);
                     </label>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_email_resolve';document.notificationForm.submit();">Click here</a>
+                <?php
+                    $db =JFactory::getDBO();
+                    $db->setQuery("SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) where m.action = 'Email resolution acknowledgment sent' and m.description like '%#$row->message_id%' order by m.id desc limit 1");
+                    $status = $db->loadObject();
+                    if(!is_object($status))
+                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_email_resolve\';document.notificationForm.submit();">Click here</a> to send';
+                    else
+                        echo 'Sent by ' . $status->user . ' on ' . $status->date . '. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_email_resolve\';document.notificationForm.submit();">Click here</a> to send again';
+                ?>
                 </td>
             </tr>
             <?php endif; ?>
@@ -687,21 +719,37 @@ swfu = new SWFUpload(settings);
             <tr>
                 <td class="key" style="width:300px;">
                     <label for="title">
-                        <?php echo JText::_( 'Acknowledgment made in person' ); ?>
+                        <?php echo JText::_( 'Resolution acknowledgment made in person' ); ?>
                     </label>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_inperson_resolve';document.notificationForm.submit();">Click here</a>
+                <?php
+                    $db =JFactory::getDBO();
+                    $db->setQuery("SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) where m.action = 'Resolution acknowledgment made in person' and m.description like '%#$row->message_id%' order by m.id desc limit 1");
+                    $status = $db->loadObject();
+                    if(!is_object($status))
+                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_inperson_resolve\';document.notificationForm.submit();">Click here</a> to record';
+                    else
+                        echo 'Made by ' . $status->user . ' on ' . $status->date . '. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_inperson_resolve\';document.notificationForm.submit();">Click here</a> to record again';
+                ?>
                 </td>
             </tr>
             <tr>
                 <td class="key" style="width:300px;">
                     <label for="title">
-                        <?php echo JText::_( 'Acknowledgment made by phone' ); ?>
+                        <?php echo JText::_( 'Resolution acknowledgment made by phone' ); ?>
                     </label>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="document.notificationForm.task.value='notify_phone_resolve';document.notificationForm.submit();">Click here</a>
+                <?php
+                    $db =JFactory::getDBO();
+                    $db->setQuery("SELECT m.*, u.name as user FROM #__complaint_notifications as m left join #__users as u on (m.user_id = u.id) where m.action = 'Resolution acknowledgment made by phone' and m.description like '%#$row->message_id%' order by m.id desc limit 1");
+                    $status = $db->loadObject();
+                    if(!is_object($status))
+                        echo '<a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_phone_resolve\';document.notificationForm.submit();">Click here</a> to record';
+                    else
+                        echo 'Made by ' . $status->user . ' on ' . $status->date . '. <a href="javascript:void(0);" onclick="document.notificationForm.task.value=\'notify_phone_resolve\';document.notificationForm.submit();">Click here</a> to record again';
+                ?>
                 </td>
             </tr>
             <?php endif; ?>
