@@ -122,6 +122,10 @@ class ClsModelComplaint extends JModelLegacy {
         // source list
         $lists['source'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Source -' ), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Email', 'value' => 'Email'), array('key' => 'Website', 'value' => 'Website'), array('key' => 'Telephone Call', 'value' => 'Telephone Call'), array('key' => 'Personal Visit', 'value' => 'Personal Visit'), array('key' => 'Field Visit by Project Staff', 'value' => 'Field Visit by Project Staff'), array('key' => 'Other', 'value' => 'Other')), 'message_source', null, 'key', 'value', $row->message_source);
 
+        
+        // gender list
+        $lists['gender'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Gender -' ), array('key' => 'Male', 'value' => 'Male'), array('key' => 'Female', 'value' => 'Female'), array('key' => 'Not Specified', 'value' => 'Not Specified')), 'gender', null, 'key', 'value', $row->gender);
+        
         // preferred contact list
         $lists['preferred_contact'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Contact Method -' ), array('key' => 'Email', 'value' => 'Email'), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Telephone Call', 'value' => 'Telephone Call')), 'preferred_contact', null, 'key', 'value', $row->preferred_contact);
 

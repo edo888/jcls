@@ -177,6 +177,7 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->set('editor_id', null);
             $complaint->set('raw_message', null);
             $complaint->set('related_to_pb', null);
+            $complaint->set('gender', null);
             $complaint->set('processed_message', null);
             $complaint->set('contract_id', null);
             $complaint->set('support_group_id', null);
@@ -203,8 +204,9 @@ class ClsControllerComplaint extends JControllerForm {
             }
             
             if($user_type == 'System Administrator' or $user_type == 'Level 1' or $user_type == 'Level 2') {
-	            $complaint->set('related_to_pb', JRequest::getInt('related_to_pb'));
-	        }
+                $complaint->set('related_to_pb', JRequest::getInt('related_to_pb'));
+                $complaint->set('gender', JRequest::getVar('gender'));
+            }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
                 $complaint->set('name', JRequest::getVar('name'));

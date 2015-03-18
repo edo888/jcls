@@ -30,6 +30,7 @@ ALTER TABLE `#__complaints` ADD COLUMN `support_group_id` int(11) NOT NULL defau
 ALTER TABLE `#__complaints` ADD COLUMN `preferred_contact` ENUM('', 'Email', 'SMS', 'Telephone Call') AFTER `ip_address`;
 ALTER TABLE `#__complaints` ADD COLUMN `date_closed` datetime default NULL AFTER `confirmed_closed`;
 ALTER TABLE `#__complaints` ADD COLUMN `related_to_pb` int(4) NOT NULL default 0 AFTER `processed_message`;
+ALTER TABLE `#__complaints` ADD COLUMN `gender` ENUM('Male', 'Female', 'Not Specified') NOT NULL default 'Not Specified' AFTER `related_to_pb`;
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
   `id` int(11) NOT NULL auto_increment,

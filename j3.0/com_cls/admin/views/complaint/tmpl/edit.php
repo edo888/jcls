@@ -302,6 +302,21 @@ swfu = new SWFUpload(settings);
                     ?>
                 </td>
             </tr>
+            <tr>
+                <td class="key">
+                    <label for="gender">
+                        <?php echo JText::_('Gender'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                        echo @$row->gender;
+                    else
+                        echo $lists['gender'];
+                    ?>
+                </td>
+            </tr>
             <?php endif; ?>
             <?php if(isset($row->date_processed)): ?>
             <tr>
