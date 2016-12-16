@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+        <fieldset name="basic" label="Basic" description="">
+            <field name="complaints_email" type="text" default="complaints@localhost" label="Complaints Email" description="" size="20" />
+            <field name="statistics_period" type="text" default="20" label="Statistics Period" description="Statistics period in days" size="4" />
+            <field name="raw_complaint_warning_period" type="text" default="2" label="Raw Complaint Warning Period" description="Show a warning message if a raw complaint was not processed after N days" size="4" />
+        </fieldset>
+
+        <fieldset name="priorities" label="Priorities" description="Define complaint priorities and advised action periods to solve them.">
+            <field name="low_priority_description" type="text" default="Issues which are not critical to the successful completion of the project." label="Low Priority Description" description="" size="50" />
+            <field name="action_period_low" type="text" default="30" label="Action Period" description="Expected number of days to solve low priority complaints" size="4" />
+            <field name="medium_priority_description" type="text" default="Issues which could potentially cause cost increases or time delays on a significant component of the project; and/or be in conflict with law." label="Medium Priority Description" description="" size="50" />
+            <field name="action_period_medium" type="text" default="10" label="Action Period" description="Expected number of days to solve medium priority complaints" size="4" />
+            <field name="high_priority_description" type="text" default="Issues which potentially affect Safety at the project site, or which can cause significant Environmental Damage." label="High Priority Description" description="" size="50" />
+            <field name="action_period_high" type="text" default="5" label="Action Period" description="Expected number of days to solve high priority complaints" size="4" />
+        </fieldset>
+
+        <fieldset name="texts" label="Acknowledgements" description="Please define the acknowledgement messages format.">
+            <field name="sms_acknowledgment" type="radio" class="btn-group" default="0" label="SMS Acknowledgment" description="The complainer will receive SMS acknowledgment message after the complaint is received">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </field>
+            <field name="email_acknowledgment" type="radio" class="btn-group" default="1" label="Email Acknowledgment" description="The complainer will receive Email acknowledgment message after the complaint is received">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </field>
+            <field name="acknowledgment_text" type="text" default="Thank you, your complaint #%s is received. You will get further details soon. {sitename}" label="Acknowledgment text" description="The formatted text to be used. You can use {sitename} variable." size="50" />
+        </fieldset>
+
+        <fieldset name="map" label="Map" description="Please specify the default map data.">
+            <field name="center_map" type="text" default="40.313043,44.736328" label="Map center point" description="Complaints map center point (lat,lng)" size="20" />
+            <field name="zoom_level" type="text" default="12" label="Map zoom level" description="Google Maps zoom level" size="4" />
+            <field name="map_api_key" type="text" default="" label="Map API key (optional)" description="Google Maps API key, you can get one from: http://code.google.com/apis/maps/signup.html" size="20" />
+        </fieldset>
+
+        <fieldset name="form" label="Form Fields" description="Add optional fields to complaint form on front-end.">
+            <field name="show_gender" type="radio" class="btn-group" default="0" label="Show Gender" description="Display Gender field on the complain form">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </field>
+            <field name="gender_required" type="radio" class="btn-group" default="0" label="Gender required" description="Gender field should be required input">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </field>
+            <field name="show_location" type="radio" class="btn-group" default="0" label="Show Location selection" description="Allows to add a marker on the map on the complain form">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </field>
+            <field name="show_upload" type="radio" class="btn-group" default="1" label="Show upload pictures" description="Allows to upload pictures on the complain form">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </field>
+        </fieldset>
+</config>

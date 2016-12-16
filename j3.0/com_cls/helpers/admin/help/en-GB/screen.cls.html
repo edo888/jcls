@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Complaint Logging System - Help</title>
+    <link type="text/css" href="http://help.joomla.org/templates/jw_joomla/css/template_css.css" rel="stylesheet" />
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+</head>
+<body class="contentpane">
+    <table class="contentpaneopen">
+        <tr>
+            <td class="contentheading" width="100%">Complaint Logging System</td>
+        </tr>
+        <tr>
+            <td valign="top">
+                <h2><span class="mw-headline">Description</span></h2>
+                <p>
+                    This component loggs complaints received by the one of following ways: (1) through a form on the website, (2) by sending an SMS message, (3) via e-mail.
+                    <ol>
+                        <li><b>Web Logging:</b> The user would open the "Feedback" page at the site and enter key information (name, contacts, etc) along with details of the complaint.</li>
+                        <li><b>SMS Logging:</b> Upon receipt of an SMS complaint an acknowledgement message would be returned to the complainant indicating that the message was received and will be processed. Upon resolution the complainant would receive a message which they can confirm that the resolution was satisfactory or otherwise. If the latter, additional steps will need to be done.</li>
+                        <li><b>E-mail Logging:</b> An e-mail would be sent to an e-mail address. An auto-responder would send out an acknowledgement and the business flow would be the same as for SMS logging.</li>
+                    </ol>
+                    Upon receipt of a complaint, the message would be automatically forwarded via e-mail or sms to Level 1 users.  The reporting facility in the system would record the details of the message, sender information, when received, etc. Later, when resolved, the complainant will be notified by SMS if possible. The reporting system will record the elapsed time for dealing with the complaint as well as the outcome. The system allows anonymous complaints to be made if the displaced person wish to do so.<br /><br />
+
+                    For more info please check <a href="http://code.google.com/p/jcls/source/browse/trunk/CLSManual.pdf">CLS Manual</a>
+                </p>
+
+                <h2><span class="mw-headline">Screenshot</span></h2>
+                <p><span class="image"><img src="com_cls.png" alt="Image:com_cls.png" border="0" /></span></p>
+
+                <h2><span class="mw-headline">Column Headers</span></h2>
+                <ul>
+                    <li><p><b>#</b>. An indexing number automatically assigned by Joomla! for ease of reference.</p></li>
+                    <li><p><b>Checkbox</b>. Check this box to select one or more items. To select all items, check the box in the column heading. After one or more boxes are checked, click a toolbar button to take an action on the selected item or items.</p></li>
+                    <li><p><b>Message ID</b>. Unique complaint identification number.</p></li>
+                    <li><p><b>Source</b>. The source of the complaint.</p></li>
+                    <li><p><b>Sender</b>. The sender details.</p></li>
+                    <li><p><b>Received</b>. The date complaint was received.</p></li>
+                    <li><p><b>Category</b>. The category of the complaint.</p></li>
+                    <li><p><b>Priority</b>. The priority of the complaint.</p></li>
+                    <li><p><b>Processed</b>. The date complaint was processed.</p></li>
+                    <li><p><b>Processed by</b>. Editor name who processed the complaint.</p></li>
+                    <li><p><b>Resolved</b>. The date complaint was resolved.</p></li>
+                    <li><p><b>Resolved by</b>. Editor name who resolved the complaint.</p></li>
+                    <li><p><b>ID</b>. This is another unique identification number for the complaint.</p></li>
+                </ul>
+
+                <h2><span class="mw-headline">Toolbar</span></h2>
+                <p>At the top right you will see the toolbar:</p>
+                <p><span class="image"><img src="com_cls_toolbar.png" alt="Image:com_cls_toolbar.png" border="0" /></span></p>
+                <ul>
+                    <li><p><b>New</b>. Opens a new complaint creation form.</p></li>
+                    <li><p><b>Edit</b>. Select one item and click on this button to open it in edit mode. You can also open an item for editing by clicking on its Message ID.</p></li>
+                    <li><p><b>Delete</b>. Select one item and click on this button to delete it. It will delete the complaint.</p></li>
+                    <li><p><b>Settings</b>. Opens component configuration settings.</p></li>
+                    <li><p><b>Help</b>. Opens this Help Screen.</p></li>
+                </ul>
+
+                <h2><span class="mw-headline">Quick Tips</span></h2>
+                <ul>
+                    <li><p>If the complaint is not processed/resolved in N days specified in the Settings, you will see a warning message on the top.</p></li>
+                    <li><p>If you want to see statistics data about complaints you can navigate to Reports section from the top left under Complaints title.</p></li>
+                    <li><p>If you don't see a button described here, it means that you don't have permission to do the appropriate action.</p></li>
+                    <li><p>If you are an admin and want to add/modify roles for the users, you need to do that from Site -> User Manager.</p></li>
+                </ul>
+
+                <h2><span class="mw-headline">Related Information</span></h2>
+                <ul>
+                    <li>For creating/processing/resolving a complaint you may consider reading: <a href="screen.cls.new.html">New Complaint</a></li>
+                    <li>For adding/editing contracts you may consider reading: <a href="screen.cls.contracts.html">Contracts</a></li>
+                    <li>For adding/editing locations you may consider reading: <a href="screen.cls.sections.html">Locations</a></li>
+                    <li>For adding/editing support groups you may consider reading: <a href="screen.cls.supportgroups.html">Support Groups</a></li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

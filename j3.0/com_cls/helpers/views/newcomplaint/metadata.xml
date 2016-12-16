@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <view title="New Complaint">
+        <message>Displays complaint form to be filled by administrator.</message>
+    </view>
+</metadata>
