@@ -497,7 +497,7 @@ class clsFrontController extends JControllerLegacy {
         $mail->setSender(array($config->get('complaints_email'), 'Complaint Logging System'));
         $mail->setSubject('New Website Complaint: #' . $message_id);
         $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-        $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Login to http://'.JURI::base().'administrator/index.php?option=com_cls to process it.</p>' . $msg);
+        $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Login to '.JURI::base().'administrator/index.php?option=com_cls to process it.</p>' . $msg);
         $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
         foreach($rows as $row) {
             $params = json_decode($row[2]);
@@ -528,7 +528,7 @@ class clsFrontController extends JControllerLegacy {
             $mail->setSender(array($config->get('complaints_email'), 'Complaint Logging System'));
             $mail->setSubject('Your Complaint Received: #' . $message_id);
             $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-            $mail->MsgHTML('<p>'.$acknowledgment_text.'</p>' . 'http://'.$_SERVER['HTTP_HOST']);
+            $mail->MsgHTML('<p>'.$acknowledgment_text.'</p>' . JURI::base());
             $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
             $mail->AddAddress($email);
             $mail->Send();

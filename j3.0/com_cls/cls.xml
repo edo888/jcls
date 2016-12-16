@@ -3,11 +3,11 @@
     <name>CLS</name>
     <author>Edvard Ananyan</author>
     <creationDate>March 2010</creationDate>
-    <copyright>Copyright (c) 2010 - 2015 Edvard Ananyan. All rights reserved.</copyright>
+    <copyright>Copyright (c) 2010 - 2016 Edvard Ananyan. All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>edo888@gmail.com</authorEmail>
     <authorUrl>http://2glux.com</authorUrl>
-    <version>3.0.1</version>
+    <version>3.1.2</version>
     <description>COM_CLS_DESCRIPTION</description>
 
     <files>
@@ -22,6 +22,7 @@
         <filename>base64.php</filename>
         <filename>lsans.ttf</filename>
         <filename>captcha.gif</filename>
+        <filename>ACP-EU_NDRR-Logo-EN.png</filename>
         <filename>user_extend.xml</filename>
         <filename>index.html</filename>
     </files>

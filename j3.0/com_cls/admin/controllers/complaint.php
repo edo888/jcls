@@ -202,7 +202,7 @@ class ClsControllerComplaint extends JControllerForm {
                 $complaint->set('editor_id', JRequest::getInt('editor_id'));
                 $complaint->set('resolver_id', JRequest::getInt('resolver_id'));
             }
-            
+
             if($user_type == 'System Administrator' or $user_type == 'Level 1' or $user_type == 'Level 2') {
                 $complaint->set('related_to_pb', JRequest::getInt('related_to_pb'));
                 $complaint->set('gender', JRequest::getVar('gender'));
@@ -250,7 +250,7 @@ class ClsControllerComplaint extends JControllerForm {
                     $mail->FromName = 'Complaint Logging System';
                     $mail->Subject = 'New Processed Complaint: #' . $complaint->message_id;
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                    $mail->msgHTML('<p>A complaint was processed. Login to http://'.$_SERVER['HTTP_HOST'].'/administrator/index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
+                    $mail->msgHTML('<p>A complaint was processed. Login to '.JURI::base().'index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
                     $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
                     foreach($rows as $row) {
                         $params = json_decode($row[2]);
