@@ -64,7 +64,7 @@ function editSupportGroup($row, $lists, $user_type) {
             <table class="admintable">
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="name">
                         <?php echo JText::_( 'Name' ); ?>
                     </label>
                 </td>
@@ -74,7 +74,7 @@ function editSupportGroup($row, $lists, $user_type) {
             </tr>
             <tr>
                 <td class="key" valign="top">
-                    <label for="path">
+                    <label for="description">
                         <?php echo JText::_( 'Description' ); ?>
                     </label>
                 </td>

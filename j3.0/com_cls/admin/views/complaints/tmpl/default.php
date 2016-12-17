@@ -31,6 +31,13 @@ $action_period_medium = (int) $config->get('action_period_medium', 10);
 $action_period_high = (int) $config->get('action_period_high', 5);
 
 jimport('joomla.filter.output');
+
+$document = JFactory::getDocument();
+$document->addStyleDeclaration("
+    tr.open td {background-color:#ee7722 !important;}
+    tr.processed td {background-color:orange !important;}
+    tr.resolved td {background-color:#44ccff !important;}
+");
 ?>
 <script type="text/javascript">
     Joomla.orderTable = function() {
@@ -61,7 +68,7 @@ jimport('joomla.filter.output');
             </div>
             <div class="btn-group pull-left">
                 <button class="btn hasTooltip" type="submit" title="<?php echo JText::_('Search'); ?>"><i class="icon-search"></i></button>
-                <button class="btn hasTooltip" type="button" title="<?php echo JText::_('Clear'); ?>" onclick="document.id('filter_search').value='';this.form.submit();"><i class="icon-remove"></i></button>
+                <button class="btn hasTooltip" type="button" title="<?php echo JText::_('Clear'); ?>" onclick="document.getElementById('filter_search').value='';this.form.submit();"><i class="icon-remove"></i></button>
             </div>
             <div class="btn-group pull-right hidden-phone">
                 <label for="limit" class="element-invisible"><?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?></label>
@@ -97,6 +104,9 @@ jimport('joomla.filter.output');
                         <?php echo JHTML::_('grid.sort', 'Message ID', 'm.message_id', $listDirn, $listOrder); ?>
                     </th>
                     <th width="4%" align="center">
+                        <?php echo JHTML::_('grid.sort', 'Status', 'current_status', $listDirn, $listOrder); ?>
+                    </th>
+                    <th width="4%" align="center">
                         <?php echo JHTML::_('grid.sort', 'Source', 'm.message_source', $listDirn, $listOrder); ?>
                     </th>
                     <th width="4%" align="center">
@@ -106,10 +116,7 @@ jimport('joomla.filter.output');
                         <?php echo JHTML::_('grid.sort', 'Received', 'm.date_received', $listDirn, $listOrder); ?>
                     </th>
                     <th width="4%" align="center">
-                        <?php
-                            // echo JHTML::_('grid.sort', 'Area', 'g.area', @$lists['order_Dir'], $listOrder);
-                            echo JHTML::_('grid.sort', 'Category', 'g.area', $listDirn, $listOrder);
-                        ?>
+                        <?php echo JHTML::_('grid.sort', 'Category', 'g.area', $listDirn, $listOrder); ?>
                     </th>
                     <th width="4%" align="center">
                         <?php echo JHTML::_('grid.sort', 'Priority', 'm.message_priority',$listDirn, $listOrder); ?>
@@ -149,7 +156,7 @@ jimport('joomla.filter.output');
                     }
                 }
                 ?>
-                <tr class="row<?php echo $i % 2; ?>">
+                <tr class="<?php echo strtolower($row->current_status); ?> row<?php echo $i % 2; ?>" style="<?php echo $row_style; ?>">
                     <td>
                         <?php echo $i + 1; ?>
                     </td>
@@ -159,6 +166,9 @@ jimport('joomla.filter.output');
                     <td align="center">
                         <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Complaint' ); ?>">
                             <?php echo $row->message_id; ?></a>
+                    </td>
+                    <td align="center">
+                        <?php echo $row->current_status; ?>
                     </td>
                     <td align="center">
                         <?php echo $row->message_source; ?>

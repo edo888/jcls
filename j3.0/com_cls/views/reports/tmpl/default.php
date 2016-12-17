@@ -38,7 +38,7 @@ function showReports() {
     $session->set('enddate', $enddate, 'com_cls');
 
     $statistics_period = (int) ((strtotime($enddate) - strtotime($startdate)) / 86400);
-    
+
     /*
     ?>
     <h3>Statistics Period</h3>
@@ -77,7 +77,7 @@ function showReports() {
         echo '<a href="index.php?option=com_cls&amp;task=download_report&period=all">Download All</a>';
         # -- End Complaint Downloads --
     }
-    
+
     */
 
     # -- Complaint Averages --
@@ -121,7 +121,7 @@ function showReports() {
 
     $db->setQuery("select * from #__complaints where date_received <= '$enddate 23:59:59'");
     $all_complaints_received_till_date = $db->loadObjectList();
-    
+
     $res_within_standards = $res_within_standards_low = $res_within_standards_medium = $res_within_standards_high = 0;
     foreach($all_complaints_received_till_date as $complaint) {
         if($complaint->message_priority == '')
@@ -133,7 +133,7 @@ function showReports() {
             case 'High': $action_period = $action_period_high; break;
             default: break;
         }
-        
+
         if(!empty($complaint->date_resolved) and $action_period*24*60*60 >= (strtotime($complaint->date_resolved) - strtotime($complaint->date_received))) {
             if($complaint->message_priority == 'Low')
                 $res_within_standards_low++;
@@ -143,10 +143,10 @@ function showReports() {
                 $res_within_standards_high++;
         }
     }
-    
+
     $db->setQuery("select * from #__complaints where related_to_pb = 1 and date_received <= '$enddate 23:59:59'");
     $all_complaints_received_till_date2 = $db->loadObjectList();
-    
+
     $res_within_standards2 = $res_within_standards_low2 = $res_within_standards_medium2 = $res_within_standards_high2 = 0;
     foreach($all_complaints_received_till_date2 as $complaint) {
         if($complaint->message_priority == '')
@@ -158,7 +158,7 @@ function showReports() {
             case 'High': $action_period = $action_period_high; break;
             default: break;
         }
-        
+
         if(!empty($complaint->date_resolved) and $action_period*24*60*60 >= (strtotime($complaint->date_resolved) - strtotime($complaint->date_received))) {
             if($complaint->message_priority == 'Low')
                 $res_within_standards_low2++;
@@ -168,10 +168,10 @@ function showReports() {
                 $res_within_standards_high2++;
         }
     }
-    
+
     $db->setQuery("select * from #__complaints where related_to_pb = 1 and gender = 'Female' and date_received <= '$enddate 23:59:59'");
     $all_complaints_received_till_date3 = $db->loadObjectList();
-    
+
     $res_within_standards3 = $res_within_standards_low3 = $res_within_standards_medium3 = $res_within_standards_high3 = 0;
     foreach($all_complaints_received_till_date3 as $complaint) {
         if($complaint->message_priority == '')
@@ -183,7 +183,7 @@ function showReports() {
             case 'High': $action_period = $action_period_high; break;
             default: break;
         }
-        
+
         if(!empty($complaint->date_resolved) and $action_period*24*60*60 >= (strtotime($complaint->date_resolved) - strtotime($complaint->date_received))) {
             if($complaint->message_priority == 'Low')
                 $res_within_standards_low3++;
@@ -193,33 +193,33 @@ function showReports() {
                 $res_within_standards_high3++;
         }
     }
-    
+
     $res_within_standards = $res_within_standards_low + $res_within_standards_medium + $res_within_standards_high;
     $res_within_standards2 = $res_within_standards_low2 + $res_within_standards_medium2 + $res_within_standards_high2;
     $res_within_standards3 = $res_within_standards_low3 + $res_within_standards_medium3 + $res_within_standards_high3;
-    
+
     $db->setQuery("select count(*) from #__complaints where date_received <= '$enddate 23:59:59'");
     $complaints_received_till_date = $db->loadResult();
-    
+
     $db->setQuery("select count(*) from #__complaints where related_to_pb = 1 and date_received <= '$enddate 23:59:59'");
     $all_complaints_related_to_pb = $db->loadResult();
-    
+
     $db->setQuery("select count(*) from #__complaints where related_to_pb = 1 and gender = 'Female' and date_received <= '$enddate 23:59:59'");
     $all_complaints_related_to_pb_and_females = $db->loadResult();
-    
+
     $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'Y' and related_to_pb = 1 and date_received <= '$enddate 23:59:59'");
     $complaints_resolved_related_to_pb = $db->loadResult();
-    
+
     $db->setQuery("select count(*) from #__complaints where confirmed_closed = 'Y' and related_to_pb = 1 and gender = 'Female' and date_received <= '$enddate 23:59:59'");
     $complaints_resolved_related_to_pb_and_females = $db->loadResult();
-    
+
     $total_res_within_standards = $res_within_standards;
     $res_within_standards = ($complaints_received_till_date > 0 ? round($res_within_standards/$complaints_received_till_date * 100, 1) . ' %' : '0 %');
     $rel_pb_addressed = ($all_complaints_related_to_pb > 0 ? round($complaints_resolved_related_to_pb/$all_complaints_related_to_pb * 100, 1) . ' %' : '0 %');
-    
+
     $total_res_within_standards2 = $res_within_standards2;
     $total_res_within_standards3 = $res_within_standards3;
-    
+
     if($params->get('show_summary', '1') == '1') {
         echo '<h3>Summary of Complaints</h3>';
         echo '<i>Complaints Received Per Day:</i> ' . $complaints_received_per_day . '<br />'; //' <small style="color:#cc0000;">' . $complaints_received_growth . '</small><br />';
@@ -317,7 +317,7 @@ function showReports() {
         //$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
         JHtml::_('jquery.framework');
         $document->addScript('http://code.highcharts.com/highcharts.js');
-    
+
         $complaints_js = <<< EOT
 jQuery.noConflict();
 var chart;
@@ -403,7 +403,7 @@ EOT;
                     mapTypeControl: true
                 }
             );
-    
+
             <?php
             foreach($complaints as $cid => $complaint) {
                 echo 'var point'.$cid.' = new google.maps.LatLng('.$complaint->location.');';
@@ -420,10 +420,10 @@ EOT;
     <?php
     }
     # -- End Complaint Map --
-    
+
     if($params->get('show_summary_table', '1') == '1') {
     ?>
-    
+
     <h3>Summary Table</h3>
     <div style="width:900px;">
         <table style="border:1px solid;" cellpadding="5">
@@ -443,13 +443,13 @@ EOT;
             <tr>
                 <th align="left" style="border-right:1px solid;">%</th>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center"><?php echo round($total_count7/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo (100-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); ?>%</td>
+                <td align="center"><?php echo @round($total_count7/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @(100-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); ?>%</td>
             </tr>
         </table>
         <br />
@@ -475,15 +475,15 @@ EOT;
                 <th align="left" style="border-right:1px solid;">%</th>
                 <td align="center" style="border-right:1px solid;">100%</td>
                 <td align="center" style="border-right:1px solid;"><?php echo str_replace(' ', '', $res_within_standards); ?></td>
-                <td align="center"><?php echo round($total_count7/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center"><?php echo @round($total_count7/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
@@ -530,44 +530,44 @@ EOT;
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_high/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_high/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_medium/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_medium/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_low/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_low/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_low/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;" colspan="12">Grievances and Complaints Related to Project Benefits</th></tr>
             <tr>
@@ -588,15 +588,15 @@ EOT;
                 <th align="left" style="border-right:1px solid;">%</th>
                 <td align="center" style="border-right:1px solid;">100%</td>
                 <td align="center" style="border-right:1px solid;"><?php echo str_replace(' ', '', $res_within_standards2); ?></td>
-                <td align="center"><?php echo round($total_count7/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center"><?php echo @round($total_count7/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
@@ -643,44 +643,44 @@ EOT;
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_high2/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high2/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_high/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_medium2/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium2/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_medium/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_low2/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low2/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_low/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_low/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;" colspan="12">Grievances and Complaints Related to Project Benefits and Related to Females</th></tr>
             <tr>
@@ -701,15 +701,15 @@ EOT;
                 <th align="left" style="border-right:1px solid;">%</th>
                 <td align="center" style="border-right:1px solid;">100%</td>
                 <td align="center" style="border-right:1px solid;"><?php echo str_replace(' ', '', $res_within_standards3); ?></td>
-                <td align="center"><?php echo round($total_count7/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center"><?php echo @round($total_count7/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
@@ -756,48 +756,50 @@ EOT;
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_high3/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high3/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_high/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_high/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_medium3/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium3/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_medium/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_medium/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($res_within_standards_low3/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count7_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count14_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count21_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count28_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count56_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo round($total_count84_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low3/$total_count * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_low/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_low/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_low/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
+                <td align="center"><?php echo @(100 - $unresolved); ?>%</td>
             </tr>
-            
+
         </table>
     </div>
+
+    <div style="margin:15px 0;"><img src="<?php echo JURI::base(true); ?>/components/com_cls/ACP-EU_NDRR-Logo-EN.png" width="100%" height="100%" border="0" alt="The GCLS was developed with the support of ACP-EU" title="The GCLS was developed with the support of ACP-EU" /></div>
     <?php } ?>
-    
+
 <?php } ?>

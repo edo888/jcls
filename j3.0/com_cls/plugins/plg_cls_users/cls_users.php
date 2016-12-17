@@ -19,7 +19,7 @@ class  plgSystemCLS_Users extends JPlugin {
     function __construct( &$subject ) {
         parent::__construct( $subject );
     }
-    
+
     /**
      * Lock the admin bar and redirect the user to the complaints component
      *
@@ -27,13 +27,13 @@ class  plgSystemCLS_Users extends JPlugin {
      */
     function onAfterDispatch() {
         $app = JFactory::getApplication();
-        
+
         if(!$app->isAdmin())
             return;
-            
+
         $user = JFactory::getUser();
         $user_type = $user->getParam('role', 'Guest');
-        
+
         if($user_type != 'System Administrator' and !$user->authorise('core.admin') and !$user->guest) {
             if(JRequest::getVar('option') != 'com_cls') {
                 JRequest::setVar('option', 'com_cls');
@@ -42,5 +42,12 @@ class  plgSystemCLS_Users extends JPlugin {
 
             JRequest::setVar('hidemainmenu', 1);
         }
+    }
+
+    function onAfterRender() {
+        $body = JResponse::getBody();
+        $logout_btn = '<ul class="nav nav-user pull-right"><li><a href="' . JRoute::_('index.php?option=com_login&task=logout&' . JSession::getFormToken() . '=1') . '">' . JText::_('JLOGOUT') . '</a></li></ul>';
+        $body = str_replace('<ul class="nav nav-user', $logout_btn . '<ul class="nav nav-user', $body);
+        JResponse::setBody($body);
     }
 }

@@ -26,7 +26,8 @@ class ClsModelSections extends JModelList {
             $config['filter_fields'] = array(
                     'm.id',
                     'm.name',
-                    'm.description'
+                    'm.description',
+                    'contracts_count'
             );
         }
 
@@ -98,6 +99,10 @@ class ClsModelSections extends JModelList {
 
         $query->from('#__complaint_sections AS m');
 
+        // Join
+        $query->select('IFNULL(tbl3.cnt, 0) as contracts_count');
+        $query->join('LEFT', '(select section_id, count(*) as cnt from jos_complaint_contracts group by section_id) as tbl3 ON (m.id = tbl3.section_id)');
+
         // Filter by search in name.
         $search = $this->getState('filter.search');
         if (!empty($search)) {
@@ -108,13 +113,8 @@ class ClsModelSections extends JModelList {
         // Add the list ordering clause.
         $orderCol   = $this->state->get('list.ordering', 'm.id');
         $orderDirn  = $this->state->get('list.direction', 'asc');
-        /*
-            if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
-        $orderCol = 'c.title '.$orderDirn.', a.ordering';
-        }
-        */
+
         $query->order($db->escape($orderCol.' '.$orderDirn));
-        //$query->group('sa.id');
 
         return $query;
     }

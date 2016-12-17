@@ -79,6 +79,7 @@ class ClsViewAreas extends JViewLegacy {
         return array(
                 'm.area' => JText::_('Category Name'),
                 'm.description' => JText::_('Description'),
+                'complaints_count' => JText::_('Complaints Count'),
                 'm.id' => JText::_('id')
         );
     }

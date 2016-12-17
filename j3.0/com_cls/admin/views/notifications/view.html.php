@@ -91,7 +91,7 @@ class ClsViewNotifications extends JViewLegacy {
             'm.action' => JText::_('Action'),
             'm.date' => JText::_('Date'),
             'm.end_date' => JText::_('End Date'),
-            'm.id' => JText::_('id')
+            'm.id' => JText::_('ID')
         );
     }
 

@@ -84,7 +84,7 @@ class ClsModelNotifications extends JModelList {
         $this->setState('filter.action', $action);
 
         // List state information.
-        parent::populateState('m.id', 'asc');
+        parent::populateState('m.id', 'desc');
     }
 
     /**

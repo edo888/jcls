@@ -361,6 +361,7 @@ class clsFrontController extends JControllerLegacy {
         $session->set('cls_email', JRequest::getVar('email'));
         $session->set('cls_tel', JRequest::getVar('tel'));
         $session->set('cls_address', JRequest::getVar('address'));
+        $session->set('cls_gender', JRequest::getVar('gender'));
 
         if($session->get('cls_captcha') != strtoupper(JRequest::getVar('captcha'))) {
             $session->set('cls_msg', JRequest::getVar('msg'));
@@ -376,6 +377,8 @@ class clsFrontController extends JControllerLegacy {
         $email   = $db->escape(JRequest::getVar('email', '', 'post', 'string'));
         $tel     = $db->escape(JRequest::getVar('tel', '', 'post', 'string'));
         $address = $db->escape(JRequest::getVar('address', '', 'post', 'string'));
+        $gender  = $db->escape(JRequest::getVar('gender', '', 'post', 'string'));
+        $gender  = $db->escape(JRequest::getVar('location', '', 'post', 'string'));
         $msg     = $db->escape(JRequest::getVar('msg', '', 'post', 'string'));
 
         // generating message_id
@@ -397,9 +400,30 @@ class clsFrontController extends JControllerLegacy {
         // sender
         $ip_address = $_SERVER['REMOTE_ADDR'];
 
-        $query = "insert into #__complaints (message_id, name, email, phone, address, ip_address, raw_message, message_source, date_received) value('$message_id', '$name', '$email', '$tel', '$address', '$ip_address', '$msg', 'Website', now())";
+        /*
+        $query = "insert into #__complaints (message_id, name, email, phone, address, gender, ip_address, raw_message, message_source, date_received) value('$message_id', '$name', '$email', '$tel', '$address', '$gender', '$ip_address', '$msg', 'Website', now())";
         $db->setQuery($query);
         $db->query();
+        $complaint_id = $db->insertid();
+        */
+
+        // constructing the complaint object
+        $complaint = new stdClass();
+        $complaint->id = NULL;
+        $complaint->message_id = $message_id;
+        $complaint->name = JRequest::getVar('name', 'Anonymous');
+        $complaint->email = JRequest::getVar('email');
+        $complaint->phone = JRequest::getVar('tel');
+        $complaint->address = JRequest::getVar('address');
+        $complaint->gender = JRequest::getVar('gender');
+        $complaint->location = JRequest::getVar('location');
+        $complaint->ip_address = JRequest::getVar('ip_address');
+        $complaint->raw_message = JRequest::getVar('msg');
+        $complaint->date_received = date('Y-m-d H:i:s');
+        $complaint->message_source = 'Website';
+        $complaint->preferred_contact = JRequest::getVar('preferred_contact');
+
+        $db->insertObject('#__complaints', $complaint, 'id');
         $complaint_id = $db->insertid();
 
         // adding pictures if any

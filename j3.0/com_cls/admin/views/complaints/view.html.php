@@ -40,7 +40,8 @@ class ClsViewcomplaints extends JViewLegacy {
         $this->state        = $this->get('State');
 
         $category_options   = $this->get('category_options');
-        $contracts_options  = $this->get('Contracts_options');
+        $contracts_options  = $this->get('contracts_options');
+        $support_group_options = $this->get('supportgroup_options');
 
         //area_id filter
         $options        = array();
@@ -51,6 +52,17 @@ class ClsViewcomplaints extends JViewLegacy {
                 JText::_('- Select Category -'),
                 'filter_area_id',
                 JHtml::_('select.options', $options, 'value', 'text', $this->state->get('filter.area_id'))
+        );
+
+        //support group filter
+        $options        = array();
+        foreach($support_group_options AS $support_group) {
+            $options[]      = JHtml::_('select.option', $support_group->id, $support_group->name);
+        }
+        JHtmlSidebar::addFilter(
+                JText::_('- Select Support Group -'),
+                'filter_support_group_id',
+                JHtml::_('select.options', $options, 'value', 'text', $this->state->get('filter.support_group_id'))
         );
 
         //contract_id filter
@@ -89,7 +101,7 @@ class ClsViewcomplaints extends JViewLegacy {
         );
 
         //status filter
-        $status_array = array(array('key' => 'N', 'value' => 'Open'), array('key' => 'Y', 'value' => 'Resolved'));
+        $status_array = array(array('key' => 'Open', 'value' => 'Open'), array('key' => 'Processed', 'value' => 'Processed'), array('key' => 'Resolved', 'value' => 'Resolved'), array('key' => 'Closed', 'value' => 'Closed'));
         $options        = array();
         foreach($status_array AS $status_item) {
             $options[]      = JHtml::_('select.option', $status_item['key'], $status_item['value']);
@@ -142,6 +154,7 @@ class ClsViewcomplaints extends JViewLegacy {
             'm.message_id' => JText::_('Message ID'),
             'm.message_source' => JText::_('Source'),
             'sender' => JText::_('Sender'),
+            'current_status' => JText::_('Status'),
             'm.date_received' => JText::_('Received'),
             'g.area' => JText::_('Category'),
             'm.message_priority' => JText::_('Priority'),
@@ -149,7 +162,7 @@ class ClsViewcomplaints extends JViewLegacy {
             'e.name' => JText::_('Processed by'),
             'm.date_resolved' => JText::_('Resolved'),
             'u.name' => JText::_('Resolved by'),
-            'm.id' => JText::_('id')
+            'm.id' => JText::_('ID')
         );
     }
 }

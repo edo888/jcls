@@ -53,7 +53,7 @@ function editArea($row, $lists, $user_type) {
             <table class="admintable">
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="area">
                         <?php echo JText::_( 'Category Name' ); ?>
                     </label>
                 </td>
@@ -63,7 +63,7 @@ function editArea($row, $lists, $user_type) {
             </tr>
             <tr>
                 <td class="key" valign="top">
-                    <label for="path">
+                    <label for="description">
                         <?php echo JText::_( 'Description' ); ?>
                     </label>
                 </td>
@@ -79,7 +79,6 @@ function editArea($row, $lists, $user_type) {
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="view" value="area" />
         <input type="hidden" name="option" value="com_cls" />
-        <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
         <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
          <?php echo JHtml::_('form.token'); ?>

@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `#__complaints` (
   `message_id` varchar(20) NOT NULL default '',
   `name` varchar(100) NOT NULL default '',
   `email` varchar(100) NOT NULL default '',
-  `phone` varchar(100) NOT NULL default '',
+  `phone` varchar(20) NOT NULL default '',
   `ip_address` varchar(15) NOT NULL default '',
   `editor_id` int(11) NOT NULL default 0,
   `raw_message` text NOT NULL default '',
@@ -30,6 +30,7 @@ ALTER TABLE `#__complaints` ADD COLUMN `support_group_id` int(11) NOT NULL defau
 ALTER TABLE `#__complaints` ADD COLUMN `preferred_contact` ENUM('', 'Email', 'SMS', 'Telephone Call') AFTER `ip_address`;
 ALTER TABLE `#__complaints` ADD COLUMN `date_closed` datetime default NULL AFTER `confirmed_closed`;
 ALTER TABLE `#__complaints` ADD COLUMN `related_to_pb` int(4) NOT NULL default 0 AFTER `processed_message`;
+ALTER TABLE `#__complaints` ADD COLUMN `issue_type` int(4) NOT NULL default 1 AFTER `related_to_pb`;
 ALTER TABLE `#__complaints` ADD COLUMN `gender` ENUM('Male', 'Female', 'Not Specified') NOT NULL default 'Not Specified' AFTER `related_to_pb`;
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
@@ -65,6 +66,8 @@ ALTER TABLE `#__complaint_contracts` ADD COLUMN `contractors` text AFTER `name`;
 ALTER TABLE `#__complaint_contracts` ADD COLUMN `end_date` datetime NOT NULL default '0000-00-00 00:00:00' AFTER `name`;
 ALTER TABLE `#__complaint_contracts` ADD COLUMN `start_date` datetime NOT NULL default '0000-00-00 00:00:00' AFTER `name`;
 ALTER TABLE `#__complaint_contracts` ADD COLUMN `contract_id` varchar(25) NOT NULL default '' AFTER `name`;
+ALTER TABLE `#__complaint_contracts` ADD COLUMN `email` varchar(100) NOT NULL default '' AFTER `contractors`;
+ALTER TABLE `#__complaint_contracts` ADD COLUMN `phone` varchar(20) NOT NULL default '' AFTER `email`;
 ALTER TABLE `#__complaint_contracts` ADD UNIQUE KEY `name` (`name`);
 ALTER TABLE `#__complaint_contracts` ADD UNIQUE KEY `contract_id` (`contract_id`);
 
@@ -130,7 +133,7 @@ REPLACE INTO `#__users` (`id`, `name`, `username`, `email`, `password`, `block`,
 (100380, 'Complaint - Contracts', 'Complaint_Contracts', 'complaint_contracts@isafeguards.com', '$2y$10$2OPVr6D9RNJP30HGofF3cuVCds8KBUiwEwvDMSeeHkH2iP1b/qrYy', 0, 0, '2014-11-14 05:33:28', '0000-00-00 00:00:00', '', '{"admin_style":"","admin_language":"","language":"","editor":"","helpsite":"","timezone":"","organization":"","area":"","telephone":"","role":"Level 2","receive_notifications":"1","receive_by_email":"1","receive_by_sms":"0"}', '0000-00-00 00:00:00', 0, '', '', 0),
 (100381, 'Complaint - Accountant', 'Complaint_Accountant', 'complaint_accountant@isafeguards.com', '$2y$10$fa42KSkR8BuakbgOm8hWoOdgKgUQ07Srt7Rc1Uful7PkV23kXUmIm', 0, 0, '2014-11-14 05:34:23', '0000-00-00 00:00:00', '', '{"admin_style":"","admin_language":"","language":"","editor":"","helpsite":"","timezone":"","organization":"","area":"","telephone":"","role":"Level 2","receive_notifications":"1","receive_by_email":"1","receive_by_sms":"0"}', '0000-00-00 00:00:00', 0, '', '', 0);
 
-INSERT INTO `#__user_usergroup_map` (`user_id`, `group_id`) VALUES (100377, 7), (100378, 7), (100379, 7), (100380, 7), (100381, 7);
+INSERT INTO `#__user_usergroup_map` (`user_id`, `group_id`) VALUES (100377, 6), (100378, 6), (100379, 6), (100380, 6), (100381, 6);
 
 REPLACE INTO `#__menu` (`id`, `menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `level`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `lft`, `rgt`, `home`, `language`, `client_id`) VALUES (100128, 'mainmenu', 'Make a Complaint', 'make-a-complaint', '', 'make-a-complaint', 'index.php?option=com_cls&view=complain', 'component', 1, 1, 1, 10006, 0, '0000-00-00 00:00:00', 0, 1, '', 0, '{"menu-anchor_title":"","menu-anchor_css":"","menu_image":"","menu_text":1,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}', 15, 16, 0, '*', 0);
 REPLACE INTO `#__menu` (`id`, `menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `level`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `lft`, `rgt`, `home`, `language`, `client_id`) VALUES (100129, 'mainmenu', 'Complaint Statistics', 'complaint-statistics', '', 'complaint-statistics', 'index.php?option=com_cls&view=reports', 'component', 1, 1, 1, 10006, 0, '0000-00-00 00:00:00', 0, 1, '', 0, '{"show_summary":"1","show_chart":"1","show_map":"1","show_summary_table":"1","menu-anchor_title":"","menu-anchor_css":"","menu_image":"","menu_text":1,"page_title":"","show_page_heading":0,"page_heading":"","pageclass_sfx":"","menu-meta_description":"","menu-meta_keywords":"","robots":"","secure":0}', 17, 18, 0, '*', 0);

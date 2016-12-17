@@ -29,7 +29,8 @@ class ClsModelContracts extends JModelList {
                     'm.contract_id',
                     'm.start_date',
                     'm.end_date',
-                    's.name'
+                    's.name',
+                    'complaints_count'
             );
         }
 
@@ -117,6 +118,10 @@ class ClsModelContracts extends JModelList {
         $query->from('#__complaint_contracts AS m');
 
         // Join
+        $query->select('IFNULL(tbl3.cnt, 0) as complaints_count');
+        $query->join('LEFT', '(select contract_id, count(*) as cnt from jos_complaints group by contract_id) as tbl3 ON (m.id = tbl3.contract_id)');
+
+        // Join
         $query->select('s.name as section_name');
         $query->join('LEFT', '#__complaint_sections AS s ON m.section_id = s.id');
 
@@ -130,19 +135,14 @@ class ClsModelContracts extends JModelList {
         $search = $this->getState('filter.search');
         if (!empty($search)) {
             $search = $db->Quote('%'.$db->escape($search, true).'%');
-            $query->where('(name LIKE '.$search.' OR description LIKE '.$search.')');
+            $query->where('(m.name LIKE '.$search.' OR m.description LIKE '.$search.' OR m.email LIKE '.$search.' OR m.phone LIKE '.$search.' OR m.contractors LIKE '.$search.')');
         }
 
         // Add the list ordering clause.
         $orderCol   = $this->state->get('list.ordering', 'm.id');
         $orderDirn  = $this->state->get('list.direction', 'asc');
-        /*
-            if ($orderCol == 'a.ordering' || $orderCol == 'category_title') {
-        $orderCol = 'c.title '.$orderDirn.', a.ordering';
-        }
-        */
+
         $query->order($db->escape($orderCol.' '.$orderDirn));
-        //$query->group('sa.id');
 
         return $query;
     }

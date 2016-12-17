@@ -101,7 +101,9 @@ class ClsControllerComplaint extends JControllerForm {
     }
 
     function editComplaint() {
-        $id = (int)$_REQUEST['id'];
+        $ids = $this->input->get('cid', array(), 'array');
+        $id = JRequest::getInt('id', intval($ids[0]));
+
         $model = $this->getModel('complaint');
 
         $model->editComplaint($_REQUEST);
@@ -145,6 +147,7 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->id = NULL;
             $complaint->message_id = $message_id;
             $complaint->name = JRequest::getVar('name');
+            $complaint->gender = JRequest::getVar('gender');
             $complaint->email = JRequest::getVar('email');
             $complaint->phone = JRequest::getVar('phone');
             $complaint->address = JRequest::getVar('address');
@@ -152,6 +155,7 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->raw_message = JRequest::getVar('raw_message');
             $complaint->date_received = JRequest::getVar('date_received', date('Y-m-d H:i:s'));
             $complaint->message_source = JRequest::getVar('message_source');
+            $complaint->preferred_contact = JRequest::getVar('preferred_contact');
 
             if ($db->insertObject( '#__complaints', $complaint, 'id' ))
 
@@ -177,6 +181,7 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->set('editor_id', null);
             $complaint->set('raw_message', null);
             $complaint->set('related_to_pb', null);
+            $complaint->set('issue_type', null);
             $complaint->set('gender', null);
             $complaint->set('processed_message', null);
             $complaint->set('contract_id', null);
@@ -199,12 +204,15 @@ class ClsControllerComplaint extends JControllerForm {
                 $complaint->set('ip_address', JRequest::getVar('ip_address'));
                 $complaint->set('raw_message', JRequest::getVar('raw_message'));
                 $complaint->set('message_source', JRequest::getVar('message_source'));
-                $complaint->set('editor_id', JRequest::getInt('editor_id'));
-                $complaint->set('resolver_id', JRequest::getInt('resolver_id'));
+                if(JRequest::getInt('editor_id', 0))
+                    $complaint->set('editor_id', JRequest::getInt('editor_id'));
+                if(JRequest::getInt('resolver_id', 0))
+                    $complaint->set('resolver_id', JRequest::getInt('resolver_id'));
             }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1' or $user_type == 'Level 2') {
                 $complaint->set('related_to_pb', JRequest::getInt('related_to_pb'));
+                $complaint->set('issue_type', JRequest::getInt('issue_type'));
                 $complaint->set('gender', JRequest::getVar('gender'));
             }
 
@@ -224,6 +232,7 @@ class ClsControllerComplaint extends JControllerForm {
                     $complaint->set('location', JRequest::getVar('location'));
                 if($complaint->date_processed == '' and $complaint->processed_message != '') {
                     $complaint->set('date_processed', date('Y-m-d H:i:s'));
+                    $complaint->set('editor_id', $user->id);
 
                     clsLog('Complaint processed', 'The user processed the complaint #' . $complaint->message_id);
 
@@ -273,7 +282,7 @@ class ClsControllerComplaint extends JControllerForm {
                 }
             }
 
-            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
+            if($user_type == 'System Administrator' or $user_type == 'Level 1' or $user_type == 'Level 2') {
                 $complaint->set('resolution', JRequest::getVar('resolution'));
                 if($complaint->date_resolved == '' and $complaint->resolution != '') {
                     $complaint->set('date_resolved', date('Y-m-d H:i:s'));
@@ -282,6 +291,10 @@ class ClsControllerComplaint extends JControllerForm {
                     clsLog('Complaint resolved', 'The user resolved the complaint #' . $complaint->message_id);
                 }
 
+                // TODO: send notification to "interested" parties
+            }
+
+            if($user_type == 'System Administrator' or $user_type == 'Level 1') {
                 // send notifications
                 if($complaint->confirmed_closed == 'Y') {
                     $complaint->set('date_closed', date('Y-m-d H:i:s'));
@@ -342,6 +355,10 @@ class ClsControllerComplaint extends JControllerForm {
             }
 
             if($user_type != 'Guest') {
+                if(JRequest::getVar('action', '') != '') { // record action
+                    clsLog('Complaint action taken', 'Action taken for #' . $complaint->message_id . ": \n" . JRequest::getVar('action'));
+                }
+
                 if(JRequest::getVar('comments', '') != '') { // append comment
                     $complaint->set('comments', $complaint->comments . 'On ' . date('Y-m-d H:i:s') . ' ' . $user->name . " wrote:\n" . JRequest::getVar('comments') . "\n\n");
                     clsLog('Complaint comment added', 'The user added a follow up comment on the complaint #' . $complaint->message_id);

@@ -54,7 +54,7 @@ jimport('joomla.filter.output');
             </div>
             <div class="btn-group pull-left">
                 <button class="btn hasTooltip" type="submit" title="<?php echo JText::_('Search'); ?>"><i class="icon-search"></i></button>
-                <button class="btn hasTooltip" type="button" title="<?php echo JText::_('Clear'); ?>" onclick="document.id('filter_search').value='';this.form.submit();"><i class="icon-remove"></i></button>
+                <button class="btn hasTooltip" type="button" title="<?php echo JText::_('Clear'); ?>" onclick="document.getElementById('filter_search').value='';this.form.submit();"><i class="icon-remove"></i></button>
             </div>
             <div class="btn-group pull-right hidden-phone">
                 <label for="limit" class="element-invisible"><?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?></label>
@@ -89,8 +89,11 @@ jimport('joomla.filter.output');
                     <th width="20%" class="title">
                         <?php echo JHTML::_('grid.sort', 'Category Name', 'm.area', $listDirn, $listOrder); ?>
                     </th>
-                    <th width="77%" class="title">
+                    <th width="61%" class="title">
                         <?php echo JHTML::_('grid.sort', 'Description', 'm.description', $listDirn, $listOrder); ?>
+                    </th>
+                    <th width="16%" class="title">
+                        <?php echo JHTML::_('grid.sort', 'Complaints Count', 'complaints_count', $listDirn, $listOrder); ?>
                     </th>
                     <th width="1%" nowrap="nowrap">
                         <?php echo JHTML::_('grid.sort', 'ID', 'm.id', $listDirn, $listOrder); ?>
@@ -120,6 +123,9 @@ jimport('joomla.filter.output');
                         <?php echo $row->description; ?>
                     </td>
                     <td align="center">
+                        <a href="<?php echo JRoute::_('index.php?option=com_cls&filter_area_id='. $row->id); ?>" title="<?php echo JText::_('View Complaints'); ?>"><?php echo $row->complaints_count; ?></a>
+                    </td>
+                    <td align="center">
                         <?php echo $row->id; ?>
                     </td>
                 </tr>
@@ -127,7 +133,7 @@ jimport('joomla.filter.output');
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <?php echo $this->pagination->getListFooter(); ?>
                     </td>
                 </tr>

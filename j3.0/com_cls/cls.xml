@@ -3,7 +3,7 @@
     <name>CLS</name>
     <author>Edvard Ananyan</author>
     <creationDate>March 2010</creationDate>
-    <copyright>Copyright (c) 2010 - 2016 Edvard Ananyan. All rights reserved.</copyright>
+    <copyright>Copyright (c) 2010 - 2015 Edvard Ananyan. All rights reserved.</copyright>
     <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
     <authorEmail>edo888@gmail.com</authorEmail>
     <authorUrl>http://2glux.com</authorUrl>
@@ -36,6 +36,7 @@
     <updateservers>
         <server type="extension" name="2GLux" priority="1">http://2glux.com/downloads/files/free/cls.xml</server>
     </updateservers>
+
 
     <languages folder="language">
         <language tag="en-GB">en-GB.com_cls.ini</language>

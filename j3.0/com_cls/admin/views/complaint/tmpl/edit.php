@@ -112,41 +112,31 @@ swfu = new SWFUpload(settings);
             else
                 submitform(pressbutton);
         }
+
+        function actionChanged() {
+            document.getElementById('action').value = document.getElementById('action_taken').value;
+        }
         </script>
+
+        <ul class="nav nav-tabs" id="myTabTabs">
+            <li class="active"><a href="#details" data-toggle="tab"><?php echo JText::_('Details'); ?></a></li>
+            <?php if((int)$row->id != 0): ?>
+            <li class=""><a href="#pictures" data-toggle="tab"><?php echo JText::_('Pictures') . (count($row->pictures) ? ' (' .  count($row->pictures) . ')' : ''); ?></a></li>
+            <li class=""><a href="#notifications" data-toggle="tab"><?php echo JText::_('Notifications'); ?></a></li>
+            <?php if($user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?><li class=""><a href="#activity_log" data-toggle="tab"><?php echo JText::_('Activity Log'); ?></a></li><?php endif; ?>
+            <li class=""><a href="#actions" data-toggle="tab"><?php echo JText::_('Actions'); ?></a></li>
+            <?php endif; ?>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+
+        <div id="details" class="tab-pane active">
+
         <form action="index.php" method="post" name="adminForm">
 
-
         <fieldset class="adminform">
-            <legend><?php echo JText::_('Details'); ?></legend>
-
+            <legend><?php echo JText::_('Complainant Information'); ?></legend>
             <table class="admintable">
-            <?php if(property_exists($row, 'message_id')): ?>
-            <tr>
-                <td width="200" class="key">
-                    <label for="message_id">
-                        <?php echo JText::_( 'Message ID' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php echo @$row->message_id; ?>
-                </td>
-            </tr>
-            <?php endif; ?>
-            <tr>
-                <td class="key">
-                    <label for="message_source">
-                        <?php echo JText::_( 'Message Source' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
-                        echo @$row->message_source;
-                    else
-                        echo $lists['source'];
-                    ?>
-                </td>
-            </tr>
             <tr>
                 <td width="200" class="key">
                     <label for="name">
@@ -215,10 +205,25 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <?php
-                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
+                    if($row->id != 0 and ($row->confirmed_closed == 'Y' or $user_type != 'System Administrator'))
                         echo @$row->ip_address;
                     else
                         echo '<input class="inputbox" type="text" name="ip_address" id="ip_address" size="60" value="', @$row->ip_address, '" />';
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <td class="key">
+                    <label for="gender">
+                        <?php echo JText::_('Gender'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                        echo @$row->gender;
+                    else
+                        echo $lists['gender'];
                     ?>
                 </td>
             </tr>
@@ -237,9 +242,25 @@ swfu = new SWFUpload(settings);
                     ?>
                 </td>
             </tr>
+            </table>
+
+            <legend><?php echo JText::_('Complaint Information'); ?></legend>
+            <table class="admintable">
+            <?php if(property_exists($row, 'message_id')): ?>
+            <tr>
+                <td width="200" class="key">
+                    <label for="message_id">
+                        <?php echo JText::_( 'Message ID' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo @$row->message_id; ?>
+                </td>
+            </tr>
+            <?php endif; ?>
             <?php if(property_exists($row, 'date_received')): ?>
             <tr>
-                <td class="key">
+                <td width="200" class="key">
                     <label for="date_received">
                         <?php echo JText::_( 'Date Received' ); ?>
                     </label>
@@ -265,6 +286,21 @@ swfu = new SWFUpload(settings);
             </tr>
             <?php endif; ?>
             <tr>
+                <td class="key">
+                    <label for="message_source">
+                        <?php echo JText::_( 'Message Source' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->id != 0 and ($row->confirmed_closed == 'Y' or $user_type != 'System Administrator'))
+                        echo @$row->message_source;
+                    else
+                        echo $lists['source'];
+                    ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="key" valign="top">
                     <label for="raw_message">
                         <?php echo JText::_( 'Raw Message' ); ?>
@@ -272,64 +308,13 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                         <?php
-                        if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
+                        if($row->id != 0 and ($row->confirmed_closed == 'Y' or $user_type != 'System Administrator'))
                             echo '<pre>', @$row->raw_message, '</pre>';
                         else
                             echo '<textarea name="raw_message" id="raw_message" cols="80" rows="5">', @$row->raw_message, '</textarea>';
                         ?>
                 </td>
             </tr>
-            <?php if(isset($row->related_to_pb)): ?>
-            <tr>
-                <td class="key">
-                    <label for="related_to_pb">
-                        <?php echo JText::_('Related to Project Benefits'); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php
-                        $related_to_pb[0] = new stdClass();
-                        $related_to_pb[0]->value = 0;
-                        $related_to_pb[0]->text = JText::_('JNo');
-                        $related_to_pb[1] = new stdClass();
-                        $related_to_pb[1]->value = 1;
-                        $related_to_pb[1]->text = JText::_('JYes');
-    
-                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
-                            echo @$related_to_pb[$row->related_to_pb]->text;
-                        else
-                            echo JHTML::_('select.radiolist', $related_to_pb, 'related_to_pb', null, 'value', 'text', $row->related_to_pb);
-                    ?>
-                </td>
-            </tr>
-            <tr>
-                <td class="key">
-                    <label for="gender">
-                        <?php echo JText::_('Gender'); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
-                        echo @$row->gender;
-                    else
-                        echo $lists['gender'];
-                    ?>
-                </td>
-            </tr>
-            <?php endif; ?>
-            <?php if(isset($row->date_processed)): ?>
-            <tr>
-                <td class="key">
-                    <label for="date_processed">
-                        <?php echo JText::_( 'Date Processed' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php echo @$row->date_processed; ?>
-                </td>
-            </tr>
-            <?php endif; ?>
             <?php if(property_exists($row, 'processed_message')): ?>
             <tr>
                 <td class="key" valign="top">
@@ -347,10 +332,91 @@ swfu = new SWFUpload(settings);
                 </td>
             </tr>
             <?php endif; ?>
+            <?php if(isset($row->date_processed)): ?>
+            <tr>
+                <td class="key">
+                    <label for="date_processed">
+                        <?php echo JText::_( 'Date Processed' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo @$row->date_processed; ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if(property_exists($row, 'editor_id') and $row->date_processed != ''): ?>
+            <tr>
+                <td class="key">
+                    <label for="editor_id">
+                        <?php echo JText::_( 'Processed by' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
+                        echo @$row->editor;
+                    else
+                        echo $lists['editor'];
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            </table>
+
+            <legend><?php echo JText::_('Complaint Categorization'); ?></legend>
+            <table class="admintable">
+            <?php if(isset($row->related_to_pb)): ?>
+            <tr>
+                <td width="200" class="key">
+                    <label for="related_to_pb">
+                        <?php echo JText::_('Related to Project Benefits'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                        $related_to_pb[0] = new stdClass();
+                        $related_to_pb[0]->value = 0;
+                        $related_to_pb[0]->text = JText::_('JNo');
+                        $related_to_pb[1] = new stdClass();
+                        $related_to_pb[1]->value = 1;
+                        $related_to_pb[1]->text = JText::_('JYes');
+
+                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                            echo @$related_to_pb[$row->related_to_pb]->text;
+                        else
+                            echo JHTML::_('select.radiolist', $related_to_pb, 'related_to_pb', null, 'value', 'text', $row->related_to_pb);
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if(isset($row->issue_type)): ?>
+            <tr>
+                <td width="200" class="key">
+                    <label for="issue_type">
+                        <?php echo JText::_('Issue Type'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                        $issue_type[0] = new stdClass();
+                        $issue_type[0]->value = 1;
+                        $issue_type[0]->text = JText::_('Complaint');
+                        $issue_type[1] = new stdClass();
+                        $issue_type[1]->value = 2;
+                        $issue_type[1]->text = JText::_('Grievance');
+
+                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                            echo @$issue_type[$row->issue_type]->text;
+                        else
+                            echo JHTML::_('select.radiolist', $issue_type, 'issue_type', null, 'value', 'text', $row->issue_type);
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
             <?php if(property_exists($row, 'complaint_area_id')): ?>
             <tr>
                 <td class="key">
-                    <label for="complaint_area">
+                    <label for="complaint_area_id">
                         <?php
                         // echo JText::_( 'Complaint Area' );
                         echo JText::_( 'Complaint Category' );
@@ -370,7 +436,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'support_group_id')): ?>
             <tr>
                 <td class="key">
-                    <label for="support_group">
+                    <label for="support_group_id">
                         <?php echo JText::_( 'Assign to Support Group' ); ?>
                     </label>
                 </td>
@@ -387,7 +453,7 @@ swfu = new SWFUpload(settings);
             <?php if(property_exists($row, 'contract_id')): ?>
             <tr>
                 <td class="key">
-                    <label for="contract">
+                    <label for="contract_id">
                         <?php echo JText::_( 'Contract' ); ?>
                     </label>
                 </td>
@@ -405,7 +471,7 @@ swfu = new SWFUpload(settings);
             <tr>
                 <td class="key" valign="top">
                     <label for="location">
-                        <?php echo JText::_( 'Location where Issue was Identified' ); ?>
+                        <?php echo JText::_( 'Location where issue was identified' ); ?>
                     </label>
                 </td>
                 <td>
@@ -414,23 +480,6 @@ swfu = new SWFUpload(settings);
                         echo '<a href="index.php?option=com_cls&view=viewlocation&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
                     else
                         echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&view=editlocation&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
-                    ?>
-                </td>
-            </tr>
-            <?php endif; ?>
-            <?php if(property_exists($row, 'editor_id') and $row->date_processed != ''): ?>
-            <tr>
-                <td class="key">
-                    <label for="path">
-                        <?php echo JText::_( 'Processed by' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
-                        echo @$row->editor;
-                    else
-                        echo $lists['editor'];
                     ?>
                 </td>
             </tr>
@@ -452,9 +501,31 @@ swfu = new SWFUpload(settings);
                 </td>
             </tr>
             <?php endif; ?>
+            </table>
+
+            <?php if($row->date_processed != ''): ?>
+            <legend><?php echo JText::_('Resolution'); ?></legend>
+            <table class="admintable">
+            <?php if(property_exists($row, 'resolution') and $row->date_processed != ''): ?>
+            <tr>
+                <td width="200" class="key" valign="top">
+                    <label for="resolution">
+                        <?php echo JText::_( 'Resolution' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                        echo @$row->resolution;
+                    else
+                        echo '<textarea name="resolution" id="resolution" cols="80" rows="3">', @$row->resolution, '</textarea>';
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
             <?php if(isset($row->date_resolved)): ?>
             <tr>
-                <td class="key">
+                <td width="200" class="key">
                     <label for="date_resolved">
                         <?php echo JText::_( 'Date Resolved' ); ?>
                     </label>
@@ -464,10 +535,27 @@ swfu = new SWFUpload(settings);
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if(property_exists($row, 'confirmed_closed') and $row->date_processed != ''): ?>
+            <?php if(property_exists($row, 'resolver_id') and $row->date_processed != ''): ?>
             <tr>
                 <td class="key">
-                    <label for="confirmed">
+                    <label for="resolver_id">
+                        <?php echo JText::_( 'Resolved by' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
+                        echo @$row->resolver;
+                    else
+                        echo $lists['resolver'];
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if(property_exists($row, 'confirmed_closed') and $row->date_processed != '' and $row->date_resolved != ''): ?>
+            <tr>
+                <td width="200" class="key">
+                    <label for="confirmed_closed">
                         <?php echo JText::_( 'Resolved and Closed' ); ?>
                     </label>
                 </td>
@@ -504,43 +592,14 @@ swfu = new SWFUpload(settings);
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if(property_exists($row, 'resolution') and $row->date_processed != ''): ?>
-            <tr>
-                <td class="key" valign="top">
-                    <label for="resolution">
-                        <?php echo JText::_( 'Resolution' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo @$row->resolution;
-                    else
-                        echo '<textarea name="resolution" id="resolution" cols="80" rows="3">', @$row->resolution, '</textarea>';
-                    ?>
-                </td>
-            </tr>
+            </table>
             <?php endif; ?>
-            <?php if(property_exists($row, 'resolver_id') and $row->date_processed != ''): ?>
-            <tr>
-                <td class="key">
-                    <label for="resolver">
-                        <?php echo JText::_( 'Resolved by' ); ?>
-                    </label>
-                </td>
-                <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
-                        echo @$row->resolver;
-                    else
-                        echo $lists['resolver'];
-                    ?>
-                </td>
-            </tr>
-            <?php endif; ?>
+
+            <legend><?php echo JText::_('Comments'); ?></legend>
+            <table class="admintable">
             <?php if(property_exists($row, 'comments')): ?>
             <tr>
-                <td class="key" valign="top">
+                <td width="200" class="key" valign="top">
                     <label for="comments">
                         <?php echo JText::_( 'Comments' ); ?>
                     </label>
@@ -562,6 +621,8 @@ swfu = new SWFUpload(settings);
 
         <div class="clr"></div>
 
+        <input type="hidden" name="action" id="action" value="" />
+
         <input type="hidden" name="task" value="complaint.edit" />
         <input type="hidden" name="option" value="com_cls" />
         <input type="hidden" name="controller" value="complaint" />
@@ -570,6 +631,10 @@ swfu = new SWFUpload(settings);
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
         <?php echo JHtml::_('form.token'); ?>
         </form>
+
+        </div>
+
+        <div id="pictures" class="tab-pane">
 
         <?php if(isset($row->id) and count($row->pictures)): ?>
         <fieldset class="adminform">
@@ -597,6 +662,10 @@ swfu = new SWFUpload(settings);
         </form>
         <?php endif; ?>
         <?php endif; ?>
+
+        </div>
+
+        <div id="notifications" class="tab-pane">
 
         <?php if((int)$row->id != 0): ?>
         <form action="index.php" method="post" name="notificationForm">
@@ -840,6 +909,10 @@ swfu = new SWFUpload(settings);
         </form>
         <?php endif; ?>
 
+        </div>
+
+        <div id="activity_log" class="tab-pane">
+
         <?php if((int)$row->id != 0): ?>
         <?php if($user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?>
         <fieldset class="adminform">
@@ -860,7 +933,7 @@ swfu = new SWFUpload(settings);
                     <th width="10%" align="center">
                         <?php echo JText::_('Date'); ?>
                     </th>
-                    <th width="68%" align="left">Description</th>
+                    <th width="68%" align="left"><?php echo JText::_('Description'); ?></th>
                 </tr>
             </thead>
             <?php
@@ -876,7 +949,7 @@ swfu = new SWFUpload(settings);
                     <td align="center">
                         <?php if($row_i->user_id == 0) echo 'System'; else echo $row_i->user; ?>
                     </td>
-                    <td align="center">
+                    <td align="center" nowrap>
                         <?php echo $row_i->action; ?>
                     </td>
                     <td align="center">
@@ -891,13 +964,75 @@ swfu = new SWFUpload(settings);
             }
             ?>
             </table><br />
-            <a href="index.php?option=com_cls&view=notifications&filter_search=<?php echo $row->message_id ?>">View full log</a>
+            <a href="index.php?option=com_cls&view=notifications&filter_search=<?php echo $row->message_id ?>" target="_blank"><?php echo JText::_('View full log'); ?></a>
         </div>
         </fieldset>
+        <?php endif; ?>
+        <?php endif; ?>
+
+        </div>
+
+        <div id="actions" class="tab-pane">
+        <?php if((int)$row->id != 0): ?>
+            <?php
+            if($row->confirmed_closed != 'Y' and $user_type != 'Guest' and $user_type != 'Supervisor') {
+                echo JText::_('Summary of action taken'), ':<br />';
+                echo '<textarea name="action_taken" id="action_taken" onchange="actionChanged()" cols="70" rows="12" style="width:507px;"></textarea>';
+            }
+            ?>
+
+            <fieldset class="adminform">
+                <legend><?php echo JText::_('Actions Taken'); ?></legend>
+                <div id="tablecell">
+                <table class="adminlist">
+                <thead>
+                    <tr>
+                        <th width="1%">
+                            <?php echo JText::_('NUM'); ?>
+                        </th>
+                        <th width="10%" align="center">
+                            <?php echo JText::_('User'); ?>
+                        </th>
+                        <th width="10%" align="center">
+                            <?php echo JText::_('Date'); ?>
+                        </th>
+                        <th width="68%" align="left"><?php echo JText::_('Description'); ?></th>
+                    </tr>
+                </thead>
+                <?php
+                $k = 0;
+                for($i=0, $n=count($row->actions_taken); $i < $n; $i++) {
+                    $row_i = &$row->actions_taken[$i];
+                    JFilterOutput::objectHTMLSafe($row_i, ENT_QUOTES);
+                    ?>
+                    <tr class="<?php echo "row$k"; ?>">
+                        <td>
+                            <?php echo $i+1; ?>
+                        </td>
+                        <td align="center">
+                            <?php if($row_i->user_id == 0) echo 'System'; else echo $row_i->user; ?>
+                        </td>
+                        <td align="center">
+                            <?php echo $row_i->date; ?>
+                        </td>
+                        <td align="left">
+                            <?php echo $row_i->description; ?>
+                        </td>
+                    </tr>
+                    <?php
+                    $k = 1 - $k;
+                }
+                ?>
+                </table><br />
+                <a href="index.php?option=com_cls&view=notifications&filter_search=<?php echo $row->message_id ?>" target="_blank"><?php echo JText::_('View full log'); ?></a>
+            </div>
+            </fieldset>
+        <?php endif; ?>
+        </div>
+
+        </div>
 
         <div class="clr"></div>
-        <?php endif; ?>
-        <?php endif; ?>
     <?php
     }
 ?>

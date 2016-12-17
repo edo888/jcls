@@ -92,6 +92,7 @@ class ClsViewContracts extends JViewLegacy {
                 'm.start_date' => JText::_('Start Date'),
                 'm.end_date' => JText::_('End Date'),
                 's.name' => JText::_('Location'),
+                'complaints_count' => JText::_('Complaints Count'),
                 'm.id' => JText::_('id')
         );
     }

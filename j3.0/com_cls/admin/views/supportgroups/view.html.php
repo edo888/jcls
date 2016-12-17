@@ -79,6 +79,7 @@ class ClsViewSupportGroups extends JViewLegacy {
         return array(
             'm.name' => JText::_('Name'),
             'm.description' => JText::_('Description'),
+            'complaints_count' => JText::_('Complaints Count'),
             'm.id' => JText::_('id')
         );
     }

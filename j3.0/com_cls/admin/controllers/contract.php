@@ -59,7 +59,8 @@ class ClsControllerContract extends JControllerForm {
             return;
         }
 
-        $id = (int)$_REQUEST['id'];
+        $ids = $this->input->get('cid', array(), 'array');
+        $id = JRequest::getInt('id', intval($ids[0]));
 
         $link = 'index.php?option=com_cls&view=contract&layout=edit';
         if($id != 0)
@@ -87,6 +88,8 @@ class ClsControllerContract extends JControllerForm {
             $contract->set('start_date', JRequest::getVar('start_date'));
             $contract->set('end_date', JRequest::getVar('end_date'));
             $contract->set('contractors', JRequest::getVar('contractors'));
+            $contract->set('email', JRequest::getVar('email'));
+            $contract->set('phone', JRequest::getVar('phone'));
             $contract->set('section_id', JRequest::getInt('section_id'));
             $contract->set('description', JRequest::getVar('description'));
             if (!$contract->store()) {
@@ -110,6 +113,8 @@ class ClsControllerContract extends JControllerForm {
             $contract->set('start_date', null);
             $contract->set('end_date', null);
             $contract->set('contractors', null);
+            $contract->set('email', null);
+            $contract->set('phone', null);
             $contract->set('section_id', null);
             $contract->set('description', null);
             $contract->load();
@@ -120,6 +125,8 @@ class ClsControllerContract extends JControllerForm {
                 $contract->set('start_date', JRequest::getVar('start_date'));
                 $contract->set('end_date', JRequest::getVar('end_date'));
                 $contract->set('contractors', JRequest::getVar('contractors'));
+                $contract->set('email', JRequest::getVar('email'));
+                $contract->set('phone', JRequest::getVar('phone'));
                 $contract->set('section_id', JRequest::getInt('section_id'));
                 $contract->set('description', JRequest::getVar('description'));
 

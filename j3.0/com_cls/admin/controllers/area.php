@@ -58,7 +58,8 @@ class ClsControllerArea extends JControllerForm {
             return;
         }
 
-        $id = (int)$_REQUEST['id'];
+        $ids = $this->input->get('cid', array(), 'array');
+        $id = JRequest::getInt('id', intval($ids[0]));
 
         $link = 'index.php?option=com_cls&view=area&layout=edit';
         if($id != 0)

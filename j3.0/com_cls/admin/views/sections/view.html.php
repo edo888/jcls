@@ -78,6 +78,7 @@ class ClsViewSections extends JViewLegacy {
         return array(
             'm.name' => JText::_('Name'),
             'm.description' => JText::_('Description'),
+            'contracts_count' => JText::_('Contracts Count'),
             'm.id' => JText::_('id')
         );
     }

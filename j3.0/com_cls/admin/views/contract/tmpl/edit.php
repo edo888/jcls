@@ -56,7 +56,7 @@ function editContract($row, $lists, $user_type) {
             <table class="admintable">
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="name">
                         <?php echo JText::_( 'Name' ); ?>
                     </label>
                 </td>
@@ -66,7 +66,7 @@ function editContract($row, $lists, $user_type) {
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="contract_id">
                         <?php echo JText::_( 'Contract ID' ); ?>
                     </label>
                 </td>
@@ -76,7 +76,7 @@ function editContract($row, $lists, $user_type) {
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="start_date">
                         <?php echo JText::_( 'Start Date' ); ?>
                     </label>
                 </td>
@@ -89,7 +89,7 @@ function editContract($row, $lists, $user_type) {
             </tr>
             <tr>
                 <td width="200" class="key">
-                    <label for="alias">
+                    <label for="end_date">
                         <?php echo JText::_( 'Anticipated End Date' ); ?>
                     </label>
                 </td>
@@ -101,8 +101,28 @@ function editContract($row, $lists, $user_type) {
                 </td>
             </tr>
             <tr>
+                <td width="200" class="key">
+                    <label for="email">
+                        <?php echo JText::_( 'Email' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="email" id="email" size="60" value="', @JRequest::getVar('email', $row->email), '" />'; ?>
+                </td>
+            </tr>
+            <tr>
+                <td width="200" class="key">
+                    <label for="phone">
+                        <?php echo JText::_( 'Phone' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php echo '<input class="inputbox" type="text" name="phone" id="phone" size="60" value="', @JRequest::getVar('phone', $row->phone), '" />'; ?>
+                </td>
+            </tr>
+            <tr>
                 <td class="key" valign="top">
-                    <label for="path">
+                    <label for="contractors">
                         <?php echo JText::_( 'Contractor(s)' ); ?>
                     </label>
                 </td>
@@ -112,7 +132,7 @@ function editContract($row, $lists, $user_type) {
             </tr>
             <tr>
                 <td class="key">
-                    <label for="path">
+                    <label for="section_id">
                         <?php echo JText::_( 'Location' ); ?>
                     </label>
                 </td>
@@ -122,7 +142,7 @@ function editContract($row, $lists, $user_type) {
             </tr>
             <tr>
                 <td class="key" valign="top">
-                    <label for="path">
+                    <label for="description">
                         <?php echo JText::_( 'Description' ); ?>
                     </label>
                 </td>
