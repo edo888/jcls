@@ -263,7 +263,7 @@ class ClsControllerComplaint extends JControllerForm {
                     $mail->FromName = 'Complaint Logging System';
                     $mail->Subject = 'New Processed Complaint: #' . $complaint->message_id;
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                    $mail->msgHTML('<p>A complaint was processed. Login to '.JURI::base().'administrator/index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
+                    $mail->msgHTML('<p>A complaint was processed. Login to '.JURI::base().'index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
                     $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
                     foreach($rows as $row) {
                         $params = json_decode($row[2]);
@@ -316,7 +316,7 @@ class ClsControllerComplaint extends JControllerForm {
                 $mail->FromName = 'Complaint Logging System';
                 $mail->Subject = 'Complaint Resolved: #' . $complaint->message_id;
                 $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                $mail->msgHTML('<p>A complaint has been Resolved. Login to '.JURI::base().'administrator/index.php?option=com_cls to confirm and close it.</p>' . $complaint->resolution);
+                $mail->msgHTML('<p>A complaint has been Resolved. Login to '.JURI::base().'index.php?option=com_cls to confirm and close it.</p>' . $complaint->resolution);
                 $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
                 foreach($rows as $row) {
                     $params = json_decode($row[2]);

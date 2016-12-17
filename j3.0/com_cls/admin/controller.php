@@ -437,7 +437,7 @@ class clsController extends JControllerLegacy {
         $mail->FromName = 'Complaint Logging System';
         $mail->Subject = 'Complaint Reopened: #' . $complaint->message_id;
         $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-        $mail->msgHTML('<p>A complaint has been Re-Opened. Login to '.JURI::base().'administrator/index.php?option=com_cls to resolve it.</p>' . JRequest::getVar('reopen_reason'));
+        $mail->msgHTML('<p>A complaint has been Re-Opened. Login to '.JURI::base().'index.php?option=com_cls to resolve it.</p>' . JRequest::getVar('reopen_reason'));
         $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
         foreach($rows as $row) {
             $params = json_decode($row[2]);
