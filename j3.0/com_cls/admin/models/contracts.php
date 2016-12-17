@@ -119,7 +119,7 @@ class ClsModelContracts extends JModelList {
 
         // Join
         $query->select('IFNULL(tbl3.cnt, 0) as complaints_count');
-        $query->join('LEFT', '(select contract_id, count(*) as cnt from jos_complaints group by contract_id) as tbl3 ON (m.id = tbl3.contract_id)');
+        $query->join('LEFT', '(select contract_id, count(*) as cnt from #__complaints group by contract_id) as tbl3 ON (m.id = tbl3.contract_id)');
 
         // Join
         $query->select('s.name as section_name');

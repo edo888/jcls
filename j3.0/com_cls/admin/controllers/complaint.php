@@ -187,6 +187,8 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->set('contract_id', null);
             $complaint->set('support_group_id', null);
             $complaint->set('location', null);
+            $complaint->set('beneficiary_id', null);
+            $complaint->set('building_id', null);
             $complaint->set('complaint_area_id', null);
             $complaint->set('date_received', null);
             $complaint->set('date_processed', null);
@@ -228,6 +230,8 @@ class ClsControllerComplaint extends JControllerForm {
                 $complaint->set('processed_message', JRequest::getVar('processed_message'));
                 $complaint->set('contract_id', JRequest::getInt('contract_id'));
                 $complaint->set('support_group_id', JRequest::getInt('support_group_id'));
+                $complaint->set('beneficiary_id', JRequest::getVar('beneficiary_id'));
+                $complaint->set('building_id', JRequest::getVar('building_id'));
                 if(JRequest::getVar('location') != '')
                     $complaint->set('location', JRequest::getVar('location'));
                 if($complaint->date_processed == '' and $complaint->processed_message != '') {
@@ -259,7 +263,7 @@ class ClsControllerComplaint extends JControllerForm {
                     $mail->FromName = 'Complaint Logging System';
                     $mail->Subject = 'New Processed Complaint: #' . $complaint->message_id;
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                    $mail->msgHTML('<p>A complaint was processed. Login to '.JURI::base().'index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
+                    $mail->msgHTML('<p>A complaint was processed. Login to '.JURI::base().'administrator/index.php?option=com_cls to resolve it.</p>' . $complaint->processed_message);
                     $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
                     foreach($rows as $row) {
                         $params = json_decode($row[2]);
@@ -291,7 +295,47 @@ class ClsControllerComplaint extends JControllerForm {
                     clsLog('Complaint resolved', 'The user resolved the complaint #' . $complaint->message_id);
                 }
 
-                // TODO: send notification to "interested" parties
+                // send resolution notification to "interested" parties
+                $config =& JComponentHelper::getParams('com_cls');
+
+                $query = array();
+                // Send notification to Supervisors
+                $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+
+                // Send notification to Level 1 and System Administrator
+                $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%'))";
+
+                $query = implode(' UNION ALL ', $query);
+
+                $db->setQuery($query);
+                $rows = $db->loadRowList();
+
+                jimport('joomla.mail.mail');
+                $mail = new JMail();
+                $mail->From = $config->get('complaints_email');
+                $mail->FromName = 'Complaint Logging System';
+                $mail->Subject = 'Complaint Resolved: #' . $complaint->message_id;
+                $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+                $mail->msgHTML('<p>A complaint has been Resolved. Login to '.JURI::base().'administrator/index.php?option=com_cls to confirm and close it.</p>' . $complaint->resolution);
+                $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+                foreach($rows as $row) {
+                    $params = json_decode($row[2]);
+                    if($params->receive_by_email == "1") { // send email notification
+                        $mail->AddAddress($row[0]);
+                        clsLog('Resolved notification sent', 'Complaint #' . $complaint->message_id . ' resolved notification sent to ' . $row[1]);
+                    }
+
+                    if($params->receive_by_sms == "1") { // send sms notification
+                        $telephone = $params->telephone;
+                        if(!empty($telephone)) {
+                            $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been resolved, please login to the system to confirm and close it.', now(), 'Notification')");
+                            $db->query();
+
+                            clsLog('Resolved notification sent', 'Complaint #' . $complaint->message_id . ' resolved notification sent to ' . $telephone);
+                        }
+                    }
+                }
+                $mail->Send();
             }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
@@ -321,7 +365,7 @@ class ClsControllerComplaint extends JControllerForm {
                     $mail->FromName = 'Complaint Logging System';
                     $mail->Subject = 'Complaint resolved and closed: #' . $complaint->message_id;
                     $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                    $mail->msgHTML("<p>Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.</p>");
+                    $mail->msgHTML("<p>Complaint #$complaint->message_id has been resolved and closed. Thanks for your efforts.</p><br><p>Resolution: ".$complaint->resolution."</p>");
                     $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
                     foreach($rows as $row) {
                         $params = json_decode($row[2]);
@@ -347,10 +391,13 @@ class ClsControllerComplaint extends JControllerForm {
                     $sms_acknowledgment = (int) $config->get('sms_acknowledgment', 0);
                     $email_acknowledgment = (int) $config->get('email_acknowledgment', 0);
 
-                    if($sms_acknowledgment)
-                        $this->notifySMSResolve();
-                    if($email_acknowledgment)
-                        $this->notifyEmailResolve();
+                    if($sms_acknowledgment) {
+                        include_once dirname(__FILE__) . '/../controller.php';
+                        clsController::notifySMSResolve();
+                    } if($email_acknowledgment) {
+                        include_once dirname(__FILE__) . '/../controller.php';
+                        clsController::notifyEmailResolve();
+                    }
                 }
             }
 

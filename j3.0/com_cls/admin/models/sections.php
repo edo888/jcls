@@ -101,7 +101,7 @@ class ClsModelSections extends JModelList {
 
         // Join
         $query->select('IFNULL(tbl3.cnt, 0) as contracts_count');
-        $query->join('LEFT', '(select section_id, count(*) as cnt from jos_complaint_contracts group by section_id) as tbl3 ON (m.id = tbl3.section_id)');
+        $query->join('LEFT', '(select section_id, count(*) as cnt from #__complaint_contracts group by section_id) as tbl3 ON (m.id = tbl3.section_id)');
 
         // Filter by search in name.
         $search = $this->getState('filter.search');

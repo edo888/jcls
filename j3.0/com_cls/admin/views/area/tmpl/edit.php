@@ -45,7 +45,7 @@ function editArea($row, $lists, $user_type) {
                 submitform(pressbutton);
         }
         </script>
-        <form action="index.php" method="post" name="adminForm">
+        <form action="index.php" method="post" name="adminForm" id="adminForm">
 
         <fieldset class="adminform">
             <legend><?php echo JText::_('Details'); ?></legend>

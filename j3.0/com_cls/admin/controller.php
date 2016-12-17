@@ -31,7 +31,8 @@ class clsController extends JControllerLegacy {
         $this->registerTask('notify_email_resolve', 'notifyEmailResolve');
         $this->registerTask('notify_inperson_resolve', 'notifyInPersonResolve');
         $this->registerTask('notify_phone_resolve', 'notifyPhoneResolve');
-        $this->registerTask('upload_picture' , 'uploadPicture');
+        $this->registerTask('upload_picture', 'uploadPicture');
+        $this->registerTask('reopen', 'reopenComplaint');
     }
 
     /**
@@ -129,7 +130,7 @@ class clsController extends JControllerLegacy {
             $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
         }
     }
-    
+
     function notifyInPersonAcknowledge() {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
@@ -142,15 +143,15 @@ class clsController extends JControllerLegacy {
             $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
-        
+
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
-        
+
         clsLog('Acknowledgment made in person', "Acknowledgment made in person for complaint #$complaint->message_id");
 
         $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('In person acknowledgement successfully recorded'));
     }
-    
+
     function notifyPhoneAcknowledge() {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
@@ -163,10 +164,10 @@ class clsController extends JControllerLegacy {
             $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
-        
+
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
-        
+
         clsLog('Acknowledgment made by phone', "Acknowledgment made by phone for complaint #$complaint->message_id");
 
         $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('Phone acknowledgement successfully recorded'));
@@ -233,7 +234,7 @@ class clsController extends JControllerLegacy {
             $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('You don\'t have permission to send notifications'));
         }
     }
-    
+
     function notifyInPersonResolve() {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
@@ -246,15 +247,15 @@ class clsController extends JControllerLegacy {
             $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
-        
+
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
-        
+
         clsLog('Resolution acknowledgment made in person', "Resolution acknowledgment made in person for complaint #$complaint->message_id");
 
         $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('In person resolution acknowledgement successfully recorded'));
     }
-    
+
     function notifyPhoneResolve() {
         $db   = JFactory::getDBO();
         $user = JFactory::getUser();
@@ -267,10 +268,10 @@ class clsController extends JControllerLegacy {
             $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
             return;
         }
-        
+
         $db->setQuery('select * from #__complaints where id = ' . $id);
         $complaint = $db->loadObject();
-        
+
         clsLog('Resolution acknowledgment made by phone', "Resolution acknowledgment made by phone for complaint #$complaint->message_id");
 
         $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('Phone resolution acknowledgement successfully recorded'));
@@ -393,6 +394,71 @@ class clsController extends JControllerLegacy {
             // success, exit with code 0 for Mac users, otherwise they receive an IO Error
             exit(0);
         }
+    }
+
+    function reopenComplaint() {
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $id   = JRequest::getInt('id', 0);
+
+        $user_type = $user->getParam('role', 'Guest');
+        // guest cannot see this list
+        if($user_type == 'Guest' or $user_type == 'Supervisor' or $user_type == 'Level 2') {
+            $this->setRedirect('index.php?option=com_cls&view=reports', JText::_("You don't have permission"));
+            return;
+        }
+
+        $db->setQuery('select message_id, resolution from #__complaints where id = ' . $id);
+        $complaint = $db->loadObject();
+
+        $db->setQuery('update #__complaints set resolver_id = 0, resolution = "", date_resolved = null, confirmed_closed = "N" where id = ' . $id);
+        $db->query();
+
+        clsLog('Complaint action taken', 'Complaint #' . $complaint->message_id . " has been reopened with reason message: \n" . JRequest::getVar('reopen_reason') . "\n\nOld resolution was: \n" . $complaint->resolution);
+
+        // send reopen notification to "interested" parties
+        $config =& JComponentHelper::getParams('com_cls');
+
+        $query = array();
+        // Send notification to Supervisors
+        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+
+        // Send notification to Level 1 and System Administrator
+        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%'))";
+
+        $query = implode(' UNION ALL ', $query);
+
+        $db->setQuery($query);
+        $rows = $db->loadRowList();
+
+        jimport('joomla.mail.mail');
+        $mail = new JMail();
+        $mail->From = $config->get('complaints_email');
+        $mail->FromName = 'Complaint Logging System';
+        $mail->Subject = 'Complaint Reopened: #' . $complaint->message_id;
+        $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+        $mail->msgHTML('<p>A complaint has been Re-Opened. Login to '.JURI::base().'administrator/index.php?option=com_cls to resolve it.</p>' . JRequest::getVar('reopen_reason'));
+        $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+        foreach($rows as $row) {
+            $params = json_decode($row[2]);
+            if($params->receive_by_email == "1") { // send email notification
+                $mail->AddAddress($row[0]);
+                clsLog('Reopened notification sent', 'Complaint #' . $complaint->message_id . ' reopened notification sent to ' . $row[1]);
+            }
+
+            if($params->receive_by_sms == "1") { // send sms notification
+                $telephone = $params->telephone;
+                if(!empty($telephone)) {
+                    $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been reopened, please login to the system to resolve it.', now(), 'Notification')");
+                    $db->query();
+
+                    clsLog('Reopened notification sent', 'Complaint #' . $complaint->message_id . ' reopened notification sent to ' . $telephone);
+                }
+            }
+        }
+        $mail->Send();
+
+        $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, JText::_('Complaint has been Reopened'));
     }
 
     function downloadReport() {

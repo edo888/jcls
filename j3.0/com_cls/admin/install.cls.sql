@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS `#__complaints` (
 ALTER TABLE `#__complaints` MODIFY `message_source` ENUM('SMS', 'Email', 'Website', 'Telephone Call', 'Personal Visit', 'Field Visit by Project Staff', 'Other');
 ALTER TABLE `#__complaints` ADD COLUMN `address` varchar(250) NOT NULL default '' AFTER `phone`;
 ALTER TABLE `#__complaints` ADD COLUMN `location` varchar(250) NOT NULL default '' AFTER `processed_message`;
+ALTER TABLE `#__complaints` ADD COLUMN `beneficiary_id` varchar(250) NOT NULL default '' AFTER `location`;
+ALTER TABLE `#__complaints` ADD COLUMN `building_id` varchar(250) NOT NULL default '' AFTER `beneficiary_id`;
 ALTER TABLE `#__complaints` ADD COLUMN `contract_id` int(11) NOT NULL default 0 AFTER `processed_message`;
 ALTER TABLE `#__complaints` ADD COLUMN `support_group_id` int(11) NOT NULL default 0 AFTER `contract_id`;
 ALTER TABLE `#__complaints` ADD COLUMN `preferred_contact` ENUM('', 'Email', 'SMS', 'Telephone Call') AFTER `ip_address`;

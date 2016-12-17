@@ -102,7 +102,7 @@ class ClsModelAreas extends JModelList {
 
         // Join
         $query->select('IFNULL(tbl3.cnt, 0) as complaints_count');
-        $query->join('LEFT', '(select complaint_area_id, count(*) as cnt from jos_complaints group by complaint_area_id) as tbl3 ON (m.id = tbl3.complaint_area_id)');
+        $query->join('LEFT', '(select complaint_area_id, count(*) as cnt from #__complaints group by complaint_area_id) as tbl3 ON (m.id = tbl3.complaint_area_id)');
 
         // Filter by search in name.
         $search = $this->getState('filter.search');

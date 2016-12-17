@@ -101,7 +101,7 @@ class ClsModelSupportGroups extends JModelList {
 
         // Join
         $query->select('IFNULL(tbl3.cnt, 0) as complaints_count');
-        $query->join('LEFT', '(select support_group_id, count(*) as cnt from jos_complaints group by support_group_id) as tbl3 ON (m.id = tbl3.support_group_id)');
+        $query->join('LEFT', '(select support_group_id, count(*) as cnt from #__complaints group by support_group_id) as tbl3 ON (m.id = tbl3.support_group_id)');
 
         // Filter by search in name.
         $search = $this->getState('filter.search');

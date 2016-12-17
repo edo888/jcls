@@ -101,30 +101,76 @@ swfu = new SWFUpload(settings);
             }
 
             // validation
-            if(form.message_source && form.message_source.value == "")
+            if(form.name.value == "") {
+                alert('Complainer name required');
+                return false;
+            }
+
+            if(form.message_source && form.message_source.value == "") {
                 alert('Message Source is required');
-            else if(form.name.value == "" && form.email.value == "" && form.phone.value == "" && form.address.value == "" && form.ip_address.value == "")
-                alert('Sender is required');
-            else if(form.raw_message && form.raw_message.value == "")
+                return false;
+            }
+
+            if(form.raw_message && form.raw_message.value == "") {
                 alert('Raw message is required');
-            else if(form.message_priority && form.message_priority.value == "")
+                return false;
+            }
+
+            if(form.message_priority && form.message_priority.value == "") {
                 alert('Complaint priority is required');
-            else
-                submitform(pressbutton);
+                return false;
+            }
+
+            submitform(pressbutton);
+        }
+
+        function reopenComplaint() {
+            if(document.getElementById('reopen_reason').value == "") {
+                alert('Reason message is required');
+                return false;
+            }
+
+            return true;
+            //document.reopenForm.submit();
         }
 
         function actionChanged() {
             document.getElementById('action').value = document.getElementById('action_taken').value;
+        }
+
+        function resolutionChanged() {
+            if(document.getElementById('resolution'))
+                document.getElementById('resolution').value = document.getElementById('resolution_text').value;
+            else
+                document.getElementById('resolutiontab').innerHTML = document.getElementById('resolution_table').innerHTML;
+
+            if(document.getElementById('resolver'))
+                document.getElementById('resolver').value = document.getElementById('resolver_id').value;
+            if(document.getElementById('conf_closed'))
+                document.getElementById('conf_closed').value = document.getElementById('confirmed_closed').value;
+        }
+
+        function setPriority(issue_type) {
+            if(issue_type == 2) { // grievance
+                document.getElementById('message_priorityHigh').checked = true;
+                document.getElementById('message_priorityLow').disabled = true;
+            } else if(issue_type == 1) { // complaint
+                document.getElementById('message_priorityHigh').checked = false;
+                document.getElementById('message_priorityLow').disabled = false;
+            } else { // unknown
+            }
         }
         </script>
 
         <ul class="nav nav-tabs" id="myTabTabs">
             <li class="active"><a href="#details" data-toggle="tab"><?php echo JText::_('Details'); ?></a></li>
             <?php if((int)$row->id != 0): ?>
-            <li class=""><a href="#pictures" data-toggle="tab"><?php echo JText::_('Pictures') . (count($row->pictures) ? ' (' .  count($row->pictures) . ')' : ''); ?></a></li>
+            <?php /* <li class=""><a href="#pictures" data-toggle="tab"><?php echo JText::_('Pictures') . (count($row->pictures) ? ' (' .  count($row->pictures) . ')' : ''); ?></a></li> */ ?>
             <li class=""><a href="#notifications" data-toggle="tab"><?php echo JText::_('Notifications'); ?></a></li>
-            <?php if($user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?><li class=""><a href="#activity_log" data-toggle="tab"><?php echo JText::_('Activity Log'); ?></a></li><?php endif; ?>
             <li class=""><a href="#actions" data-toggle="tab"><?php echo JText::_('Actions'); ?></a></li>
+            <?php if($row->date_processed != ''): ?><li class=""><a href="#resolutiontab" onclick="resolutionChanged()" data-toggle="tab"><?php echo JText::_('Resolution'); ?></a></li><?php endif; ?>
+            <?php if(!empty($row->resolution) and $user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?><li class=""><a href="#reopen" data-toggle="tab"><?php echo JText::_('Re-Open Complaint'); ?></a></li><?php endif; ?>
+            <?php if($user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?><li class=""><a href="#activity_log" data-toggle="tab"><?php echo JText::_('Activity Log'); ?></a></li><?php endif; ?>
             <?php endif; ?>
         </ul>
 
@@ -132,7 +178,7 @@ swfu = new SWFUpload(settings);
 
         <div id="details" class="tab-pane active">
 
-        <form action="index.php" method="post" name="adminForm">
+        <form action="index.php" method="post" name="adminForm" id="adminForm">
 
         <fieldset class="adminform">
             <legend><?php echo JText::_('Complainant Information'); ?></legend>
@@ -244,7 +290,7 @@ swfu = new SWFUpload(settings);
             </tr>
             </table>
 
-            <legend><?php echo JText::_('Complaint Information'); ?></legend>
+            <legend><?php echo JText::_('Complaint'); ?></legend>
             <table class="admintable">
             <?php if(property_exists($row, 'message_id')): ?>
             <tr>
@@ -363,6 +409,7 @@ swfu = new SWFUpload(settings);
             <?php endif; ?>
             </table>
 
+            <?php if((int)$row->id != 0): ?>
             <legend><?php echo JText::_('Complaint Categorization'); ?></legend>
             <table class="admintable">
             <?php if(isset($row->related_to_pb)): ?>
@@ -408,7 +455,7 @@ swfu = new SWFUpload(settings);
                         if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
                             echo @$issue_type[$row->issue_type]->text;
                         else
-                            echo JHTML::_('select.radiolist', $issue_type, 'issue_type', null, 'value', 'text', $row->issue_type);
+                            echo JHTML::_('select.radiolist', $issue_type, 'issue_type', 'onchange="setPriority(this.value)"', 'value', 'text', $row->issue_type);
                     ?>
                 </td>
             </tr>
@@ -477,9 +524,43 @@ swfu = new SWFUpload(settings);
                 <td>
                     <?php
                     if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo '<a href="index.php?option=com_cls&view=viewlocation&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a>';
+                        echo '<a href="index.php?option=com_cls&view=viewlocation&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">View Map</a> Lat,Lng: ' . $row->location;
                     else
-                        echo '<input type="hidden" name="location" id="location" value="', @$row->location, '" /><a href="index.php?option=com_cls&view=editlocation&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
+                        echo '<input type="text" placeholder="Lat,Lng" name="location" id="location" value="', @$row->location, '" /> <a href="index.php?option=com_cls&view=editlocation&id=' . @$row->id . '" class="modal" rel="{handler:\'iframe\',size:{x:screen.availWidth-250, y:screen.availHeight-250}}">'.( empty($row->location) ? 'Add Location' : 'Edit Location' ).'</a>';
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if(property_exists($row, 'beneficiary_id')): ?>
+            <tr>
+                <td width="200" class="key">
+                    <label for="beneficiary_id">
+                        <?php echo JText::_( 'Beneficiary ID' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
+                        echo @$row->beneficiary_id;
+                    else
+                        echo '<input class="inputbox" type="text" name="beneficiary_id" id="beneficiary_id" size="60" value="', @$row->beneficiary_id, '" />';
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if(property_exists($row, 'building_id')): ?>
+            <tr>
+                <td width="200" class="key">
+                    <label for="building_id">
+                        <?php echo JText::_( 'Building ID' ); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
+                        echo @$row->building_id;
+                    else
+                        echo '<input class="inputbox" type="text" name="building_id" id="building_id" size="60" value="', @$row->building_id, '" />';
                     ?>
                 </td>
             </tr>
@@ -503,8 +584,9 @@ swfu = new SWFUpload(settings);
             <?php endif; ?>
             </table>
 
-            <?php if($row->date_processed != ''): ?>
+            <?php if($row->date_resolved != ''  /* $row->date_processed != '' */): ?>
             <legend><?php echo JText::_('Resolution'); ?></legend>
+            <div id="resolution_table">
             <table class="admintable">
             <?php if(property_exists($row, 'resolution') and $row->date_processed != ''): ?>
             <tr>
@@ -514,12 +596,7 @@ swfu = new SWFUpload(settings);
                     </label>
                 </td>
                 <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
-                        echo @$row->resolution;
-                    else
-                        echo '<textarea name="resolution" id="resolution" cols="80" rows="3">', @$row->resolution, '</textarea>';
-                    ?>
+                    <pre><?php echo @$row->resolution; ?></pre>
                 </td>
             </tr>
             <?php endif; ?>
@@ -543,12 +620,7 @@ swfu = new SWFUpload(settings);
                     </label>
                 </td>
                 <td>
-                    <?php
-                    if($row->confirmed_closed == 'Y' or $user_type != 'System Administrator')
-                        echo @$row->resolver;
-                    else
-                        echo $lists['resolver'];
-                    ?>
+                    <?php echo @$row->resolver; ?>
                 </td>
             </tr>
             <?php endif; ?>
@@ -585,14 +657,14 @@ swfu = new SWFUpload(settings);
                         }
                         else
                             echo @$row->confirmed_closed;
-                    }
-                    else
-                        echo $lists['confirmed'];
+                    } else
+                        echo @$row->confirmed_closed;
                     ?>
                 </td>
             </tr>
             <?php endif; ?>
             </table>
+            </div>
             <?php endif; ?>
 
             <legend><?php echo JText::_('Comments'); ?></legend>
@@ -617,11 +689,23 @@ swfu = new SWFUpload(settings);
             </tr>
             <?php endif; ?>
             </table>
+            <?php endif; ?>
         </fieldset>
 
         <div class="clr"></div>
 
         <input type="hidden" name="action" id="action" value="" />
+
+        <?php if($row->date_processed != ''): ?>
+            <?php if(!($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))): ?>
+                  <textarea name="resolution" id="resolution" cols="80" rows="3" style="display:none;"><?php echo @$row->resolution; ?></textarea>
+            <?php endif; ?>
+
+            <?php if($row->confirmed_closed != 'Y' and $row->date_resolved != '' and ($user_type == 'System Administrator' or $user_type == 'Level 1')): ?>
+                <input type="hidden" name="resolver_id" id="resolver" value="<?php echo @$row->resolver_id; ?>" />
+                <input type="hidden" name="confirmed_closed" id="conf_closed" value="<?php echo @$row->confirmed_closed; ?>" />
+            <?php endif; ?>
+        <?php endif; ?>
 
         <input type="hidden" name="task" value="complaint.edit" />
         <input type="hidden" name="option" value="com_cls" />
@@ -631,10 +715,6 @@ swfu = new SWFUpload(settings);
         <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
         <?php echo JHtml::_('form.token'); ?>
         </form>
-
-        </div>
-
-        <div id="pictures" class="tab-pane">
 
         <?php if(isset($row->id) and count($row->pictures)): ?>
         <fieldset class="adminform">
@@ -911,6 +991,25 @@ swfu = new SWFUpload(settings);
 
         </div>
 
+        <?php if(!empty($row->resolution) and $user_type != 'Guest' and $user_type != 'Supervisor' and $user_type != 'Level 2'): ?>
+        <div id="reopen" class="tab-pane">
+            <form action="index.php" method="post" name="reopenForm" onsubmit="return reopenComplaint();">
+                <fieldset class="adminform">
+                <?php echo JText::_( 'Reason for Reopening Complaint' ); ?>:<br />
+                <textarea name="reopen_reason" id="reopen_reason" cols="70" rows="12" style="width:507px;"></textarea><br />
+
+                <button class="btn btn-small">
+                    <span class="icon-pending"></span>
+                    <?php echo JText::_('Reopen'); ?>
+                </button>
+
+                <input type="hidden" name="task" value="reopen" />
+                <input type="hidden" name="option" value="com_cls" />
+                <input type="hidden" name="id" value="<?php echo @$row->id; ?>" />
+            </form>
+        </div>
+        <?php endif; ?>
+
         <div id="activity_log" class="tab-pane">
 
         <?php if((int)$row->id != 0): ?>
@@ -970,6 +1069,36 @@ swfu = new SWFUpload(settings);
         <?php endif; ?>
         <?php endif; ?>
 
+        </div>
+
+        <div id="resolutiontab" class="tab-pane">
+            <?php if($row->date_processed != ''): ?>
+            <?php
+            echo JText::_('Resolution'), ':<br />';
+            if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                echo @$row->resolution;
+            else
+                echo '<textarea name="resolution_text" id="resolution_text" onchange="resolutionChanged()" cols="70" rows="12" style="width:507px;">', @$row->resolution, '</textarea>';
+            ?>
+
+            <?php if($row->confirmed_closed != 'Y' and $row->date_resolved != ''): ?>
+            <table class="admintable">
+            <?php if($user_type == 'System Administrator'): ?>
+            <tr>
+                <td>Resolved by</td>
+                <td><?php echo $lists['resolver']; ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php if($user_type == 'System Administrator' or $user_type == 'Level 1'): ?>
+            <tr>
+                <td>Resolved and Closed</td>
+                <td><?php echo $lists['confirmed']; ?></td>
+            </tr>
+            <?php endif; ?>
+            </table>
+            <?php endif; ?>
+
+            <?php endif; ?>
         </div>
 
         <div id="actions" class="tab-pane">

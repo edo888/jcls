@@ -113,7 +113,7 @@ class ClsModelComplaint extends JModelLegacy {
         $resolver[] = array('key' => '', 'value' => '- Select Resolver -');
         foreach($resolvers as $r)
             $resolver[] = array('key' => $r->id, 'value' => $r->name);
-        $lists['resolver'] = JHTML::_('select.genericlist', $resolver, 'resolver_id', null, 'key', 'value', $row->resolver_id);
+        $lists['resolver'] = JHTML::_('select.genericlist', $resolver, 'resolver_id', 'onchange="resolutionChanged()"', 'key', 'value', $row->resolver_id);
 
         // support groups list
         $query = 'select * from #__complaint_support_groups order by name asc';
@@ -153,7 +153,7 @@ class ClsModelComplaint extends JModelLegacy {
         $lists['priority'] = JHTML::_('select.radiolist', $priority, 'message_priority', null, 'value', 'text', $row->message_priority);
 
         // confirmed_closed list
-        $lists['confirmed'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Confirmation -' ), array('key' => 'Y', 'value' => 'Yes'), array('key' => 'N', 'value' => 'No')), 'confirmed_closed', null, 'key', 'value', $row->confirmed_closed);
+        $lists['confirmed'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Confirmation -' ), array('key' => 'Y', 'value' => 'Yes'), array('key' => 'N', 'value' => 'No')), 'confirmed_closed', 'onchange="resolutionChanged()"', 'key', 'value', $row->confirmed_closed);
 
         $_SESSION['lists'] = $lists;
         $_SESSION['row'] = $row;
