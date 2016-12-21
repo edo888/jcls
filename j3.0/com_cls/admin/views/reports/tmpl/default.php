@@ -508,21 +508,22 @@ EOT;
         <br />
         <br />
         <table style="border:1px solid" cellpadding="5">
-            <tr><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><th rowspan="2" width="30" style="border-right:1px solid;">Within Service Standard</th><th colspan="7" style="border-bottom:1px solid;border-right:1px solid;">Time to Resolve Grievances and Complaints</th><td style="border-right:1px solid;"></td><td></td></tr>
-            <tr style="border-bottom:1px solid;"><td style="border-right:1px solid;"></td><th align="center" style="border-right:1px solid;">Total</th><th><= 7 days</th><th><= 14 days</th><th><= 21 days</th><th><= 28 days</th><th><= 56 days</th><th><= 84 days</th><th style="border-right:1px solid;">>= 85 days</th><th style="border-right:1px solid;">Unresolved</th><th>Resolved</th></tr>
+            <tr><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><th rowspan="2" width="30" style="border-right:1px solid;">Within Service Standard</th><th colspan="7" style="border-bottom:1px solid;border-right:1px solid;">Time to Resolve Grievances and Complaints</th><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><td></td></tr>
+            <tr style="border-bottom:1px solid;"><td style="border-right:1px solid;"></td><th align="center" style="border-right:1px solid;">Total</th><th><= 7 days</th><th><= 14 days</th><th><= 21 days</th><th><= 28 days</th><th><= 56 days</th><th><= 84 days</th><th style="border-right:1px solid;">>= 85 days</th><th style="border-right:1px solid;">Being Processed</th><th style="border-right:1px solid;">Resolved</th><th>Resolved and Closed</th></tr>
             <tr>
                 <th align="left" style="border-right:1px solid;">Number</th>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints $category_sql_where"); $total_count = $db->loadResult(); echo $total_count; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $total_res_within_standards; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7 = $db->loadResult(); echo $total_count7; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14 = $db->loadResult(); echo $total_count14; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21 = $db->loadResult(); echo $total_count21; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28 = $db->loadResult(); echo $total_count28; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56 = $db->loadResult(); echo $total_count56; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84 = $db->loadResult(); echo $total_count84; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85 = $db->loadResult(); echo $total_count85; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'N'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved <= date_add(date_received, interval 7 day)"); $total_count7 = $db->loadResult(); echo $total_count7; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14 = $db->loadResult(); echo $total_count14; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21 = $db->loadResult(); echo $total_count21; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28 = $db->loadResult(); echo $total_count28; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56 = $db->loadResult(); echo $total_count56; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84 = $db->loadResult(); echo $total_count84; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved > date_add(date_received, interval 85 day)"); $total_count85 = $db->loadResult(); echo $total_count85; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql date_resolved is null"); $being_processed = $db->loadResult(); echo $being_processed; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count - $being_processed); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y'"); $resolved_and_closed = $db->loadResult(); echo $resolved_and_closed; ?></td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <th align="left" style="border-right:1px solid;">%</th>
@@ -535,8 +536,9 @@ EOT;
                 <td align="center"><?php echo @round($total_count56/$total_count*100, 1); ?>%</td>
                 <td align="center"><?php echo @round($total_count84/$total_count*100, 1); ?>%</td>
                 <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count - $being_processed)/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed/$total_count*100, 1); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
@@ -549,8 +551,9 @@ EOT;
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_high = $db->loadResult(); echo $total_count56_high; ?></td>
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_high = $db->loadResult(); echo $total_count84_high; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'High' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_high = $db->loadResult(); echo $total_count85_high; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'N' and message_priority = 'High'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_high - $unresolved); ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql message_priority = 'High' and date_resolved is null"); $being_processed_high = $db->loadResult(); echo $being_processed_high; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_high - $being_processed_high); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql message_priority = 'High' and confirmed_closed = 'Y'"); $resolved_and_closed_high = $db->loadResult(); echo $resolved_and_closed_high; ?></td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
@@ -563,8 +566,9 @@ EOT;
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_medium = $db->loadResult(); echo $total_count56_medium; ?></td>
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_medium = $db->loadResult(); echo $total_count84_medium; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_medium = $db->loadResult(); echo $total_count85_medium; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'N' and message_priority = 'Medium'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_medium - $unresolved); ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql (message_priority = 'Medium' or message_priority is null) and date_resolved is null"); $being_processed_medium = $db->loadResult(); echo $being_processed_medium; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_medium - $being_processed_medium); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql message_priority = 'Medium' and confirmed_closed = 'Y'"); $resolved_and_closed_medium = $db->loadResult(); echo $resolved_and_closed_medium; ?></td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
@@ -577,65 +581,70 @@ EOT;
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_low = $db->loadResult(); echo $total_count56_low; ?></td>
                 <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_low = $db->loadResult(); echo $total_count84_low; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_low = $db->loadResult(); echo $total_count85_low; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'N' and (message_priority = 'Low' or message_priority is null or message_priority = '')"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_low - $unresolved); ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql message_priority = 'Low' and date_resolved is null"); $being_processed_low = $db->loadResult(); echo $being_processed_low; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_low - $being_processed_low); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql message_priority = 'Low' and confirmed_closed = 'Y'"); $resolved_and_closed_low = $db->loadResult(); echo $resolved_and_closed_low; ?></td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high/$total_count_high * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_high - $being_processed_high)/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_high/$total_count_high*100, 1); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium/$total_count_medium * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_medium - $being_processed_medium)/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_medium/$total_count_medium*100, 1); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php $unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low/$total_count_low * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo round($total_count85_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_low - $being_processed_low)/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_low/$total_count_low*100, 1); ?>%</td>
             </tr>
-            <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;" colspan="12">Grievances and Complaints Related to Project Benefits</th></tr>
+            <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;" colspan="13">Grievances and Complaints Related to Project Benefits</th></tr>
             <tr>
                 <th align="left" style="border-right:1px solid;">Number</th>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1"); $total_count = $db->loadResult(); echo $total_count; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $total_res_within_standards2; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7 = $db->loadResult(); echo $total_count7; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14 = $db->loadResult(); echo $total_count14; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21 = $db->loadResult(); echo $total_count21; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28 = $db->loadResult(); echo $total_count28; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56 = $db->loadResult(); echo $total_count56; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84 = $db->loadResult(); echo $total_count84; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85 = $db->loadResult(); echo $total_count85; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'N'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7 = $db->loadResult(); echo $total_count7; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14 = $db->loadResult(); echo $total_count14; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21 = $db->loadResult(); echo $total_count21; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28 = $db->loadResult(); echo $total_count28; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56 = $db->loadResult(); echo $total_count56; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84 = $db->loadResult(); echo $total_count84; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved > date_add(date_received, interval 85 day)"); $total_count85 = $db->loadResult(); echo $total_count85; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and date_resolved is null"); $being_processed = $db->loadResult(); echo $being_processed; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count - $being_processed); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y'"); $resolved_and_closed = $db->loadResult(); echo $resolved_and_closed; ?></td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <th align="left" style="border-right:1px solid;">%</th>
@@ -648,107 +657,115 @@ EOT;
                 <td align="center"><?php echo @round($total_count56/$total_count*100, 1); ?>%</td>
                 <td align="center"><?php echo @round($total_count84/$total_count*100, 1); ?>%</td>
                 <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count - $being_processed)/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed/$total_count*100, 1); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High'"); $total_count_high = $db->loadResult(); echo $total_count_high; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $res_within_standards_high2; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_high = $db->loadResult(); echo $total_count7_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_high = $db->loadResult(); echo $total_count14_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_high = $db->loadResult(); echo $total_count21_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_high = $db->loadResult(); echo $total_count28_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_high = $db->loadResult(); echo $total_count56_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_high = $db->loadResult(); echo $total_count84_high; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_high = $db->loadResult(); echo $total_count85_high; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'N' and message_priority = 'High'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_high - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_high = $db->loadResult(); echo $total_count7_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_high = $db->loadResult(); echo $total_count14_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_high = $db->loadResult(); echo $total_count21_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_high = $db->loadResult(); echo $total_count28_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_high = $db->loadResult(); echo $total_count56_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_high = $db->loadResult(); echo $total_count84_high; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_high = $db->loadResult(); echo $total_count85_high; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and date_resolved is null"); $being_processed_high = $db->loadResult(); echo $being_processed_high; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_high - $being_processed_high); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'High' and confirmed_closed = 'Y'"); $resolved_and_closed_high = $db->loadResult(); echo $resolved_and_closed_high; ?></td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium'"); $total_count_medium = $db->loadResult(); echo $total_count_medium; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $res_within_standards_medium2; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_medium = $db->loadResult(); echo $total_count7_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_medium = $db->loadResult(); echo $total_count14_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_medium = $db->loadResult(); echo $total_count21_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_medium = $db->loadResult(); echo $total_count28_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_medium = $db->loadResult(); echo $total_count56_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_medium = $db->loadResult(); echo $total_count84_medium; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_medium = $db->loadResult(); echo $total_count85_medium; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'N' and message_priority = 'Medium'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_medium - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_medium = $db->loadResult(); echo $total_count7_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_medium = $db->loadResult(); echo $total_count14_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_medium = $db->loadResult(); echo $total_count21_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_medium = $db->loadResult(); echo $total_count28_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_medium = $db->loadResult(); echo $total_count56_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_medium = $db->loadResult(); echo $total_count84_medium; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_medium = $db->loadResult(); echo $total_count85_medium; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and (message_priority = 'Medium' or message_priority is null) and date_resolved is null"); $being_processed_medium = $db->loadResult(); echo $being_processed_medium; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_medium - $being_processed_medium); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Medium' and confirmed_closed = 'Y'"); $resolved_and_closed_medium = $db->loadResult(); echo $resolved_and_closed_medium; ?></td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and (message_priority = 'Low' or message_priority is null or message_priority = '')"); $total_count_low = $db->loadResult(); echo $total_count_low; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $res_within_standards_low2; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_low = $db->loadResult(); echo $total_count7_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_low = $db->loadResult(); echo $total_count14_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_low = $db->loadResult(); echo $total_count21_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_low = $db->loadResult(); echo $total_count28_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_low = $db->loadResult(); echo $total_count56_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_low = $db->loadResult(); echo $total_count84_low; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_low = $db->loadResult(); echo $total_count85_low; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and confirmed_closed = 'N' and (message_priority = 'Low' or message_priority is null or message_priority = '')"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_low - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_low = $db->loadResult(); echo $total_count7_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_low = $db->loadResult(); echo $total_count14_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_low = $db->loadResult(); echo $total_count21_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_low = $db->loadResult(); echo $total_count28_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_low = $db->loadResult(); echo $total_count56_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_low = $db->loadResult(); echo $total_count84_low; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_low = $db->loadResult(); echo $total_count85_low; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and date_resolved is null"); $being_processed_low = $db->loadResult(); echo $being_processed_low; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_low - $being_processed_low); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and message_priority = 'Low' and confirmed_closed = 'Y'"); $resolved_and_closed_low = $db->loadResult(); echo $resolved_and_closed_low; ?></td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high2/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high2/$total_count_high * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_high - $being_processed_high)/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_high/$total_count_high*100, 1); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium2/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium2/$total_count_medium * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_medium - $being_processed_medium)/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_medium/$total_count_medium*100, 1); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low2/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low2/$total_count_low * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_low - $being_processed_low)/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_low/$total_count_low*100, 1); ?>%</td>
             </tr>
-            <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;" colspan="12">Grievances and Complaints Related to Project Benefits and Related to Females</th></tr>
+            <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;" colspan="13">Grievances and Complaints Related to Project Benefits and Related to Females</th></tr>
             <tr>
                 <th align="left" style="border-right:1px solid;">Number</th>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female'"); $total_count = $db->loadResult(); echo $total_count; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $total_res_within_standards3; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7 = $db->loadResult(); echo $total_count7; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14 = $db->loadResult(); echo $total_count14; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21 = $db->loadResult(); echo $total_count21; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28 = $db->loadResult(); echo $total_count28; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56 = $db->loadResult(); echo $total_count56; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84 = $db->loadResult(); echo $total_count84; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85 = $db->loadResult(); echo $total_count85; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'N'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7 = $db->loadResult(); echo $total_count7; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14 = $db->loadResult(); echo $total_count14; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21 = $db->loadResult(); echo $total_count21; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28 = $db->loadResult(); echo $total_count28; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56 = $db->loadResult(); echo $total_count56; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84 = $db->loadResult(); echo $total_count84; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85 = $db->loadResult(); echo $total_count85; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and date_resolved is null"); $being_processed = $db->loadResult(); echo $being_processed; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count - $being_processed); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y'"); $resolved_and_closed = $db->loadResult(); echo $resolved_and_closed; ?></td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <th align="left" style="border-right:1px solid;">%</th>
@@ -761,92 +778,99 @@ EOT;
                 <td align="center"><?php echo @round($total_count56/$total_count*100, 1); ?>%</td>
                 <td align="center"><?php echo @round($total_count84/$total_count*100, 1); ?>%</td>
                 <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85/$total_count*100, 1)-round($total_count84/$total_count*100, 1)-round($total_count56/$total_count*100, 1)-round($total_count28/$total_count*100, 1)-round($total_count21/$total_count*100, 1)-round($total_count14/$total_count*100, 1)-round($total_count7/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed/$total_count*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count - $being_processed)/$total_count*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed/$total_count*100, 1); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High'"); $total_count_high = $db->loadResult(); echo $total_count_high; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $res_within_standards_high3; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_high = $db->loadResult(); echo $total_count7_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_high = $db->loadResult(); echo $total_count14_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_high = $db->loadResult(); echo $total_count21_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_high = $db->loadResult(); echo $total_count28_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_high = $db->loadResult(); echo $total_count56_high; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_high = $db->loadResult(); echo $total_count84_high; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'High' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_high = $db->loadResult(); echo $total_count85_high; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'N' and message_priority = 'High'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_high - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_high = $db->loadResult(); echo $total_count7_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_high = $db->loadResult(); echo $total_count14_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_high = $db->loadResult(); echo $total_count21_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_high = $db->loadResult(); echo $total_count28_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_high = $db->loadResult(); echo $total_count56_high; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_high = $db->loadResult(); echo $total_count84_high; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_high = $db->loadResult(); echo $total_count85_high; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and date_resolved is null"); $being_processed_high = $db->loadResult(); echo $being_processed_high; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_high - $being_processed_high); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'High' and confirmed_closed = 'Y'"); $resolved_and_closed_high = $db->loadResult(); echo $resolved_and_closed_high; ?></td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium'"); $total_count_medium = $db->loadResult(); echo $total_count_medium; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $res_within_standards_medium3; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_medium = $db->loadResult(); echo $total_count7_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_medium = $db->loadResult(); echo $total_count14_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_medium = $db->loadResult(); echo $total_count21_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_medium = $db->loadResult(); echo $total_count28_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_medium = $db->loadResult(); echo $total_count56_medium; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_medium = $db->loadResult(); echo $total_count84_medium; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Medium' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_medium = $db->loadResult(); echo $total_count85_medium; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'N' and message_priority = 'Medium'"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_medium - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_medium = $db->loadResult(); echo $total_count7_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_medium = $db->loadResult(); echo $total_count14_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_medium = $db->loadResult(); echo $total_count21_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_medium = $db->loadResult(); echo $total_count28_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_medium = $db->loadResult(); echo $total_count56_medium; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_medium = $db->loadResult(); echo $total_count84_medium; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_medium = $db->loadResult(); echo $total_count85_medium; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and (message_priority = 'Medium' or message_priority is null) and date_resolved is null"); $being_processed_medium = $db->loadResult(); echo $being_processed_medium; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_medium - $being_processed_medium); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Medium' and confirmed_closed = 'Y'"); $resolved_and_closed_medium = $db->loadResult(); echo $resolved_and_closed_medium; ?></td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and (message_priority = 'Low' or message_priority is null or message_priority = '')"); $total_count_low = $db->loadResult(); echo $total_count_low; ?></td>
                 <td align="center" style="border-right:1px solid;"><?php echo $res_within_standards_low3; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_low = $db->loadResult(); echo $total_count7_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_low = $db->loadResult(); echo $total_count14_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_low = $db->loadResult(); echo $total_count21_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_low = $db->loadResult(); echo $total_count28_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_low = $db->loadResult(); echo $total_count56_low; ?></td>
-                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_low = $db->loadResult(); echo $total_count84_low; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'Y' and message_priority = 'Low' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_low = $db->loadResult(); echo $total_count85_low; ?></td>
-                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and confirmed_closed = 'N' and (message_priority = 'Low' or message_priority is null or message_priority = '')"); $unresolved = $db->loadResult(); echo $unresolved; ?></td>
-                <td align="center"><?php echo ($total_count_low - $unresolved); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 7 day)"); $total_count7_low = $db->loadResult(); echo $total_count7_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $total_count14_low = $db->loadResult(); echo $total_count14_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $total_count21_low = $db->loadResult(); echo $total_count21_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $total_count28_low = $db->loadResult(); echo $total_count28_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $total_count56_low = $db->loadResult(); echo $total_count56_low; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $total_count84_low = $db->loadResult(); echo $total_count84_low; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved > date_add(date_received, interval 85 day)"); $total_count85_low = $db->loadResult(); echo $total_count85_low; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and date_resolved is null"); $being_processed_low = $db->loadResult(); echo $being_processed_low; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($total_count_low - $being_processed_low); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where $category_sql related_to_pb = 1 and gender = 'Female' and message_priority = 'Low' and confirmed_closed = 'Y'"); $resolved_and_closed_low = $db->loadResult(); echo $resolved_and_closed_low; ?></td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">High Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high3/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_high/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_high/$total_count*100, 1)-round($total_count84_high/$total_count*100, 1)-round($total_count56_high/$total_count*100, 1)-round($total_count28_high/$total_count*100, 1)-round($total_count21_high/$total_count*100, 1)-round($total_count14_high/$total_count*100, 1)-round($total_count7_high/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_high3/$total_count_high * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_high/$total_count_high*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_high - $being_processed_high)/$total_count_high*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_high/$total_count_high*100, 1); ?>%</td>
             </tr>
             <tr>
                 <td align="left" style="border-right:1px solid;">Medium Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium3/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_medium/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_medium/$total_count*100, 1)-round($total_count84_medium/$total_count*100, 1)-round($total_count56_medium/$total_count*100, 1)-round($total_count28_medium/$total_count*100, 1)-round($total_count21_medium/$total_count*100, 1)-round($total_count14_medium/$total_count*100, 1)-round($total_count7_medium/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_medium3/$total_count_medium * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_medium/$total_count_medium*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_medium - $being_processed_medium)/$total_count_medium*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_medium/$total_count_medium*100, 1); ?>%</td>
             </tr>
             <tr style="border-bottom:1px solid;">
                 <td align="left" style="border-right:1px solid;">Low Priority</td>
                 <td align="center" style="border-right:1px solid;">100%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low3/$total_count * 100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count7_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count14_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count21_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count28_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count56_low/$total_count*100, 1); ?>%</td>
-                <td align="center"><?php echo @round($total_count84_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_low/$total_count*100, 1); ?>%</td>
-                <td align="center" style="border-right:1px solid;"><?php @$unresolved = (100-round($total_count85_low/$total_count*100, 1)-round($total_count84_low/$total_count*100, 1)-round($total_count56_low/$total_count*100, 1)-round($total_count28_low/$total_count*100, 1)-round($total_count21_low/$total_count*100, 1)-round($total_count14_low/$total_count*100, 1)-round($total_count7_low/$total_count*100, 1)); echo $unresolved; ?>%</td>
-                <td align="center"><?php echo (100 - $unresolved); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($res_within_standards_low3/$total_count_low * 100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count7_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count14_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count21_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count28_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count56_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($total_count84_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($total_count85_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round($being_processed_low/$total_count_low*100, 1); ?>%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo @round(($total_count_low - $being_processed_low)/$total_count_low*100, 1); ?>%</td>
+                <td align="center"><?php echo @round($resolved_and_closed_low/$total_count_low*100, 1); ?>%</td>
             </tr>
 
         </table>
