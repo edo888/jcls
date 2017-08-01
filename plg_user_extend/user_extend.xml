@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<install version="1.5" type="plugin" group="system" method="upgrade">
+<extension type="plugin" group="System" version="2.5" method="upgrade">
     <name>System - User Extend</name>
     <author>Edvard Ananyan</author>
     <creationDate>March 2010</creationDate>
-    <copyright>Copyright (C) 2008 - 2012 Edvard Ananyan. All rights reserved.</copyright>
+    <copyright>Copyright (C) 2008 - 2014 Edvard Ananyan. All rights reserved.</copyright>
     <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
     <authorEmail>edo888@gmail.com</authorEmail>
-    <authorUrl>http://edo.webmaster.am</authorUrl>
+    <authorUrl>http://2glux.com</authorUrl>
     <version>0.9.8</version>
     <description>This plugin will add new custom fields in user manager. You need to define custom parameters in plugins/system/user_extend/user.xml file.</description>
 
@@ -17,4 +17,4 @@
 
     <params>
     </params>
-</install>
+</extension>

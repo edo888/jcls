@@ -136,6 +136,13 @@ jimport('joomla.filter.output');
                 </tr>
             </tfoot>
         </table>
+
+        <?php
+        $manifest_details = JInstaller::parseXMLInstallFile(JPATH_ADMINISTRATOR .'/components/com_cls/cls.xml');
+        $version = $manifest_details['version'];
+        ?>
+        <div style="text-align:right;"><b>Version:</b> <?php echo $version; ?></div>
+
         <input type="hidden" name="view" value="notifications" />
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="boxchecked" value="0" />

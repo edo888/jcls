@@ -232,9 +232,9 @@ class ClsFrontControllerComplaint extends JControllerForm {
 
                     $query = array();
                     // Send notification to Supervisors
-                    $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
                     if($support_group_id)// Send notification to assagned Level 2 support groups
-                        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+                        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
 
                     $query = implode(' UNION ALL ', $query);
 
@@ -290,10 +290,10 @@ class ClsFrontControllerComplaint extends JControllerForm {
 
                     $query = array();
                     // Send notification to Supervisors
-                    $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
                     // Send notification to assagned Level 2 support groups
                     if($support_group_id)
-                        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+                        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
 
                     $query = implode(' UNION ALL ', $query);
 
@@ -351,11 +351,11 @@ class ClsFrontControllerComplaint extends JControllerForm {
                     $query = array();
 
                     // Send notification to Supervisors
-                    $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
 
                     // Send notification to assagned Level 2 support groups
                     if($support_group_id)
-                        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+                        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
 
                     $query = implode(' UNION ALL ', $query);
 

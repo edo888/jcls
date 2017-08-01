@@ -93,7 +93,7 @@ class ClsFrontModelComplaint extends JModelLegacy {
         $lists['contract'] = JHTML::_('select.genericlist', $contract, 'contract_id', null, 'key', 'value', $row->contract_id);
 
         // editor list
-        $query = 'select * from #__users where params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
+        $query = 'select * from #__users where block = 0 and params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
         $db->setQuery($query);
         $editors = $db->loadObjectList();
         $editor[] = array('key' => '', 'value' => '- Select Editor -');
@@ -102,7 +102,7 @@ class ClsFrontModelComplaint extends JModelLegacy {
         $lists['editor'] = JHTML::_('select.genericlist', $editor, 'editor_id', null, 'key', 'value', $row->editor_id);
 
         // resolver list
-        $query = 'select * from #__users where params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
+        $query = 'select * from #__users where block = 0 and params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
         $db->setQuery($query);
         $resolvers = $db->loadObjectList();
         $resolver[] = array('key' => '', 'value' => '- Select Resolver -');

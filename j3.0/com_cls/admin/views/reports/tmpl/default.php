@@ -102,6 +102,7 @@ function showReports() {
         <li class=""><a href="#summary" data-toggle="tab">General Summary</a></li>
         <li class=""><a href="#statistics" data-toggle="tab">Statistics Chart</a></li>
         <li class=""><a href="#table" data-toggle="tab">Summary Table</a></li>
+        <li class=""><a href="#gbv-table" data-toggle="tab">GBV/VAC Summary Table</a></li>
         <li class=""><a href="#downloads" data-toggle="tab">Downloads</a></li>
     </ul>
 
@@ -239,9 +240,22 @@ function showReports() {
         }
     }
 
+    $db->setQuery("select * from #__complaints where gbv = 1 and gbv_relation = '1' and date_received <= '$enddate 23:59:59'");
+    $gbv_complaints_received_till_date = $db->loadObjectList();
+
+    $gbv_res_within_standards = $gbv_res_within_standards_high = 0;
+    foreach($gbv_complaints_received_till_date as $complaint) {
+        $action_period = $action_period_high;
+
+        if(!empty($complaint->date_resolved) and $action_period*24*60*60 >= (strtotime($complaint->date_resolved) - strtotime($complaint->date_received))) {
+            $gbv_res_within_standards_high++;
+        }
+    }
+
     $res_within_standards = $res_within_standards_low + $res_within_standards_medium + $res_within_standards_high;
     $res_within_standards2 = $res_within_standards_low2 + $res_within_standards_medium2 + $res_within_standards_high2;
     $res_within_standards3 = $res_within_standards_low3 + $res_within_standards_medium3 + $res_within_standards_high3;
+    $gbv_res_within_standards = $res_within_standards_high;
 
     $db->setQuery("select count(*) from #__complaints where $category_sql date_received <= '$enddate 23:59:59'");
     $complaints_received_till_date = $db->loadResult();
@@ -258,9 +272,14 @@ function showReports() {
     $db->setQuery("select count(*) from #__complaints where $category_sql confirmed_closed = 'Y' and related_to_pb = 1 and gender = 'Female' and date_received <= '$enddate 23:59:59'");
     $complaints_resolved_related_to_pb_and_females = $db->loadResult();
 
+    $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_received <= '$enddate 23:59:59'");
+    $gbv_complaints_received_till_date = $db->loadResult();
+
     $total_res_within_standards = $res_within_standards;
+    $gbv_total_res_within_standards = $gbv_res_within_standards;
     $res_within_standards = ($complaints_received_till_date > 0 ? round($res_within_standards/$complaints_received_till_date * 100, 1) . ' %' : '0 %');
     $rel_pb_addressed = ($all_complaints_related_to_pb > 0 ? round($complaints_resolved_related_to_pb/$all_complaints_related_to_pb * 100, 1) . ' %' : '0 %');
+    $gbv_res_within_standards = ($gbv_complaints_received_till_date > 0 ? round($gbv_res_within_standards/$gbv_complaints_received_till_date * 100, 1) . ' %' : '-');
 
     $total_res_within_standards2 = $res_within_standards2;
     $total_res_within_standards3 = $res_within_standards3;
@@ -475,6 +494,67 @@ EOT;
     ?>
     </div>
 
+    <div id="gbv-table" class="tab-pane">
+
+    <h3>GBV/VAC Summary Table</h3>
+    <div style="width:900px;">
+        <table style="border:1px solid;" cellpadding="5">
+            <tr style="border-bottom:1px solid;"><td style="border-right:1px solid;"></td><th align="center" style="border-right:1px solid;">Total</th><th align="center" style="border-right:1px solid;">Project Related</th><th align="center" style="border-right:1px solid;">Not Project Related</th></tr>
+            <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;">Number</th><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1"); $gbv_total_count = $db->loadResult(); echo $gbv_total_count; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1'"); $gbv_project_related_count = $db->loadResult(); echo $gbv_project_related_count; ?></td><td align="center" style="border-right:1px solid;"><?php echo ($gbv_total_count - $gbv_project_related_count); ?></td></tr>
+            <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;">%</th><td align="center" style="border-right:1px solid;">100%</td><td align="center" style="border-right:1px solid;"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_project_related_count/$gbv_total_count*100, 1) . '%'; ?></td><td align="center" style="border-right:1px solid;"><?php if($gbv_total_count == 0) echo '-'; else echo @(100-round($gbv_project_related_count/$gbv_total_count*100, 1)) . '%'; ?></td></tr>
+        </table>
+        <br />
+        <br />
+        <table style="border:1px solid" cellpadding="5">
+            <tr style="border-bottom:1px solid;"><th align="left" style="border-right:1px solid;" colspan="13">Grievances and Complaints Related to Project</th></tr>
+            <tr><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><th rowspan="2" width="30" style="border-right:1px solid;">Within Service Standard</th><th colspan="7" style="border-bottom:1px solid;border-right:1px solid;">Time to Resolve Grievances and Complaints</th><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><td></td></tr>
+            <tr style="border-bottom:1px solid;"><td style="border-right:1px solid;"></td><th align="center" style="border-right:1px solid;">Total</th><th><= 7 days</th><th><= 14 days</th><th><= 21 days</th><th><= 28 days</th><th><= 56 days</th><th><= 84 days</th><th style="border-right:1px solid;">>= 85 days</th><th style="border-right:1px solid;">Being Processed</th><th style="border-right:1px solid;">Resolved</th><th>Resolved and Verified</th></tr>
+            <tr>
+                <th align="left" style="border-right:1px solid;">Number</th>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1'"); $gbv_total_count = $db->loadResult(); echo $gbv_total_count; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo $gbv_total_res_within_standards; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved <= date_add(date_received, interval 7 day)"); $gbv_total_count7 = $db->loadResult(); echo $gbv_total_count7; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved <= date_add(date_received, interval 14 day) and date_resolved > date_add(date_received, interval 7 day)"); $gbv_total_count14 = $db->loadResult(); echo $gbv_total_count14; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved <= date_add(date_received, interval 21 day) and date_resolved > date_add(date_received, interval 14 day)"); $gbv_total_count21 = $db->loadResult(); echo $gbv_total_count21; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved <= date_add(date_received, interval 28 day) and date_resolved > date_add(date_received, interval 21 day)"); $gbv_total_count28 = $db->loadResult(); echo $gbv_total_count28; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved <= date_add(date_received, interval 56 day) and date_resolved > date_add(date_received, interval 28 day)"); $gbv_total_count56 = $db->loadResult(); echo $gbv_total_count56; ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved <= date_add(date_received, interval 84 day) and date_resolved > date_add(date_received, interval 56 day)"); $gbv_total_count84 = $db->loadResult(); echo $gbv_total_count84; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved > date_add(date_received, interval 85 day)"); $gbv_total_count85 = $db->loadResult(); echo $gbv_total_count85; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and date_resolved is null"); $gbv_being_processed = $db->loadResult(); echo $gbv_being_processed; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php echo ($gbv_total_count - $gbv_being_processed); ?></td>
+                <td align="center"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_relation = '1' and confirmed_closed = 'Y'"); $gbv_resolved_and_closed = $db->loadResult(); echo $gbv_resolved_and_closed; ?></td>
+            </tr>
+            <tr style="border-bottom:1px solid;">
+                <th align="left" style="border-right:1px solid;">%</th>
+                <td align="center" style="border-right:1px solid;">100%</td>
+                <td align="center" style="border-right:1px solid;"><?php echo str_replace(' ', '', $gbv_res_within_standards); ?></td>
+                <td align="center"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_total_count7/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_total_count14/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_total_count21/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_total_count28/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_total_count56/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_total_count84/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_total_count85/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_being_processed/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center" style="border-right:1px solid;"><?php if($gbv_total_count == 0) echo '-'; else echo @round(($gbv_total_count - $gbv_being_processed)/$gbv_total_count*100, 1) . '%'; ?></td>
+                <td align="center"><?php if($gbv_total_count == 0) echo '-'; else echo @round($gbv_resolved_and_closed/$gbv_total_count*100, 1) . '%'; ?></td>
+            </tr>
+        </table>
+        <br />
+        <br />
+        <table style="border:1px solid;" cellpadding="5">
+            <tr style="border-bottom:1px solid;"><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><th align="center" style="border-right:1px solid;" colspan="7">Project Related</th></tr>
+            <tr style="border-bottom:1px solid;"><th align="center" style="border-right:1px solid;">Type</th><th align="center" style="border-right:1px solid;">Total Number of Complaints</th><th align="center" style="border-right:1px solid;">Project Related Complaints (#)</th><th align="center" style="border-right:1px solid;">Affected Female</th><th align="center" style="border-right:1px solid;">Affected Male</th><th align="center" style="border-right:1px solid;">Resolved(#)</th><th align="center" style="border-right:1px solid;">Resolved (%)</th><th align="center" style="border-right:1px solid;">Being Processed (#)</th><th align="center" style="border-right:1px solid;">Being Processed (%)</th></tr>
+            <tr style="border-bottom:1px solid;"><td align="left" style="border-right:1px solid;">Rape</td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'rape'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'rape' and gbv_relation = '1'"); $total = $db->loadResult(); echo $total; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'rape' and gbv_relation = '1' and gender = 'Female'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'rape' and gbv_relation = '1' and gender = 'Male'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'rape' and gbv_relation = '1' and date_resolved is not null"); $resolved = $db->loadResult(); echo $resolved; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($resolved/$total * 100, 1) . '%'; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'rape' and gbv_relation = '1' and date_resolved is null"); $processed = $db->loadResult(); echo $processed; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($processed/$total * 100, 1) . '%'; ?></td></tr>
+            <tr style="border-bottom:1px solid;"><td align="left" style="border-right:1px solid;">Sexual Assault</td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'sexual_assault'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'sexual_assault' and gbv_relation = '1'"); $total = $db->loadResult(); echo $total; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'sexual_assault' and gbv_relation = '1' and gender = 'Female'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'sexual_assault' and gbv_relation = '1' and gender = 'Male'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'sexual_assault' and gbv_relation = '1' and date_resolved is not null"); $resolved = $db->loadResult(); echo $resolved; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($resolved/$total * 100, 1) . '%'; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'sexual_assault' and gbv_relation = '1' and date_resolved is null"); $processed = $db->loadResult(); echo $processed; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($processed/$total * 100, 1) . '%'; ?></td></tr>
+            <tr style="border-bottom:1px solid;"><td align="left" style="border-right:1px solid;">Physical Assault</td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'physical_assault'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'physical_assault' and gbv_relation = '1'"); $total = $db->loadResult(); echo $total; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'physical_assault' and gbv_relation = '1' and gender = 'Female'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'physical_assault' and gbv_relation = '1' and gender = 'Male'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'physical_assault' and gbv_relation = '1' and date_resolved is not null"); $resolved = $db->loadResult(); echo $resolved; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($resolved/$total * 100, 1) . '%'; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'physical_assault' and gbv_relation = '1' and date_resolved is null"); $processed = $db->loadResult(); echo $processed; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($processed/$total * 100, 1) . '%'; ?></td></tr>
+            <tr style="border-bottom:1px solid;"><td align="left" style="border-right:1px solid;">Forced Marriage</td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'forced_marriage'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'forced_marriage' and gbv_relation = '1'"); $total = $db->loadResult(); echo $total; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'forced_marriage' and gbv_relation = '1' and gender = 'Female'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'forced_marriage' and gbv_relation = '1' and gender = 'Male'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'forced_marriage' and gbv_relation = '1' and date_resolved is not null"); $resolved = $db->loadResult(); echo $resolved; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($resolved/$total * 100, 1) . '%'; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'forced_marriage' and gbv_relation = '1' and date_resolved is null"); $processed = $db->loadResult(); echo $processed; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($processed/$total * 100, 1) . '%'; ?></td></tr>
+            <tr style="border-bottom:1px solid;"><td align="left" style="border-right:1px solid;">Denial of Resources, Opportunities or Services</td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'denial_of_resources'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'denial_of_resources' and gbv_relation = '1'"); $total = $db->loadResult(); echo $total; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'denial_of_resources' and gbv_relation = '1' and gender = 'Female'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'denial_of_resources' and gbv_relation = '1' and gender = 'Male'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'denial_of_resources' and gbv_relation = '1' and date_resolved is not null"); $resolved = $db->loadResult(); echo $resolved; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($resolved/$total * 100, 1) . '%'; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'denial_of_resources' and gbv_relation = '1' and date_resolved is null"); $processed = $db->loadResult(); echo $processed; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($processed/$total * 100, 1) . '%'; ?></td></tr>
+            <tr style="border-bottom:1px solid;"><td align="left" style="border-right:1px solid;">Psychological/Emotional Abuse</td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'psychological_emotional_abuse'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'psychological_emotional_abuse' and gbv_relation = '1'"); $total = $db->loadResult(); echo $total; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'psychological_emotional_abuse' and gbv_relation = '1' and gender = 'Female'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'psychological_emotional_abuse' and gbv_relation = '1' and gender = 'Male'"); echo $db->loadResult(); ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'psychological_emotional_abuse' and gbv_relation = '1' and date_resolved is not null"); $resolved = $db->loadResult(); echo $resolved; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($resolved/$total * 100, 1) . '%'; ?></td><td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints where gbv = 1 and gbv_type = 'psychological_emotional_abuse' and gbv_relation = '1' and date_resolved is null"); $processed = $db->loadResult(); echo $processed; ?></td><td align="center" style="border-right:1px solid;"><?php if($total == 0) echo '-'; else echo @round($processed/$total * 100, 1) . '%'; ?></td></tr>
+        </table>
+    </div>
+    </div>
+
     <div id="table" class="tab-pane">
 
     <h3>Summary Table</h3>
@@ -509,7 +589,7 @@ EOT;
         <br />
         <table style="border:1px solid" cellpadding="5">
             <tr><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><th rowspan="2" width="30" style="border-right:1px solid;">Within Service Standard</th><th colspan="7" style="border-bottom:1px solid;border-right:1px solid;">Time to Resolve Grievances and Complaints</th><td style="border-right:1px solid;"></td><td style="border-right:1px solid;"></td><td></td></tr>
-            <tr style="border-bottom:1px solid;"><td style="border-right:1px solid;"></td><th align="center" style="border-right:1px solid;">Total</th><th><= 7 days</th><th><= 14 days</th><th><= 21 days</th><th><= 28 days</th><th><= 56 days</th><th><= 84 days</th><th style="border-right:1px solid;">>= 85 days</th><th style="border-right:1px solid;">Being Processed</th><th style="border-right:1px solid;">Resolved</th><th>Resolved and Closed</th></tr>
+            <tr style="border-bottom:1px solid;"><td style="border-right:1px solid;"></td><th align="center" style="border-right:1px solid;">Total</th><th><= 7 days</th><th><= 14 days</th><th><= 21 days</th><th><= 28 days</th><th><= 56 days</th><th><= 84 days</th><th style="border-right:1px solid;">>= 85 days</th><th style="border-right:1px solid;">Being Processed</th><th style="border-right:1px solid;">Resolved</th><th>Resolved and Verified</th></tr>
             <tr>
                 <th align="left" style="border-right:1px solid;">Number</th>
                 <td align="center" style="border-right:1px solid;"><?php $db->setQuery("select count(*) from #__complaints $category_sql_where"); $total_count = $db->loadResult(); echo $total_count; ?></td>
@@ -878,5 +958,11 @@ EOT;
     </div>
 
     </div>
+
+    <?php
+    $manifest_details = JInstaller::parseXMLInstallFile(JPATH_ADMINISTRATOR .'/components/com_cls/cls.xml');
+    $version = $manifest_details['version'];
+    ?>
+    <div style="text-align:right;"><b>Version:</b> <?php echo $version; ?></div>
 
 <?php } ?>

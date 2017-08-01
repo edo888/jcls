@@ -34,6 +34,9 @@ ALTER TABLE `#__complaints` ADD COLUMN `date_closed` datetime default NULL AFTER
 ALTER TABLE `#__complaints` ADD COLUMN `related_to_pb` int(4) NOT NULL default 0 AFTER `processed_message`;
 ALTER TABLE `#__complaints` ADD COLUMN `issue_type` int(4) NOT NULL default 1 AFTER `related_to_pb`;
 ALTER TABLE `#__complaints` ADD COLUMN `gender` ENUM('Male', 'Female', 'Not Specified') NOT NULL default 'Not Specified' AFTER `related_to_pb`;
+ALTER TABLE `#__complaints` ADD COLUMN `gbv` int(4) NOT NULL default 0 AFTER `gender`;
+ALTER TABLE `#__complaints` ADD COLUMN `gbv_type` ENUM('', 'rape', 'sexual_assault', 'physical_assault', 'forced_marriage', 'denial_of_resources', 'psychological_emotional_abuse') NOT NULL default '' AFTER `gbv`;
+ALTER TABLE `#__complaints` ADD COLUMN `gbv_relation` ENUM('0', '1', 'unknown') NOT NULL default 'unknown' AFTER `gbv_type`;
 
 CREATE TABLE IF NOT EXISTS `#__complaint_message_ids` (
   `id` int(11) NOT NULL auto_increment,

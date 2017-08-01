@@ -146,13 +146,20 @@ $document->addStyleDeclaration("
                 $link        = JRoute::_('index.php?option=com_cls&task=complaint.edit&id='. $row->id);
                 $checked     = JHTML::_('grid.checkedout',$row,$i);
 
-                if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received))
+                if($row->date_processed == '' and $raw_complaint_warning_period*24*60*60 < time() - strtotime($row->date_received)) // not processed
                     JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not processed yet.');
-                if($row->confirmed_closed == 'N' and $row->date_processed != '') {
+                if($row->date_processed != '' and $row->date_resolved == '') { // not resolved yet
                     switch($row->message_priority) {
                         case 'Low': if($action_period_low*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not resolved yet.'); break;
                         case 'Medium': if($action_period_medium*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not resolved yet.'); break;
                         case 'High': if($action_period_high*24*60*60 < time() - strtotime($row->date_processed)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not resolved yet.'); break;
+                    }
+                }
+                if($row->date_resolved != '' and $row->confirmed_closed == 'N') { // not closed yet
+                    switch($row->message_priority) {
+                        case 'Low': if($action_period_low*24*60*60 < time() - strtotime($row->date_resolved)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not closed yet.'); break;
+                        case 'Medium': if($action_period_medium*24*60*60 < time() - strtotime($row->date_resolved)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not closed yet.'); break;
+                        case 'High': if($action_period_high*24*60*60 < time() - strtotime($row->date_resolved)) JError::raiseNotice(0, 'Complaint <a href="'.$link.'" style="color:#ee7722">#' . $row->message_id . '</a> is not closed yet.'); break;
                     }
                 }
                 ?>
@@ -174,7 +181,7 @@ $document->addStyleDeclaration("
                         <?php echo $row->message_source; ?>
                     </td>
                     <td align="center">
-                        <?php echo $row->sender; ?>
+                        <?php if(substr_count($row->sender, 'enc:') == 0) echo $row->sender; else echo 'Encrypted'; ?>
                     </td>
                     <td align="center">
                         <?php echo date('Y-m-d', strtotime($row->date_received)); ?>
@@ -217,6 +224,13 @@ $document->addStyleDeclaration("
                 </tr>
             </tfoot>
         </table>
+
+        <?php
+        $manifest_details = JInstaller::parseXMLInstallFile(JPATH_ADMINISTRATOR .'/components/com_cls/cls.xml');
+        $version = $manifest_details['version'];
+        ?>
+        <div style="text-align:right;"><b>Version:</b> <?php echo $version; ?></div>
+
         <input type="hidden" name="view" value="complaints" />
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="boxchecked" value="0" />

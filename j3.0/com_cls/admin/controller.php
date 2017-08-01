@@ -421,10 +421,10 @@ class clsController extends JControllerLegacy {
 
         $query = array();
         // Send notification to Supervisors
-        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
 
         // Send notification to Level 1 and System Administrator
-        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%'))";
+        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%'))";
 
         $query = implode(' UNION ALL ', $query);
 

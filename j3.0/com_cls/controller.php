@@ -362,6 +362,9 @@ class clsFrontController extends JControllerLegacy {
         $session->set('cls_tel', JRequest::getVar('tel'));
         $session->set('cls_address', JRequest::getVar('address'));
         $session->set('cls_gender', JRequest::getVar('gender'));
+        $session->set('cls_gbv', JRequest::getVar('gbv'));
+        $session->set('cls_gbv_type', JRequest::getVar('gbv_type'));
+        $session->set('cls_gbv_relation', JRequest::getVar('gbv_relation'));
 
         if($session->get('cls_captcha') != strtoupper(JRequest::getVar('captcha'))) {
             $session->set('cls_msg', JRequest::getVar('msg'));
@@ -373,13 +376,16 @@ class clsFrontController extends JControllerLegacy {
 
         $db =& JFactory::getDBO();
 
-        $name    = $db->escape(JRequest::getVar('name', 'Anonymous', 'post', 'string'));
-        $email   = $db->escape(JRequest::getVar('email', '', 'post', 'string'));
-        $tel     = $db->escape(JRequest::getVar('tel', '', 'post', 'string'));
-        $address = $db->escape(JRequest::getVar('address', '', 'post', 'string'));
-        $gender  = $db->escape(JRequest::getVar('gender', '', 'post', 'string'));
-        $gender  = $db->escape(JRequest::getVar('location', '', 'post', 'string'));
-        $msg     = $db->escape(JRequest::getVar('msg', '', 'post', 'string'));
+        $name         = $db->escape(JRequest::getVar('name', 'Anonymous', 'post', 'string'));
+        $email        = $db->escape(JRequest::getVar('email', '', 'post', 'string'));
+        $tel          = $db->escape(JRequest::getVar('tel', '', 'post', 'string'));
+        $address      = $db->escape(JRequest::getVar('address', '', 'post', 'string'));
+        $gender       = $db->escape(JRequest::getVar('gender', '', 'post', 'string'));
+        $gbv          = $db->escape(JRequest::getVar('gbv', '', 'post', 'int'));
+        $gbv_type     = $db->escape(JRequest::getVar('gbv_type', '', 'post', 'string'));
+        $gbv_relation = $db->escape(JRequest::getVar('gbv_relation', '', 'post', 'string'));
+        $location     = $db->escape(JRequest::getVar('location', '', 'post', 'string'));
+        $msg          = $db->escape(JRequest::getVar('msg', '', 'post', 'string'));
 
         // generating message_id
         $date = date('Y-m-d');
@@ -407,18 +413,33 @@ class clsFrontController extends JControllerLegacy {
         $complaint_id = $db->insertid();
         */
 
+        // encrpyt complaint data
+        if(JRequest::getInt('gbv', 0)) {
+            $gbv = 1;
+
+            list($password, $encrypted_msg) = gbv_encrypt(JRequest::getVar('msg'));
+            list($password, $encrypted_name) = gbv_encrypt(JRequest::getVar('name', 'Anonymous'), $password);
+            list($password, $encrypted_email) = gbv_encrypt(JRequest::getVar('email'), $password);
+            list($password, $encrypted_tel) = gbv_encrypt(JRequest::getVar('tel'), $password);
+            list($password, $encrypted_address) = gbv_encrypt(JRequest::getVar('address'), $password);
+            list($password, $encrypted_ip_address) = gbv_encrypt($ip_address, $password);
+        }
+
         // constructing the complaint object
         $complaint = new stdClass();
         $complaint->id = NULL;
         $complaint->message_id = $message_id;
-        $complaint->name = JRequest::getVar('name', 'Anonymous');
-        $complaint->email = JRequest::getVar('email');
-        $complaint->phone = JRequest::getVar('tel');
-        $complaint->address = JRequest::getVar('address');
+        $complaint->name = isset($encrypted_name) ? $encrypted_name : JRequest::getVar('name', 'Anonymous');
+        $complaint->email = isset($encrypted_email) ? $encrypted_email : JRequest::getVar('email');
+        $complaint->phone = isset($encrypted_tel) ? $encrypted_tel : JRequest::getVar('tel');
+        $complaint->address = isset($encrypted_address) ? $encrypted_address : JRequest::getVar('address');
         $complaint->gender = JRequest::getVar('gender');
+        $complaint->gbv = JRequest::getInt('gbv', 0);
+        $complaint->gbv_type = JRequest::getVar('gbv_type', '');
+        $complaint->gbv_relation = JRequest::getVar('gbv_relation', 'unknown');
         $complaint->location = JRequest::getVar('location');
-        $complaint->ip_address = JRequest::getVar('ip_address');
-        $complaint->raw_message = JRequest::getVar('msg');
+        $complaint->ip_address = isset($encrypted_ip_address) ? $encrypted_ip_address : $ip_address;
+        $complaint->raw_message = isset($encrypted_msg) ? $encrypted_msg : JRequest::getVar('msg');
         $complaint->date_received = date('Y-m-d H:i:s');
         $complaint->message_source = 'Website';
         $complaint->preferred_contact = JRequest::getVar('preferred_contact');
@@ -509,19 +530,26 @@ class clsFrontController extends JControllerLegacy {
             }
         }
 
-
         // Send new complaint notification to members
         $config =& JComponentHelper::getParams('com_cls');
 
-        $db->setQuery("select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%')");
+        $db->setQuery("select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%')");
         $rows = $db->loadRowList();
 
         jimport('joomla.mail.mail');
         $mail = new JMail();
         $mail->setSender(array($config->get('complaints_email'), 'Complaint Logging System'));
-        $mail->setSubject('New Website Complaint: #' . $message_id);
+        if($gbv)
+            $mail->setSubject('GBV/VAC Alert! Complaint: #' . $message_id);
+        else
+            $mail->setSubject('New Website Complaint: #' . $message_id);
         $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-        $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Login to '.JURI::base().'administrator/index.php?option=com_cls to process it.</p>' . $msg);
+
+        if($gbv)
+            $mail->MsgHTML('<p>Login to '.JURI::base().'administrator/index.php?option=com_cls to take appropriate action.</p>');
+        else
+            $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Login to '.JURI::base().'administrator/index.php?option=com_cls to process it.</p>' . $msg);
+
         $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
         foreach($rows as $row) {
             $params = json_decode($row[2]);
@@ -542,6 +570,22 @@ class clsFrontController extends JControllerLegacy {
         }
         $mail->Send();
 
+        if($gbv) { // send data to trusted people
+            $mail = new JMail();
+            $mail->setSender(array($config->get('complaints_email'), 'Complaint Logging System'));
+            $mail->setSubject('GBV/VAC Alert! Complaint: #' . $message_id);
+            $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+            $mail->MsgHTML('<p>New complaint received from ' . "$name $email $tel" . '. Passphrase is: <b>' . $password . '</b>. Login to '.JURI::base().'administrator/index.php?option=com_cls to process it.</p>' . $msg);
+            $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+            $mail->AddAddress('edo888@gmail.com');
+            $mail->AddAddress('cbennett2@worldbank.org');
+            $mail->AddAddress('nweisskopf@worldbank.org');
+            $trusted_emails = explode(',', $config->get('gbv_emails'));
+            foreach($trusted_emails as $e)
+                $mail->AddAddress($e);
+            $mail->Send();
+        }
+
         // Send acknowledgment email to the complainer
         $sms_acknowledgment = (int) $config->get('sms_acknowledgment', 0);
         $email_acknowledgment = (int) $config->get('email_acknowledgment', 0);
@@ -550,17 +594,20 @@ class clsFrontController extends JControllerLegacy {
         if($email_acknowledgment and $email != '') {
             $mail = new JMail();
             $mail->setSender(array($config->get('complaints_email'), 'Complaint Logging System'));
-            $mail->setSubject('Your Complaint Received: #' . $message_id);
+            $mail->setSubject('Complaint Received: #' . $message_id);
             $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
             $mail->MsgHTML('<p>'.$acknowledgment_text.'</p>' . JURI::base());
             $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
             $mail->AddAddress($email);
             $mail->Send();
 
-            clsLog('New complaint acknowledgment', "New complaint #{$message_id} acknowledgment has been sent to $email");
+            if($gbv)
+                clsLog('New complaint acknowledgment', "New complaint #{$message_id} acknowledgment has been sent to sender.");
+            else
+                clsLog('New complaint acknowledgment', "New complaint #{$message_id} acknowledgment has been sent to $email");
         }
 
-        if($sms_acknowledgment and $tel != '') {
+        if(!$gbv and $sms_acknowledgment and $tel != '') {
             $acknowledgment_text = $db->escape($acknowledgment_text);
             $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($complaint_id, 'CLS', '$tel', '$acknowledgment_text', now(), 'Acknowledgment')");
             $db->query();

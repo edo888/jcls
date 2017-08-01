@@ -42,6 +42,10 @@ class ClsControllerComplaint extends JControllerForm {
         $this->registerTask('remove', 'removeComplaint');
         $this->registerTask('cancel', 'close');
 
+        $this->registerTask('decrypt', 'decryptComplaint');
+        $this->registerTask('prev', 'prevComplaint');
+        $this->registerTask('next', 'nextComplaint');
+
         $this->registerTask('addArea' , 'editArea');
         $this->registerTask('editArea', 'editArea');
         $this->registerTask('saveArea', 'saveArea');
@@ -75,18 +79,23 @@ class ClsControllerComplaint extends JControllerForm {
     }
 
     function removeComplaint() {
-        $db   =& JFactory::getDBO();
-        $user =& JFactory::getUser();
+        $db   = JFactory::getDBO();
+        $user = JFactory::getUser();
         $cid  = JRequest::getVar( 'cid', array(), '', 'array' );
 
         $user_type = $user->getParam('role', 'Guest');
 
         if($user_type == 'System Administrator') {
             for($i = 0, $n = count($cid); $i < $n; $i++) {
-                $query = "delete from #__complaints where id = $cid[$i]";
-                $db->setQuery($query);
+                $db->setQuery("select * from #__complaints where id = $cid[$i]");
+                $complaint_data = $db->loadObject();
+                $message_id = $complaint_data->message_id;
+                $complaint_data = json_encode($complaint_data);
+
+                $db->setQuery("delete from #__complaints where id = $cid[$i]");
                 $db->query();
-                clsLog('Complaint removed', 'The complaint with ID=' . $cid[$i] . ' has been removed');
+
+                clsLog('Complaint removed', 'Complaint #' . $message_id . ' has been removed: ' . $complaint_data);
             }
 
             $this->setRedirect('index.php?option=com_cls', JText::_('Complaint(s) successfully deleted'));
@@ -97,7 +106,7 @@ class ClsControllerComplaint extends JControllerForm {
 
     function close() {
         $link = 'index.php?option=com_cls&view=complaints';
-        $this->setRedirect($link, $msg);
+        $this->setRedirect($link);
     }
 
     function editComplaint() {
@@ -110,7 +119,56 @@ class ClsControllerComplaint extends JControllerForm {
         $link = 'index.php?option=com_cls&view=complaint&layout=edit';
         if($id != 0)
             $link .= '&id='.$id;
-        $this->setRedirect($link, $msg);
+        $this->setRedirect($link);
+    }
+
+    function prevComplaint() {
+        $db = JFactory::getDBO();
+        $id = JRequest::getInt('id');
+
+        $db->setQuery('select id from #__complaints where id < ' . $id . ' order by id desc limit 1');
+        $prev = $db->loadResult();
+
+        if($prev == '')
+            $prev = $id;
+
+        $link = 'index.php?option=com_cls&view=complaint&layout=edit&id='.$prev;
+        $this->setRedirect($link);
+    }
+
+    function nextComplaint() {
+        $db = JFactory::getDBO();
+        $id = JRequest::getInt('id');
+
+        $db->setQuery('select id from #__complaints where id > ' . $id . ' order by id asc limit 1');
+        $next = $db->loadResult();
+
+        if($next == '')
+            $next = $id;
+
+        $link = 'index.php?option=com_cls&view=complaint&layout=edit&id='.$next;
+        $this->setRedirect($link);
+    }
+
+    function decryptComplaint() {
+        $session = JFactory::getSession();
+        $db = JFactory::getDBO();
+
+        $id = JRequest::getInt('id');
+        $pass = JRequest::getVar('passphrase');
+
+        $db->setQuery('select name from #__complaints where id = ' . $id);
+        $name = $db->loadResult();
+
+        $link = 'index.php?option=com_cls&view=complaint&layout=edit&id=' . $id;
+
+        if(gbv_decrypt($name, $pass) !== false) { // pass is OK
+            $session->set('enc_pass_' . $id, $pass);
+
+            $this->setRedirect($link);
+        } else {
+            $this->setRedirect($link, JText::_("Wrong passphrase"));
+        }
     }
 
     public function saveComplaint() {
@@ -148,6 +206,9 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->message_id = $message_id;
             $complaint->name = JRequest::getVar('name');
             $complaint->gender = JRequest::getVar('gender');
+            $complaint->gbv = JRequest::getInt('gbv', 0);
+            $complaint->gbv_type = JRequest::getVar('gbv_type', '');
+            $complaint->gbv_relation = JRequest::getVar('gbv_relation', 'unknown');
             $complaint->email = JRequest::getVar('email');
             $complaint->phone = JRequest::getVar('phone');
             $complaint->address = JRequest::getVar('address');
@@ -183,6 +244,9 @@ class ClsControllerComplaint extends JControllerForm {
             $complaint->set('related_to_pb', null);
             $complaint->set('issue_type', null);
             $complaint->set('gender', null);
+            $complaint->set('gbv', null);
+            $complaint->set('gbv_type', null);
+            $complaint->set('gbv_relation', null);
             $complaint->set('processed_message', null);
             $complaint->set('contract_id', null);
             $complaint->set('support_group_id', null);
@@ -219,6 +283,11 @@ class ClsControllerComplaint extends JControllerForm {
             }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
+
+                $complaint->set('gbv', JRequest::getInt('gbv', 0));
+                $complaint->set('gbv_type', JRequest::getVar('gbv_type', ''));
+                $complaint->set('gbv_relation', JRequest::getVar('gbv_relation', 'unknown'));
+
                 $complaint->set('name', JRequest::getVar('name'));
                 $complaint->set('email', JRequest::getVar('email'));
                 $complaint->set('phone', JRequest::getVar('phone'));
@@ -247,9 +316,9 @@ class ClsControllerComplaint extends JControllerForm {
 
                     $query = array();
                     // Send notification to Supervisors
-                    $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
                     if($support_group_id)// Send notification to assagned Level 2 support groups
-                        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+                        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
 
                     $query = implode(' UNION ALL ', $query);
 
@@ -288,54 +357,60 @@ class ClsControllerComplaint extends JControllerForm {
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1' or $user_type == 'Level 2') {
                 $complaint->set('resolution', JRequest::getVar('resolution'));
+
+                if($complaint->gbv and $complaint->gbv_relation == 'unknown' and $complaint->resolution != '') { // generate warning
+                    $this->setRedirect('index.php?option=com_cls&task=complaint.edit&id='.$id, 'You cannot enter resolution with the "Unknown" related to project still selected.', 'warning');
+                    return;
+                }
+
                 if($complaint->date_resolved == '' and $complaint->resolution != '') {
                     $complaint->set('date_resolved', date('Y-m-d H:i:s'));
                     $complaint->set('resolver_id', $user->id);
 
                     clsLog('Complaint resolved', 'The user resolved the complaint #' . $complaint->message_id);
-                }
 
-                // send resolution notification to "interested" parties
-                $config =& JComponentHelper::getParams('com_cls');
+                    // send resolution notification to "interested" parties
+                    $config =& JComponentHelper::getParams('com_cls');
 
-                $query = array();
-                // Send notification to Supervisors
-                $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+                    $query = array();
+                    // Send notification to Supervisors
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
 
-                // Send notification to Level 1 and System Administrator
-                $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%'))";
+                    // Send notification to Level 1 and System Administrator
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and (params like '%\"role\":\"System Administrator\"%' or params like '%\"role\":\"Level 1\"%'))";
 
-                $query = implode(' UNION ALL ', $query);
+                    $query = implode(' UNION ALL ', $query);
 
-                $db->setQuery($query);
-                $rows = $db->loadRowList();
+                    $db->setQuery($query);
+                    $rows = $db->loadRowList();
 
-                jimport('joomla.mail.mail');
-                $mail = new JMail();
-                $mail->From = $config->get('complaints_email');
-                $mail->FromName = 'Complaint Logging System';
-                $mail->Subject = 'Complaint Resolved: #' . $complaint->message_id;
-                $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                $mail->msgHTML('<p>A complaint has been Resolved. Login to '.JURI::base().'index.php?option=com_cls to confirm and close it.</p>' . $complaint->resolution);
-                $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
-                foreach($rows as $row) {
-                    $params = json_decode($row[2]);
-                    if($params->receive_by_email == "1") { // send email notification
-                        $mail->AddAddress($row[0]);
-                        clsLog('Resolved notification sent', 'Complaint #' . $complaint->message_id . ' resolved notification sent to ' . $row[1]);
-                    }
+                    jimport('joomla.mail.mail');
+                    $mail = new JMail();
+                    $mail->From = $config->get('complaints_email');
+                    $mail->FromName = 'Complaint Logging System';
+                    $mail->Subject = 'Complaint Resolved: #' . $complaint->message_id;
+                    $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+                    $mail->msgHTML('<p>A complaint has been Resolved. Login to '.JURI::base().'index.php?option=com_cls to confirm and close it.</p>' . $complaint->resolution);
+                    $mail->AddReplyTo('no_reply@'.$_SERVER['HTTP_HOST']);
+                    foreach($rows as $row) {
+                        $params = json_decode($row[2]);
+                        if($params->receive_by_email == "1") { // send email notification
+                            $mail->AddAddress($row[0]);
+                            clsLog('Resolved notification sent', 'Complaint #' . $complaint->message_id . ' resolved notification sent to ' . $row[1]);
+                        }
 
-                    if($params->receive_by_sms == "1") { // send sms notification
-                        $telephone = $params->telephone;
-                        if(!empty($telephone)) {
-                            $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been resolved, please login to the system to confirm and close it.', now(), 'Notification')");
-                            $db->query();
+                        if($params->receive_by_sms == "1") { // send sms notification
+                            $telephone = $params->telephone;
+                            if(!empty($telephone)) {
+                                $db->setQuery("insert into #__complaint_message_queue (complaint_id, msg_from, msg_to, msg, date_created, msg_type) value($id, 'CLS', '$telephone', 'Complaint #$complaint->message_id has been resolved, please login to the system to confirm and close it.', now(), 'Notification')");
+                                $db->query();
 
-                            clsLog('Resolved notification sent', 'Complaint #' . $complaint->message_id . ' resolved notification sent to ' . $telephone);
+                                clsLog('Resolved notification sent', 'Complaint #' . $complaint->message_id . ' resolved notification sent to ' . $telephone);
+                            }
                         }
                     }
+                    $mail->Send();
                 }
-                $mail->Send();
             }
 
             if($user_type == 'System Administrator' or $user_type == 'Level 1') {
@@ -349,10 +424,10 @@ class ClsControllerComplaint extends JControllerForm {
 
                     $query = array();
                     // Send notification to Supervisors
-                    $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
                     // Send notification to assagned Level 2 support groups
                     if($support_group_id)
-                        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+                        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
 
                     $query = implode(' UNION ALL ', $query);
 
@@ -417,11 +492,11 @@ class ClsControllerComplaint extends JControllerForm {
                     $query = array();
 
                     // Send notification to Supervisors
-                    $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
+                    $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Supervisor\"%')";
 
                     // Send notification to assagned Level 2 support groups
                     if($support_group_id)
-                        $query[] = "(select email, name, params from #__users where params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
+                        $query[] = "(select email, name, params from #__users where block = 0 and params like '%\"receive_notifications\":\"1\"%' and params like '%\"role\":\"Level 2\"%' and id in (select user_id from #__complaint_support_groups_users_map where group_id = $support_group_id))";
 
                     $query = implode(' UNION ALL ', $query);
 

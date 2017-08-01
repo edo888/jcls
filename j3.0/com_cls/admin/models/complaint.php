@@ -98,7 +98,7 @@ class ClsModelComplaint extends JModelLegacy {
         $lists['contract'] = JHTML::_('select.genericlist', $contract, 'contract_id', null, 'key', 'value', $row->contract_id);
 
         // editor list
-        $query = 'select * from #__users where params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
+        $query = 'select * from #__users where block = 0 and params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
         $db->setQuery($query);
         $editors = $db->loadObjectList();
         $editor[] = array('key' => '', 'value' => '- Select Editor -');
@@ -107,7 +107,7 @@ class ClsModelComplaint extends JModelLegacy {
         $lists['editor'] = JHTML::_('select.genericlist', $editor, 'editor_id', null, 'key', 'value', $row->editor_id);
 
         // resolver list
-        $query = 'select * from #__users where params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
+        $query = 'select * from #__users where block = 0 and params like "%\"role\":\"Level 1\"%" or params like "%\"role\":\"System Administrator\"%"';
         $db->setQuery($query);
         $resolvers = $db->loadObjectList();
         $resolver[] = array('key' => '', 'value' => '- Select Resolver -');
@@ -130,6 +130,23 @@ class ClsModelComplaint extends JModelLegacy {
 
         // gender list
         $lists['gender'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Gender -' ), array('key' => 'Male', 'value' => 'Male'), array('key' => 'Female', 'value' => 'Female'), array('key' => 'Not Specified', 'value' => 'Not Specified')), 'gender', null, 'key', 'value', $row->gender);
+
+        // gbv list
+        $lists['gbv'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Value -' ), array('key' => 0, 'value' => JText::_('JNO')), array('key' => 1, 'value' => JText::_('JYES'))), 'gbv', null, 'key', 'value', $row->gbv);
+
+        // gbv type list
+        $lists['gbv_type'] = JHTML::_('select.genericlist', array(
+            array('key' => '', 'value' => '- '.JText::_('CLS_SELECT_GBV_TYPE').' -' ),
+            array('key' => 'rape', 'value' => JText::_('CLS_RAPE')),
+            array('key' => 'sexual_assault', 'value' => JText::_('CLS_SEXUAL_ASSAULT')),
+            array('key' => 'physical_assault', 'value' => JText::_('CLS_PHYSICAL_ASSAULT')),
+            array('key' => 'forced_marriage', 'value' => JText::_('CLS_FORCED_MARRIAGE')),
+            array('key' => 'denial_of_resources', 'value' => JText::_('CLS_DENIAL_OF_RESOURCES')),
+            array('key' => 'psychological_emotional_abuse', 'value' => JText::_('CLS_PSYCHOLOGICAL_EMOTIONAL_ABUSE'))
+        ), 'gbv_type', null, 'key', 'value', $row->gbv_type);
+
+        //gbv relation list
+        $lists['gbv_relation'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select project relation -' ), array('key' => 0, 'value' => JText::_('JNO')), array('key' => 1, 'value' => JText::_('JYES')), array('key' => 'unknown', 'value' => JText::_('CLS_UNKNOWN'))), 'gbv_relation', null, 'key', 'value', $row->gbv_relation);
 
         // preferred contact list
         $lists['preferred_contact'] = JHTML::_('select.genericlist', array(array('key' => '', 'value' => '- Select Contact Method -' ), array('key' => 'Email', 'value' => 'Email'), array('key' => 'SMS', 'value' => 'SMS'), array('key' => 'Telephone Call', 'value' => 'Telephone Call')), 'preferred_contact', null, 'key', 'value', $row->preferred_contact);

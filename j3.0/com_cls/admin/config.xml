@@ -42,6 +42,11 @@
                 <option value="0">No</option>
                 <option value="1">Yes</option>
             </field>
+            <field name="show_gbv" type="radio" class="btn-group" default="0" label="Show GBV" description="Display GBV/VAC related fields on the complain form">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </field>
+            <field name="gbv_emails" type="text" default="" label="GBV trusted emails" description="Emails of trusted persons separated by comma" size="20" />
             <field name="show_location" type="radio" class="btn-group" default="0" label="Show Location selection" description="Allows to add a marker on the map on the complain form">
                 <option value="0">No</option>
                 <option value="1">Yes</option>

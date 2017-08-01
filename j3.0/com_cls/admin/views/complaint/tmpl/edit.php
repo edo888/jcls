@@ -30,6 +30,8 @@ function editComplaint($row, $lists, $user_type) {
     //when we send the files for upload, we have to tell Joomla our session, or we will get logged out
     $session = JFactory::getSession();
 
+    $config =& JComponentHelper::getParams('com_cls');
+
     $swfUploadHeadJs ='
     var swfu;
 
@@ -94,6 +96,44 @@ swfu = new SWFUpload(settings);
     ?>
         <script language="javascript" type="text/javascript">
         Joomla.submitbutton = function(pressbutton) {
+
+            if(pressbutton == 'complaint.next' || pressbutton == 'complaint.prev') {
+                var form = document.createElement('form');
+                form.action = 'index.php';
+                form.method = 'post';
+
+                var i2 = document.createElement('input');
+                i2.type = 'hidden';
+                i2.name = 'id';
+                i2.value = '<?php echo (int)$row->id ?>';
+
+                var i3 = document.createElement('input');
+                i3.type = 'hidden';
+                i3.name = 'option';
+                i3.value = 'com_cls';
+
+                var i4 = document.createElement('input');
+                i4.type = 'hidden';
+                i4.name = 'task';
+                i4.value = pressbutton;
+
+                var i5 = document.createElement('input');
+                i5.type = 'hidden';
+                i5.name = 'controller';
+                i5.value = 'complaint';
+
+                form.appendChild(i2);
+                form.appendChild(i3);
+                form.appendChild(i4);
+                form.appendChild(i5);
+
+                document.body.appendChild(form);
+
+                form.submit();
+
+                return;
+            }
+
             var form = document.adminForm;
             if(pressbutton == 'complaint.cancel') {
                 submitform(pressbutton);
@@ -138,6 +178,20 @@ swfu = new SWFUpload(settings);
             document.getElementById('action').value = document.getElementById('action_taken').value;
         }
 
+        function gbvChanged() {
+            if(!document.getElementById('message_priorityHigh'))
+                return;
+            // gbv related priority
+            if(document.adminForm.gbv && document.adminForm.gbv.value == '1') {
+                document.getElementById('message_priorityHigh').checked = true;
+                document.getElementById('message_priorityLow').disabled = true;
+                document.getElementById('message_priorityMedium').disabled = true;
+            } else {
+                document.getElementById('message_priorityLow').disabled = false;
+                document.getElementById('message_priorityMedium').disabled = false;
+            }
+        }
+
         function resolutionChanged() {
             if(document.getElementById('resolution'))
                 document.getElementById('resolution').value = document.getElementById('resolution_text').value;
@@ -160,10 +214,54 @@ swfu = new SWFUpload(settings);
             } else { // unknown
             }
         }
+
+        function enterDecryptPass() {
+            var passphrase = prompt('Enter passphrase:');
+            if(passphrase != null) {
+                var form = document.createElement('form');
+                form.action = 'index.php';
+                form.method = 'post';
+
+                var i1 = document.createElement('input');
+                i1.type = 'hidden';
+                i1.name = 'passphrase';
+                i1.value = passphrase;
+
+                var i2 = document.createElement('input');
+                i2.type = 'hidden';
+                i2.name = 'id';
+                i2.value = '<?php echo (int)$row->id ?>';
+
+                var i3 = document.createElement('input');
+                i3.type = 'hidden';
+                i3.name = 'option';
+                i3.value = 'com_cls';
+
+                var i4 = document.createElement('input');
+                i4.type = 'hidden';
+                i4.name = 'task';
+                i4.value = 'complaint.decrypt';
+
+                var i5 = document.createElement('input');
+                i5.type = 'hidden';
+                i5.name = 'controller';
+                i5.value = 'complaint';
+
+                form.appendChild(i1);
+                form.appendChild(i2);
+                form.appendChild(i3);
+                form.appendChild(i4);
+                form.appendChild(i5);
+
+                document.body.appendChild(form);
+
+                form.submit();
+            }
+        }
         </script>
 
         <ul class="nav nav-tabs" id="myTabTabs">
-            <li class="active"><a href="#details" data-toggle="tab"><?php echo JText::_('Details'); ?></a></li>
+            <li class="active"><a href="#details" data-toggle="tab"><?php if(!empty($row->message_id)) echo "#$row->message_id "; ?><?php echo JText::_('Details'); ?></a></li>
             <?php if((int)$row->id != 0): ?>
             <?php /* <li class=""><a href="#pictures" data-toggle="tab"><?php echo JText::_('Pictures') . (count($row->pictures) ? ' (' .  count($row->pictures) . ')' : ''); ?></a></li> */ ?>
             <li class=""><a href="#notifications" data-toggle="tab"><?php echo JText::_('Notifications'); ?></a></li>
@@ -181,7 +279,7 @@ swfu = new SWFUpload(settings);
         <form action="index.php" method="post" name="adminForm" id="adminForm">
 
         <fieldset class="adminform">
-            <legend><?php echo JText::_('Complainant Information'); ?></legend>
+            <legend><?php echo JText::_('Complainant Information'); if($row->gbv == '1' and $session->get('enc_pass_'.$row->id) == '') echo ' - <a href="#" onclick="enterDecryptPass();return false;" title="Click to enter the passphrase">Encrypted</a>'?></legend>
             <table class="admintable">
             <tr>
                 <td width="200" class="key">
@@ -191,10 +289,17 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo @$row->name;
-                    else
-                        echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />';
+                    if($row->gbv == '1') {
+                        if($session->get('enc_pass_'.$row->id) == '')
+                            echo '<a href="#" onclick="enterDecryptPass();return false;" title="Click to enter the passphrase">Encrypted</a>';
+                        else
+                            echo gbv_decrypt(@$row->name, $session->get('enc_pass_'.$row->id));
+                    } else {
+                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
+                            echo @$row->name;
+                        else
+                            echo '<input class="inputbox" type="text" name="name" id="name" size="60" value="', @$row->name, '" />';
+                    }
                     ?>
                 </td>
             </tr>
@@ -206,10 +311,17 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo @$row->email;
-                    else
-                        echo '<input class="inputbox" type="text" name="email" id="email" size="60" value="', @$row->email, '" />';
+                    if($row->gbv == '1') {
+                        if($session->get('enc_pass_'.$row->id) == '')
+                            echo '<a href="#" onclick="enterDecryptPass();return false;" title="Click to enter the passphrase">Encrypted</a>';
+                        else
+                            echo gbv_decrypt(@$row->email, $session->get('enc_pass_'.$row->id));
+                    } else {
+                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
+                            echo @$row->email;
+                        else
+                            echo '<input class="inputbox" type="text" name="email" id="email" size="60" value="', @$row->email, '" />';
+                    }
                     ?>
                 </td>
             </tr>
@@ -221,10 +333,17 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo @$row->phone;
-                    else
-                        echo '<input class="inputbox" type="text" name="phone" id="phone" size="60" value="', @$row->phone, '" />';
+                    if($row->gbv == '1') {
+                        if($session->get('enc_pass_'.$row->id) == '')
+                            echo '<a href="#" onclick="enterDecryptPass();return false;" title="Click to enter the passphrase">Encrypted</a>';
+                        else
+                            echo gbv_decrypt(@$row->phone, $session->get('enc_pass_'.$row->id));
+                    } else {
+                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
+                            echo @$row->phone;
+                        else
+                            echo '<input class="inputbox" type="text" name="phone" id="phone" size="60" value="', @$row->phone, '" />';
+                    }
                     ?>
                 </td>
             </tr>
@@ -236,10 +355,17 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <?php
-                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
-                        echo @$row->address;
-                    else
-                        echo '<input class="inputbox" type="text" name="address" id="address" size="60" value="', @$row->address, '" />';
+                    if($row->gbv == '1') {
+                        if($session->get('enc_pass_'.$row->id) == '')
+                            echo '<a href="#" onclick="enterDecryptPass();return false;" title="Click to enter the passphrase">Encrypted</a>';
+                        else
+                            echo gbv_decrypt(@$row->address, $session->get('enc_pass_'.$row->id));
+                    } else {
+                        if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1'))
+                            echo @$row->address;
+                        else
+                            echo '<input class="inputbox" type="text" name="address" id="address" size="60" value="', @$row->address, '" />';
+                    }
                     ?>
                 </td>
             </tr>
@@ -251,17 +377,24 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                     <?php
-                    if($row->id != 0 and ($row->confirmed_closed == 'Y' or $user_type != 'System Administrator'))
-                        echo @$row->ip_address;
-                    else
-                        echo '<input class="inputbox" type="text" name="ip_address" id="ip_address" size="60" value="', @$row->ip_address, '" />';
+                    if($row->gbv == '1') {
+                        if($session->get('enc_pass_'.$row->id) == '')
+                            echo '<a href="#" onclick="enterDecryptPass();return false;" title="Click to enter the passphrase">Encrypted</a>';
+                        else
+                            echo gbv_decrypt(@$row->ip_address, $session->get('enc_pass_'.$row->id));
+                    } else {
+                        if($row->id != 0 and ($row->confirmed_closed == 'Y' or $user_type != 'System Administrator'))
+                            echo @$row->ip_address;
+                        else
+                            echo '<input class="inputbox" type="text" name="ip_address" id="ip_address" size="60" value="', @$row->ip_address, '" />';
+                    }
                     ?>
                 </td>
             </tr>
             <tr>
                 <td class="key">
                     <label for="gender">
-                        <?php echo JText::_('Gender'); ?>
+                        <?php echo JText::_('CLS_GENDER'); ?>
                     </label>
                 </td>
                 <td>
@@ -273,6 +406,53 @@ swfu = new SWFUpload(settings);
                     ?>
                 </td>
             </tr>
+            <?php if($config->get('show_gbv')): ?>
+            <tr>
+                <td class="key">
+                    <label for="gbv">
+                        <?php echo JText::_('CLS_GBV_FIELD_NAME'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                        if(@$row->gbv == '1') echo JText::_('JYES'); else echo JText::_('JNO');
+                    else
+                        echo $lists['gbv'];
+                    ?>
+                </td>
+            </tr>
+            <tr id="gbv_type_field" style="<?php if($row->gbv != '1') echo 'display:none;'; ?>">
+                <td class="key">
+                    <label for="gbv_type">
+                        <?php echo JText::_('CLS_GBV_FIELD_TYPE'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                        echo @$row->gbv_type;
+                    else
+                        echo $lists['gbv_type'];
+                    ?>
+                </td>
+            </tr>
+            <tr id="gbv_related_field" style="<?php if($row->gbv != '1') echo 'display:none;'; ?>">
+                <td class="key">
+                    <label for="gbv_relation">
+                        <?php echo JText::_('CLS_GBV_FIELD_RELATION'); ?>
+                    </label>
+                </td>
+                <td>
+                    <?php
+                    if($row->confirmed_closed == 'Y' or ($user_type != 'System Administrator' and $user_type != 'Level 1' and $user_type != 'Level 2'))
+                        echo @$row->gbv_relation;
+                    else
+                        echo $lists['gbv_relation'];
+                    ?>
+                </td>
+            </tr>
+            <?php endif; ?>
             <tr>
                 <td width="200" class="key">
                     <label for="preferred_contact">
@@ -354,10 +534,17 @@ swfu = new SWFUpload(settings);
                 </td>
                 <td>
                         <?php
-                        if($row->id != 0 and ($row->confirmed_closed == 'Y' or $user_type != 'System Administrator'))
-                            echo '<pre>', @$row->raw_message, '</pre>';
-                        else
-                            echo '<textarea name="raw_message" id="raw_message" cols="80" rows="5">', @$row->raw_message, '</textarea>';
+                        if($row->gbv == '1') {
+                            if($session->get('enc_pass_'.$row->id) == '')
+                                echo '<a href="#" onclick="enterDecryptPass();return false;" title="Click to enter the passphrase">Encrypted</a>';
+                            else
+                                echo '<pre>', gbv_decrypt(@$row->raw_message, $session->get('enc_pass_'.$row->id)), '</pre>';
+                        } else {
+                            if($row->id != 0 and ($row->confirmed_closed == 'Y' or $user_type != 'System Administrator'))
+                                echo '<pre>', @$row->raw_message, '</pre>';
+                            else
+                                echo '<textarea name="raw_message" id="raw_message" cols="80" rows="5">', @$row->raw_message, '</textarea>';
+                        }
                         ?>
                 </td>
             </tr>
@@ -1162,6 +1349,42 @@ swfu = new SWFUpload(settings);
         </div>
 
         <div class="clr"></div>
+
+        <script type="text/javascript">
+        if(document.getElementById('gbv'))
+            document.getElementById('gbv').onchange = function() {toggleGBV();};
+
+        function toggleGBV_Relation() {
+            if(!document.getElementById('resolution_text')) return;
+
+            if(document.getElementById('gbv_relation').value == 'unknown') {
+                document.getElementById('resolution_text').disabled = true;
+                document.getElementById('resolution_text').setAttribute('placeholder', 'The complaint cannot be resolved with the "Unknown" related to project still selected, please populate that data first.');
+            } else {
+                document.getElementById('resolution_text').disabled = false;
+                document.getElementById('resolution_text').setAttribute('placeholder', '');
+            }
+        }
+
+        if(document.getElementById('gbv_relation')) {
+            document.getElementById('gbv_relation').onchange = function() {toggleGBV_Relation();};
+
+            toggleGBV_Relation();
+            gbvChanged();
+        }
+
+        function toggleGBV() {
+            gbvChanged();
+
+            if(document.getElementById('gbv').value == '1') {
+                document.getElementById('gbv_type_field').style.display="table-row";
+                document.getElementById('gbv_related_field').style.display="table-row";
+            } else {
+                document.getElementById('gbv_type_field').style.display="none";
+                document.getElementById('gbv_related_field').style.display="none";
+            }
+        }
+        </script>
     <?php
     }
 ?>

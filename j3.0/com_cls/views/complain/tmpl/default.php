@@ -50,6 +50,16 @@ function validate() {
 
     return true;
 }
+
+function toggleGBV() {
+    if(document.getElementById('gbv_yes').checked) {
+        document.getElementById('gbv_type_field').style.display="table-row";
+        document.getElementById('gbv_related_field').style.display="table-row";
+    } else {
+        document.getElementById('gbv_type_field').style.display="none";
+        document.getElementById('gbv_related_field').style.display="none";
+    }
+}
 </script>
 <form name="complaint_form" action="index.php" method="post" enctype="multipart/form-data" onsubmit="return validate();">
     <table>
@@ -73,6 +83,34 @@ function validate() {
         <tr>
             <td><?php echo JText::_('CLS_GENDER') ?>:</td>
             <td><input type="radio" name="gender" id="gender_male" value="Male" <?php if($this->session->get('cls_gender') == 'Male') echo 'checked '; ?>/> <label for="gender_male"><?php echo JText::_('CLS_MALE') ?></label> <input type="radio" name="gender" id="gender_female" value="Female" <?php if($this->session->get('cls_gender') == 'Female') echo 'checked '; ?>/> <label for="gender_female"><?php echo JText::_('CLS_FEMALE') ?></label></td>
+        </tr>
+        <?php endif; ?>
+        <?php if($config->get('show_gbv')): ?>
+        <tr>
+            <td><?php echo JText::_('CLS_GBV_FIELD_NAME'); ?>:</td>
+            <td><input type="radio" onclick="toggleGBV()" name="gbv" id="gbv_yes" value="1" <?php if($this->session->get('cls_gbv') == '1') echo 'checked '; ?>/> <label for="gbv_yes"><?php echo JText::_('JYES') ?></label> <input type="radio" onclick="toggleGBV()" name="gbv" id="gbv_no" value="0" <?php if($this->session->get('cls_gbv') != '1') echo 'checked '; ?>/> <label for="gbv_no"><?php echo JText::_('JNO') ?></label></td>
+        </tr>
+        <tr id="gbv_type_field" style="<?php if($this->session->get('cls_gbv') != '1') echo 'display:none;'; ?>">
+            <td><?php echo JText::_('CLS_GBV_FIELD_TYPE'); ?>:</td>
+            <td>
+                <select name="gbv_type">
+                    <option value="" <?php if($this->session->get('cls_gbv_type') == '') echo 'selected '; ?>> - <?php echo JText::_('CLS_SELECT_GBV_TYPE'); ?> - </option>
+                    <option value="rape" <?php if($this->session->get('cls_gbv_type') == 'rape') echo 'selected '; ?>><?php echo JText::_('CLS_RAPE'); ?></option>
+                    <option value="sexual_assault" <?php if($this->session->get('cls_gbv_type') == 'sexual_assault') echo 'selected '; ?>><?php echo JText::_('CLS_SEXUAL_ASSAULT'); ?></option>
+                    <option value="physical_assault" <?php if($this->session->get('cls_gbv_type') == 'physical_assault') echo 'selected '; ?>><?php echo JText::_('CLS_PHYSICAL_ASSAULT'); ?></option>
+                    <option value="forced_marriage" <?php if($this->session->get('cls_gbv_type') == 'forced_marriage') echo 'selected '; ?>><?php echo JText::_('CLS_FORCED_MARRIAGE'); ?></option>
+                    <option value="denial_of_resources" <?php if($this->session->get('cls_gbv_type') == 'denial_of_resources') echo 'selected '; ?>><?php echo JText::_('CLS_DENIAL_OF_RESOURCES'); ?></option>
+                    <option value="psychological_emotional_abuse" <?php if($this->session->get('cls_gbv_type') == 'psychological_emotional_abuse') echo 'selected '; ?>><?php echo JText::_('CLS_PSYCHOLOGICAL_EMOTIONAL_ABUSE'); ?></option>
+                </select>
+            </td>
+        </tr>
+        <tr id="gbv_related_field" style="<?php if($this->session->get('cls_gbv') != '1') echo 'display:none;'; ?>">
+            <td><?php echo JText::_('CLS_GBV_FIELD_RELATION'); ?>:</td>
+            <td>
+                <input type="radio" name="gbv_relation" id="gbv_relation_yes" value="1" <?php if($this->session->get('cls_gbv_relation') == '1') echo 'checked '; ?>/> <label for="gbv_relation_yes"><?php echo JText::_('JYES') ?></label>
+                <input type="radio" name="gbv_relation" id="gbv_relation_no" value="0" <?php if($this->session->get('cls_gbv_relation') == '0') echo 'checked '; ?>/> <label for="gbv_relation_no"><?php echo JText::_('JNO') ?></label>
+                <input type="radio" name="gbv_relation" id="gbv_relation_unknown" value="unknown" <?php if($this->session->get('cls_gbv_relation', 'unknown') == 'unknown') echo 'checked '; ?>/> <label for="gbv_relation_unknown"><?php echo JText::_('CLS_UNKNOWN') ?></label>
+            </td>
         </tr>
         <?php endif; ?>
         <?php if($config->get('show_location')): ?>
