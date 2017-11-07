@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+   <layout title="Supervision Reporting Layout">
+      <message>
+         <![CDATA[Supervision Reporting Layout]]>
+      </message>
+   </layout>
+   <state>
+      <name>Supervision Reporting Layout</name>
+      <description>Supervision Reporting Layout</description>
+      <params>
+      </params>
+   </state>
+
+    <fields name="request">
+    </fields>
+</metadata>

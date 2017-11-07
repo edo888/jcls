@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+   <layout title="Contractor Reporting Layout">
+      <message>
+         <![CDATA[Contractor Reporting Layout]]>
+      </message>
+   </layout>
+   <state>
+      <name>Contractor Reporting Layout</name>
+      <description>Contractor Reporting Layout</description>
+      <params>
+      </params>
+   </state>
+
+    <fields name="request">
+    </fields>
+</metadata>

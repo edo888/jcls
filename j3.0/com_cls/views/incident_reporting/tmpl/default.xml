@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+   <layout title="Incident Reporting Layout">
+      <message>
+         <![CDATA[Incident Reporting Layout]]>
+      </message>
+   </layout>
+   <state>
+      <name>Incident Reporting Layout</name>
+      <description>Incident Reporting Layout</description>
+      <params>
+      </params>
+   </state>
+
+    <fields name="request">
+    </fields>
+</metadata>
