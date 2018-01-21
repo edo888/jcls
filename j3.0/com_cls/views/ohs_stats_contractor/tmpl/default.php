@@ -47,6 +47,20 @@ function showOHSContractorReports() {
 
     $query = $db->getQuery(true);
     $fields = array(
+        'sum(number_of_workers_trained) as number_of_workers_trained',
+        'sum(number_of_competency_assessments) as number_of_competency_assessments',
+        'sum(number_of_new_skill_training_sessions) as number_of_new_skill_training_sessions',
+        'sum(number_of_ohs_training) as number_of_ohs_training',
+        'sum(number_of_hiv_aids_training) as number_of_hiv_aids_training',
+        'sum(number_of_gbv_vac_training) as number_of_gbv_vac_training',
+        'sum(checks_site_health_and_safety_audits) as checks_site_health_and_safety_audits',
+        'sum(checks_safety_briefings) as checks_safety_briefings',
+        'sum(number_of_near_misses) as number_of_near_misses',
+        'sum(number_of_stop_work_actions) as number_of_stop_work_actions',
+        'sum(number_of_traffic_management_inspections) as number_of_traffic_management_inspections',
+        'sum(number_of_completed_investigations) as number_of_completed_investigations',
+        'sum(number_of_new_risks_identified) as number_of_new_risks_identified',
+        'sum(number_of_suggestions_for_improvement_identified) as number_of_suggestions_for_improvement_identified',
         'sum(checks_drugs) as checks_drugs',
         'sum(checks_alcohol) as checks_alcohol',
         'sum(checks_hiv) as checks_hiv',
@@ -119,13 +133,34 @@ function showOHSContractorReports() {
     <br>
 
     <table class="ohs_table">
-        <tr><th><?php echo JText::_('CLS_OHS_CATEGORY'); ?></th><th><?php echo JText::_('CLS_OHS_NUMBER'); ?></th><th><?php echo JText::_('CLS_OHS_PERCENT_POSITIVE'); ?></th><th><?php echo JText::_('CLS_OHS_PERCENT_POSITIVE_IN_LAST_SIX_MONTHS'); ?></th></tr>
-        <tr><td><?php echo JText::_('CLS_OHS_DRUG_CHECKS'); ?></td><td><?php echo $report_data->checks_drugs; ?></td><td><?php echo ($report_data->checks_drugs > 0 ? round(100*$report_data->checks_drugs_positive/$report_data->checks_drugs, 2) : 0) . '%'; ?></td><td><?php echo ($report_data_last_six_sum->checks_drugs > 0 ? round(100*$report_data_last_six_sum->checks_drugs_positive/$report_data_last_six_sum->checks_drugs, 2) : 0) . '%'; ?></td></tr>
-        <tr><td><?php echo JText::_('CLS_OHS_ALCOHOL_CHECKS'); ?></td><td><?php echo $report_data->checks_alcohol; ?></td><td><?php echo ($report_data->checks_alcohol > 0 ? round(100*$report_data->checks_alcohol_positive/$report_data->checks_alcohol, 2) : 0) . '%'; ?></td><td><?php echo ($report_data_last_six_sum->checks_alcohol > 0 ? round(100*$report_data_last_six_sum->checks_alcohol_positive/$report_data_last_six_sum->checks_alcohol, 2) : 0) . '%'; ?></td></tr>
-        <tr><td><?php echo JText::_('CLS_OHS_HIV_CHECKS'); ?></td><td><?php echo $report_data->checks_hiv; ?></td><td><?php echo ($report_data->checks_hiv > 0 ? round(100*$report_data->checks_hiv_positive/$report_data->checks_hiv, 2) : 0) . '%'; ?></td><td><?php echo ($report_data_last_six_sum->checks_hiv > 0 ? round(100*$report_data_last_six_sum->checks_hiv_positive/$report_data_last_six_sum->checks_hiv, 2) : 0) . '%'; ?></td></tr>
+        <tr><th><?php echo JText::_('CLS_OHS_CATEGORY'); ?></th><th><?php echo JText::_('CLS_OHS_NUMBER'); ?></th><th><?php echo JText::_('CLS_OHS_CUMULATIVE_SIX_MONTHS'); ?></th></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_NUMBER_OF_WORKERS_TRAINED'); ?>             </td><td><?php echo $report_data->number_of_workers_trained; ?></td><td><?php echo $report_data_last_six_sum->number_of_workers_trained; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_COMPETENCY_ASSESSMENTS'); ?>                </td><td><?php echo $report_data->number_of_competency_assessments; ?></td><td><?php echo $report_data_last_six_sum->number_of_competency_assessments; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_NEW_SKILL_TRAINING_SESSIONS'); ?>           </td><td><?php echo $report_data->number_of_new_skill_training_sessions; ?></td><td><?php echo $report_data_last_six_sum->number_of_new_skill_training_sessions; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_OHS_TRAINING_WORKER_HOURS'); ?>             </td><td><?php echo $report_data->number_of_ohs_training; ?></td><td><?php echo $report_data_last_six_sum->number_of_ohs_training; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_HIV_AIDS_TRAINING_WORKER_HOURS'); ?>        </td><td><?php echo $report_data->number_of_hiv_aids_training; ?></td><td><?php echo $report_data_last_six_sum->number_of_hiv_aids_training; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_GBV_VAC_TRAINING_WORKER_HOURS'); ?>         </td><td><?php echo $report_data->number_of_gbv_vac_training; ?></td><td><?php echo $report_data_last_six_sum->number_of_gbv_vac_training; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_SITE_HEALTH_AND_SAFETY_AUDITS'); ?>         </td><td><?php echo $report_data->checks_site_health_and_safety_audits; ?></td><td><?php echo $report_data_last_six_sum->checks_site_health_and_safety_audits; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_SAFETY_BRIEFINGS'); ?>                      </td><td><?php echo $report_data->checks_safety_briefings; ?></td><td><?php echo $report_data_last_six_sum->checks_safety_briefings; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_NEAR_MISSES'); ?>                           </td><td><?php echo $report_data->number_of_near_misses; ?></td><td><?php echo $report_data_last_six_sum->number_of_near_misses; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_STOP_WORK_ACTIONS'); ?>                     </td><td><?php echo $report_data->number_of_stop_work_actions; ?></td><td><?php echo $report_data_last_six_sum->number_of_stop_work_actions; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_TRAFFIC_MANAGEMENT_INSPECTIONS'); ?>        </td><td><?php echo $report_data->number_of_traffic_management_inspections; ?></td><td><?php echo $report_data_last_six_sum->number_of_traffic_management_inspections; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_COMPLETED_INVESTIGATIONS'); ?>              </td><td><?php echo $report_data->number_of_completed_investigations; ?></td><td><?php echo $report_data_last_six_sum->number_of_completed_investigations; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_NEW_RISKS_IDENTIFIED'); ?>                  </td><td><?php echo $report_data->number_of_new_risks_identified; ?></td><td><?php echo $report_data_last_six_sum->number_of_new_risks_identified; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_SUGGESTIONS_FOR_IMPROVEMENT_IDENTIFIED'); ?></td><td><?php echo $report_data->number_of_suggestions_for_improvement_identified; ?></td><td><?php echo $report_data_last_six_sum->number_of_suggestions_for_improvement_identified; ?></td></tr>
     </table>
 
     <br>
+
+    <table class="ohs_table">
+        <tr><th><?php echo JText::_('CLS_OHS_CATEGORY'); ?></th><th><?php echo JText::_('CLS_OHS_NUMBER'); ?></th><th><?php echo JText::_('CLS_OHS_CUMULATIVE_SIX_MONTHS'); ?></th><th><?php echo JText::_('CLS_OHS_PERCENT_POSITIVE'); ?></th><th><?php echo JText::_('CLS_OHS_PERCENT_POSITIVE_IN_LAST_SIX_MONTHS'); ?></th></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_DRUG_CHECKS'); ?></td><td><?php echo $report_data->checks_drugs; ?></td><td><?php echo $report_data_last_six_sum->checks_drugs; ?></td><td><?php echo ($report_data->checks_drugs > 0 ? round(100*$report_data->checks_drugs_positive/$report_data->checks_drugs, 2) : 0) . '%'; ?></td><td><?php echo ($report_data_last_six_sum->checks_drugs > 0 ? round(100*$report_data_last_six_sum->checks_drugs_positive/$report_data_last_six_sum->checks_drugs, 2) : 0) . '%'; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_ALCOHOL_CHECKS'); ?></td><td><?php echo $report_data->checks_alcohol; ?></td><td><?php echo $report_data_last_six_sum->checks_alcohol; ?></td><td><?php echo ($report_data->checks_alcohol > 0 ? round(100*$report_data->checks_alcohol_positive/$report_data->checks_alcohol, 2) : 0) . '%'; ?></td><td><?php echo ($report_data_last_six_sum->checks_alcohol > 0 ? round(100*$report_data_last_six_sum->checks_alcohol_positive/$report_data_last_six_sum->checks_alcohol, 2) : 0) . '%'; ?></td></tr>
+        <tr><td><?php echo JText::_('CLS_OHS_HIV_CHECKS'); ?></td><td><?php echo $report_data->checks_hiv; ?></td><td><?php echo $report_data_last_six_sum->checks_hiv; ?></td><td><?php echo ($report_data->checks_hiv > 0 ? round(100*$report_data->checks_hiv_positive/$report_data->checks_hiv, 2) : 0) . '%'; ?></td><td><?php echo ($report_data_last_six_sum->checks_hiv > 0 ? round(100*$report_data_last_six_sum->checks_hiv_positive/$report_data_last_six_sum->checks_hiv, 2) : 0) . '%'; ?></td></tr>
+    </table>
+
+    <br>
+
 
     <h3><?php echo JText::_('CLS_OHS_ACCIDENTS_AND_INCIDENTS_SIX_MONTHS'); ?></h3>
     <?php
@@ -245,8 +280,8 @@ EOT;
     <style type="text/css">
     .ohs_table th {background-color:#0e4b78;color:#fff;padding:8px;}
     .ohs_table td {padding:5px;}
-    .ohs_table tr:nth-child(even) td {background-color:#e9f4ff;}
-    .ohs_table tr:nth-child(odd) td {background-color:#e0a4ee;}
+    .ohs_table tr:nth-child(even) td {background-color:#f0f0f0;}
+    .ohs_table tr:nth-child(odd) td {background-color:#e0e0e0;}
     </style>
 
 <?php } ?>

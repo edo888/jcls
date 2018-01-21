@@ -105,6 +105,7 @@ function showOHSSupervisionReports() {
     <br>
 
     <table style="border:3px dashed #ccc;padding:8px;" cellpadding="4">
+        <tr><th colspan="4"><i><?php echo JText::_('CLS_OHS_SAFETY_OFFICER_ACTIVITIES'); ?></i></th></tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_NUMBER_OF_DAYS_WORKED'); ?></td><td nowrap style="color:green;"><?php echo $report_data->number_of_days_worked; ?></td><td>&nbsp;</td><td><?php echo JText::_('CLS_OHS_LINK_TO_MONTHTLY_SAFETY_OFFICER_REPORT'); ?></td><td><a href="<?php echo JURI::root().'administrator/components/com_cls/uploads/'.$report_data->monthtly_safety_officer_report; ?>"><?php echo JText::_('CLS_OHS_OPEN'); ?></a></td>
         </tr>
@@ -115,6 +116,7 @@ function showOHSSupervisionReports() {
             <td><?php echo JText::_('CLS_OHS_NUMBER_OF_PARTIAL_INSPECTIONS'); ?></td><td nowrap style="color:green;"><?php echo $report_data->number_of_partial_inspections; ?></td><td>&nbsp;</td>
         </tr>
 
+        <tr><th colspan="4"><i><?php echo JText::_('CLS_OHS_PLAN'); ?></i></th></tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_UPDATED_PLAN_RECEIVED'); ?></td><td nowrap style="color:green;"><?php echo $report_data->plan_updated; ?></td>
         </tr>
@@ -122,6 +124,7 @@ function showOHSSupervisionReports() {
             <td><?php echo JText::_('CLS_OHS_PLAN_REVIEWED_SUBMITTED_APPROVED'); ?></td><td nowrap style="color:green;"><?php echo $report_data->plan_reviewed_submitted_approved; ?></td>
         </tr>
 
+        <tr><th colspan="4"><i><?php echo JText::_('CLS_OHS_WORKERS_INFORMATION'); ?></i></th></tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_NUMBER_OF_WORKERS'); ?></td><td nowrap style="color:green;"><?php echo "M: {$report_data->number_of_workers_male} F: {$report_data->number_of_workers_female}"; ?></td><td>&nbsp;</td><td><?php echo JText::_('CLS_OHS_FULL_PPE_PERCENT_OF_WORKERS'); ?></td><td nowrap style="color:green;"><?php echo "M: {$report_data->percentage_of_workers_with_full_ppe_male} F: {$report_data->percentage_of_workers_with_full_ppe_female}"; ?></td>
         </tr>
@@ -245,6 +248,7 @@ EOT;
     <br>
 
     <table style="border:3px dashed #ccc;padding:8px;" cellpadding="4">
+        <tr><th colspan="4"><i><?php echo JText::_('CLS_OHS_WORKERS_CAMPS'); ?></i></th></tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_NUMBER_OF_WORKERS') ?></td><td nowrap style="color:green;"><?php echo JText::_('CLS_OHS_EXPATRIATES'); ?>: <?php echo $report_data->number_of_expatriates_workers_in_camps; ?> <?php echo JText::_('CLS_OHS_LOCAL'); ?>: <?php echo $report_data->number_of_local_workers_in_camps; ?></td><td>&nbsp;</td><td><?php echo JText::_('CLS_OHS_PROPER_SANITATION_FACILITY'); ?></td><td nowrap style="color:green;"><?php echo $report_data->proper_sanitation_facility; ?></td>
         </tr>
@@ -255,6 +259,7 @@ EOT;
             <td><?php echo JText::_('CLS_OHS_FACILITIES_IN_COMPLIANCE_WITH_LOCAL_LAWS_AND_ESMP'); ?></td><td nowrap style="color:green;"><?php echo $report_data->facilities_in_compliance_with_local_laws_and_esmp; ?></td>
         </tr>
 
+        <tr><th colspan="4"><i><?php echo JText::_('CLS_OHS_EQUIPMENT_SAFETY'); ?></i></th></tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_NUMBER_OF_VEHICLES_OR_EQUIPMENT_UNSAFE_OR_IMPROPERLY_MAINTAINED'); ?></td><td nowrap style="color:green;"><?php echo $report_data->number_of_vehicles_or_equipment_unsafe_or_improperly_maintained; ?></td>
         </tr>
@@ -264,8 +269,8 @@ EOT;
     <style type="text/css">
     .ohs_table th {background-color:#0e4b78;color:#fff;padding:8px;}
     .ohs_table td {padding:5px;}
-    .ohs_table tr:nth-child(even) td {background-color:#e9f4ff;}
-    .ohs_table tr:nth-child(odd) td {background-color:#e0a4ee;}
+    .ohs_table tr:nth-child(even) td {background-color:#f0f0f0;}
+    .ohs_table tr:nth-child(odd) td {background-color:#e0e0e0;}
     </style>
 
 <?php } ?>
