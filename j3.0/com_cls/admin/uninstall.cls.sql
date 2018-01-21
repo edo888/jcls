@@ -8,3 +8,6 @@ DROP TABLE IF EXISTS `#__complaint_message_queue`;
 DROP TABLE IF EXISTS `#__complaint_areas`;
 DROP TABLE IF EXISTS `#__complaint_support_groups`;
 DROP TABLE IF EXISTS `#__complaint_support_groups_users_map`;
+DROP TABLE IF EXISTS `#__ohs_supervision_reporting`;
+DROP TABLE IF EXISTS `#__ohs_contractor_reporting`;
+DROP TABLE IF EXISTS `#__ohs_incident_reporting`;

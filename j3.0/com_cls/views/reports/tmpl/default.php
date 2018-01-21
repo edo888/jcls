@@ -316,7 +316,7 @@ function showReports() {
         $document = JFactory::getDocument();
         //$document->addScript('http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
         JHtml::_('jquery.framework');
-        $document->addScript('http://code.highcharts.com/highcharts.js');
+        $document->addScript('//code.highcharts.com/highcharts.js');
 
         $complaints_js = <<< EOT
 jQuery.noConflict();

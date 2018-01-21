@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+   <layout title="OHS Statistics Supervision">
+      <message>
+         <![CDATA[OHS Statistics Supervision]]>
+      </message>
+   </layout>
+   <state>
+      <name>OHS Statistics Supervision</name>
+      <description>OHS Statistics Supervision</description>
+      <params>
+      </params>
+   </state>
+
+    <fields name="request">
+    </fields>
+
+    <fields name="params">
+    </fields>
+</metadata>

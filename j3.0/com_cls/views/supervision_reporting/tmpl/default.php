@@ -59,11 +59,11 @@ function validate() {
 #first_aid_kits_available_extra,
 #transport_for_injured_personnel_available_extra,
 #emergency_transport_directions_available_extra,
-#plan_updated_reviewed_extra,
-.plan_updated_reviewed_extra,
-#plan_updated_submitted_extra,
-.plan_updated_submitted_extra,
-#plan_updated_approved_extra,
+#plan_updated_extra,
+.plan_updated_extra,
+#plan_updated_extra2,
+#plan_reviewed_submitted_approved_extra,
+.plan_reviewed_submitted_approved_extra,
 #facilities_in_compliance_with_local_laws_and_esmp_extra,
 #appropriate_living_and_recreational_space_for_workers_extra,
 #proper_sanitation_facility_extra {display:none;}
@@ -122,7 +122,6 @@ function validate() {
             </td>
         </tr>
         <tr><td colspan="2">&nbsp;</td></tr>
-        <tr><td colspan="2"><?php echo JText::_('CLS_OHS_CONSTRUCTION_SITES'); ?></td></tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_TRAINED_FIRST_AID_OFFICER_AVAILABLE') ?>:</td>
             <td>
@@ -141,7 +140,7 @@ function validate() {
             </td>
         </tr>
         <tr id="first_aid_kits_available_extra">
-            <td colspan="2"><textarea name="first_aid_kits_available_comment" placeholder="<?php echo JText::_('CLS_OHS_EXPLAIN_WHY'); ?>" cols="50" rows="8"><?php echo $this->session->get('first_aid_kits_available_comment'); ?></textarea></td>
+            <td colspan="2"><textarea name="first_aid_kits_available_comment" placeholder="<?php echo JText::_('CLS_OHS_EXPLAIN_WHY'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_first_aid_kits_available_comment'); ?></textarea></td>
         </tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_TRANSPORT_FOR_INJURED_PERSONNEL_AVAILABLE') ?>:</td>
@@ -166,34 +165,24 @@ function validate() {
         <tr><td colspan="2">&nbsp;</td></tr>
         <tr><th colspan="2"><?php echo JText::_('CLS_UPDATED_OHS_PLAN'); ?></th></tr>
         <tr>
-            <td><?php echo JText::_('CLS_OHS_PLAN_UPDATED_REVIEWED') ?>:</td>
+            <td><?php echo JText::_('CLS_OHS_PLAN_UPDATED') ?>:</td>
             <td>
-                <input type="radio" onclick="toggleOptions()" name="plan_updated_reviewed" id="plan_updated_reviewed" value="1" <?php if($this->session->get('cls_plan_updated_reviewed') == '1') echo 'checked '; ?>/> <label for="plan_updated_reviewed"><?php echo JText::_('JYES') ?></label>
-                <input type="radio" onclick="toggleOptions()" name="plan_updated_reviewed" id="plan_not_updated_reviewed" value="0" <?php if($this->session->get('cls_plan_updated_reviewed') == '0') echo 'checked '; ?>/> <label for="plan_not_updated_reviewed"><?php echo JText::_('JNO') ?></label>
+                <input type="radio" onclick="toggleOptions()" name="plan_updated" id="plan_updated" value="1" <?php if($this->session->get('cls_plan_updated') == '1') echo 'checked '; ?>/> <label for="plan_updated"><?php echo JText::_('JYES') ?></label>
+                <input type="radio" onclick="toggleOptions()" name="plan_updated" id="plan_not_updated" value="0" <?php if($this->session->get('cls_plan_updated') == '0') echo 'checked '; ?>/> <label for="plan_not_updated"><?php echo JText::_('JNO') ?></label>
             </td>
         </tr>
-        <tr id="plan_updated_reviewed_extra">
-            <td colspan="2"><textarea name="plan_updated_reviewed_comment" placeholder="<?php echo JText::_('CLS_OHS_EXPLAIN_WHY'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_plan_updated_reviewed_comment'); ?></textarea></td>
+        <tr id="plan_updated_extra">
+            <td colspan="2"><textarea name="plan_updated_comment" placeholder="<?php echo JText::_('CLS_OHS_EXPLAIN_WHY'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_plan_updated_comment'); ?></textarea></td>
         </tr>
-        <tr class="plan_updated_reviewed_extra">
-            <td><?php echo JText::_('CLS_OHS_PLAN_UPDATED_SUBMITTED') ?>:</td>
+        <tr id="plan_updated_extra2">
+            <td><?php echo JText::_('CLS_OHS_PLAN_REVIEWED_SUBMITTED_APPROVED') ?>:</td>
             <td>
-                <input type="radio" onclick="toggleOptions()" name="plan_updated_submitted" id="plan_updated_submitted" value="1" <?php if($this->session->get('cls_plan_updated_submitted') == '1') echo 'checked '; ?>/> <label for="plan_updated_submitted"><?php echo JText::_('JYES') ?></label>
-                <input type="radio" onclick="toggleOptions()" name="plan_updated_submitted" id="plan_not_updated_submitted" value="0" <?php if($this->session->get('cls_plan_updated_submitted') == '0') echo 'checked '; ?>/> <label for="plan_not_updated_submitted"><?php echo JText::_('JNO') ?></label>
+                <input type="radio" onclick="toggleOptions()" name="plan_reviewed_submitted_approved" id="plan_reviewed_submitted_approved" value="1" <?php if($this->session->get('cls_plan_reviewed_submitted_approved') == '1') echo 'checked '; ?>/> <label for="plan_reviewed_submitted_approved"><?php echo JText::_('JYES') ?></label>
+                <input type="radio" onclick="toggleOptions()" name="plan_reviewed_submitted_approved" id="plan_not_reviewed_submitted_approved" value="0" <?php if($this->session->get('cls_plan_reviewed_submitted_approved') == '0') echo 'checked '; ?>/> <label for="plan_not_reviewed_submitted_approved"><?php echo JText::_('JNO') ?></label>
             </td>
         </tr>
-        <tr class="plan_updated_reviewed_extra" id="plan_updated_submitted_extra">
-            <td colspan="2"><textarea name="plan_updated_submitted_comment" placeholder="<?php echo JText::_('CLS_OHS_EXPLAIN_WHY'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_plan_updated_submitted_comment'); ?></textarea></td>
-        </tr>
-        <tr class="plan_updated_submitted_extra">
-            <td><?php echo JText::_('CLS_OHS_PLAN_UPDATED_APPROVED') ?>:</td>
-            <td>
-                <input type="radio" onclick="toggleOptions()" name="plan_updated_approved" id="plan_updated_approved" value="1" <?php if($this->session->get('cls_plan_updated_approved') == '1') echo 'checked '; ?>/> <label for="plan_updated_approved"><?php echo JText::_('JYES') ?></label>
-                <input type="radio" onclick="toggleOptions()" name="plan_updated_approved" id="plan_not_updated_approved" value="0" <?php if($this->session->get('cls_plan_updated_approved') == '0') echo 'checked '; ?>/> <label for="plan_not_updated_approved"><?php echo JText::_('JNO') ?></label>
-            </td>
-        </tr>
-        <tr class="plan_updated_submitted_extra" id="plan_updated_approved_extra">
-            <td colspan="2"><textarea name="plan_updated_approved_comment" placeholder="<?php echo JText::_('CLS_OHS_EXPLAIN_WHY'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_plan_updated_approved_comment'); ?></textarea></td>
+        <tr class="plan_reviewed_submitted_approved_extra" id="plan_reviewed_submitted_approved_extra">
+            <td colspan="2"><textarea name="plan_reviewed_submitted_approved_comment" placeholder="<?php echo JText::_('CLS_OHS_EXPLAIN_WHY'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_plan_reviewed_submitted_approved_comment'); ?></textarea></td>
         </tr>
         <tr><td colspan="2">&nbsp;</td></tr>
         <tr><th colspan="2"><?php echo JText::_('CLS_OHS_WORKERS'); ?></th></tr>
@@ -214,8 +203,8 @@ function validate() {
         <tr>
             <td><?php echo JText::_('CLS_OHS_PERCENTAGE_OF_WORKERS_WITH_FULL_PPE') ?>:</td>
             <td>
-                <?php echo JText::_('CLS_MALE'); ?>: <input type="text" size="3" maxlength="5" name="percentage_of_workers_with_full_ppe_male" value="<?php echo $this->session->get('cls_percentage_of_workers_with_full_ppe_male'); ?>" />
-                <?php echo JText::_('CLS_FEMALE'); ?>: <input type="text" size="3" maxlength="5" name="percentage_of_workers_with_full_ppe_female" value="<?php echo $this->session->get('cls_percentage_of_workers_with_full_ppe_female'); ?>" />
+                <?php echo JText::_('CLS_MALE'); ?>: <input type="text" size="3" maxlength="3" name="percentage_of_workers_with_full_ppe_male" value="<?php echo $this->session->get('cls_percentage_of_workers_with_full_ppe_male'); ?>" /> %
+                <?php echo JText::_('CLS_FEMALE'); ?>: <input type="text" size="3" maxlength="3" name="percentage_of_workers_with_full_ppe_female" value="<?php echo $this->session->get('cls_percentage_of_workers_with_full_ppe_female'); ?>" /> %
             </td>
         </tr>
         <tr><td colspan="2">&nbsp;</td></tr>
@@ -305,7 +294,7 @@ function validate() {
         <tr class="camps_extra">
             <td><?php echo JText::_('CLS_OHS_NUMBER_OF_WORKERS') ?>:</td>
             <td>
-                <?php echo JText::_('CLS_OHS_EXPATRRIATES'); ?>: <input type="text" size="3" maxlength="5" name="number_of_expatrriates_workers_in_camps" value="<?php echo $this->session->get('cls_number_of_expatrriates_workers_in_camps'); ?>" />
+                <?php echo JText::_('CLS_OHS_EXPATRIATES'); ?>: <input type="text" size="3" maxlength="5" name="number_of_expatriates_workers_in_camps" value="<?php echo $this->session->get('cls_number_of_expatriates_workers_in_camps'); ?>" />
                 <?php echo JText::_('CLS_OHS_LOCAL'); ?>: <input type="text" size="3" maxlength="5" name="number_of_local_workers_in_camps" value="<?php echo $this->session->get('cls_number_of_local_workers_in_camps'); ?>" />
             </td>
         </tr>
@@ -326,7 +315,7 @@ function validate() {
         <tr class="camps_extra">
             <td><?php echo JText::_('CLS_OHS_PROPER_SANITATION_FACILITY') ?>:</td>
             <td>
-                <input type="radio" onclick="toggleOptions()" name="proper_sanitation_facility" id="proper_sanitation_facility" value="1" <?php if($this->session->get('cls_appropriate_living_and_recreational_space_for_workers') == '1') echo 'checked '; ?>/> <label for="proper_sanitation_facility"><?php echo JText::_('JYES') ?></label>
+                <input type="radio" onclick="toggleOptions()" name="proper_sanitation_facility" id="proper_sanitation_facility" value="1" <?php if($this->session->get('cls_proper_sanitation_facility') == '1') echo 'checked '; ?>/> <label for="proper_sanitation_facility"><?php echo JText::_('JYES') ?></label>
                 <input type="radio" onclick="toggleOptions()" name="proper_sanitation_facility" id="no_proper_sanitation_facility" value="0" <?php if($this->session->get('cls_proper_sanitation_facility') == '0') echo 'checked '; ?>/> <label for="no_proper_sanitation_facility"><?php echo JText::_('JNO') ?></label>
             </td>
         </tr>
@@ -353,7 +342,7 @@ function validate() {
             <td><input type="text" size="3" maxlength="5" name="number_of_vehicles_or_equipment_unsafe_or_improperly_maintained" value="<?php echo $this->session->get('cls_number_of_vehicles_or_equipment_unsafe_or_improperly_maintained', 0); ?>" /></td>
         </tr>
         <tr>
-            <td colspan="2"><textarea name="recommendations_to_improve_vehicles_equipment" placeholder="<?php echo JText::_('CLS_OHS_RECOMMENDATIONS_TO_IMPROVE_VEHICLES_EQUIPMENT'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_ohs_plan_adherence'); ?></textarea></td>
+            <td colspan="2"><textarea name="recommendations_to_improve_vehicles_equipment" placeholder="<?php echo JText::_('CLS_OHS_RECOMMENDATIONS_TO_IMPROVE_VEHICLES_EQUIPMENT'); ?>" cols="50" rows="8"><?php echo $this->session->get('cls_recommendations_to_improve_vehicles_equipment'); ?></textarea></td>
         </tr>
         <tr><td colspan="2">&nbsp;</td></tr>
         <tr><th colspan="2"><?php echo JText::_('CLS_OHS_RECOMMENDATIONS_AND_GUIDANCE_GIVEN_TO_CONTRACTOR'); ?></th></tr>
@@ -420,37 +409,22 @@ function toggleOptions() {
 #plan_updated_submitted_extra,
 .plan_updated_submitted_extra,
 #plan_updated_approved_extra */
-    if(document.getElementById('plan_not_updated_reviewed').checked) {
-        document.getElementById('plan_updated_reviewed_extra').style.display="table-row";
 
-        var fields = document.getElementsByClassName('plan_updated_reviewed_extra');
+    if(document.getElementById('plan_not_updated').checked) {
+        document.getElementById('plan_updated_extra').style.display="table-row";
+        document.getElementById('plan_updated_extra2').style.display="none";
+
+        var fields = document.getElementsByClassName('plan_reviewed_submitted_approved_extra');
         for(var i = 0; i < fields.length; i++)
             fields[i].style.display="none";
     } else {
-        document.getElementById('plan_updated_reviewed_extra').style.display="none";
+        document.getElementById('plan_updated_extra').style.display="none";
+        document.getElementById('plan_updated_extra2').style.display="table-row";
 
-        var fields = document.getElementsByClassName('plan_updated_reviewed_extra');
-        for(var i = 0; i < fields.length; i++)
-            fields[i].style.display="table-row";
-
-        if(document.getElementById('plan_not_updated_submitted').checked) {
-            document.getElementById('plan_updated_submitted_extra').style.display="table-row";
-
-            var fields = document.getElementsByClassName('plan_updated_submitted_extra');
-            for(var i = 0; i < fields.length; i++)
-                fields[i].style.display="none";
+        if(document.getElementById('plan_not_reviewed_submitted_approved').checked) {
+            document.getElementById('plan_reviewed_submitted_approved_extra').style.display="table-row";
         } else {
-            document.getElementById('plan_updated_submitted_extra').style.display="none";
-
-            var fields = document.getElementsByClassName('plan_updated_submitted_extra');
-            for(var i = 0; i < fields.length; i++)
-                fields[i].style.display="table-row";
-
-            if(document.getElementById('plan_not_updated_approved').checked) {
-                document.getElementById('plan_updated_approved_extra').style.display="table-row";
-            } else {
-                document.getElementById('plan_updated_approved_extra').style.display="none";
-            }
+            document.getElementById('plan_reviewed_submitted_approved_extra').style.display="none";
         }
     }
 

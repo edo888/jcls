@@ -69,6 +69,7 @@
             <filename>index.html</filename>
             <folder>help</folder>
             <folder>pictures</folder>
+            <folder>uploads</folder>
             <folder>images</folder>
             <folder>swfupload</folder>
             <folder>views</folder>

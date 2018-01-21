@@ -51,7 +51,7 @@ function validate() {
     <table>
         <tr>
             <td><?php echo JText::_('CLS_OHS_DATE_OF_INCIDENT') ?>:</td>
-            <td><?php echo JHTML::_('calendar', $this->session->get('date_of_incident', ''), 'date_of_incident', 'date_of_incident', '%Y-%m-%d'); ?></td>
+            <td><?php echo JHTML::_('calendar', $this->session->get('cls_date_of_incident', ''), 'date_of_incident', 'date_of_incident', '%Y-%m-%d'); ?></td>
         </tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_SELECT_CONTRACT') ?>:</td>
@@ -59,7 +59,7 @@ function validate() {
         </tr>
         <tr>
             <td><?php echo JText::_('CLS_OHS_LOCATION_OF_INCIDENT') ?>:</td>
-            <td><input type="hidden" name="location_of_incident" id="location" value="<?php echo $this->session->get('location_of_incident', ''); ?>" /><a href="<?php echo JURI::base(); ?>index.php?option=com_cls&view=editlocation" class="modal" rel="{handler:'iframe',size:{x:screen.availWidth-250, y:screen.availHeight-250}}"><?php echo JText::_('CLS_ADD_LOCATION'); ?></a></td>
+            <td><input type="hidden" name="location_of_incident" id="location" value="<?php echo $this->session->get('cls_location_of_incident', ''); ?>" /><a href="<?php echo JURI::base(); ?>index.php?option=com_cls&view=editlocation" class="modal" rel="{handler:'iframe',size:{x:screen.availWidth-250, y:screen.availHeight-250}}"><?php echo JText::_('CLS_ADD_LOCATION'); ?></a></td>
         </tr>
 
         <tr>
@@ -111,7 +111,7 @@ function validate() {
         </tr>
     </table>
     <input type="hidden" name="option" value="com_cls" />
-    <input type="hidden" name="task" value="submit_supervision_report" />
+    <input type="hidden" name="task" value="submit_incident_report" />
     <input type="hidden" name="Itemid" value="<?php echo JRequest::getInt('Itemid') ?>" />
 </form>
 
